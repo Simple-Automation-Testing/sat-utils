@@ -94,13 +94,21 @@ function isAsyncFunction(arg: any) {
 }
 
 function isPromise(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Promise]' || (arg.then && typeof isFunction(arg.then));
+  return Object.prototype.toString.call(arg) === '[object Promise]';
 }
 
 function isType(arg, typeArg: expectedArg) {
   return Object.prototype.toString.call(arg) === typesEnum[typeArg];
 }
 
+function canBeProxed(arg) {
+  try {
+    new Proxy(arg, {});
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
 
 export {
   isArray,
@@ -119,5 +127,6 @@ export {
   expectedArg,
   isType,
   getType,
-  isPrimitive
+  isPrimitive,
+  canBeProxed
 };
