@@ -78,7 +78,7 @@ function isSymbol(arg: any) {
 }
 
 function isNumber(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Number]';
+  return Object.prototype.toString.call(arg) === '[object Number]' && !isNaN(arg);
 }
 
 function isBoolean(arg: any) {

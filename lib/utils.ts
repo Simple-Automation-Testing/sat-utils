@@ -38,4 +38,20 @@ function getRandomString(length, options: IOptions = {}) {
     .join('');
 }
 
-export {getRandomString};
+
+function getRandomArrayItem(itemsList: any[], quaintity = 1) {
+  if (!itemsList.length) {
+    throw new RangeError(`getRandomArrayItem(): given array is empty`);
+  }
+  if (quaintity > itemsList.length) {
+    throw new RangeError(
+      `getRandomArrayItem(): more elements taken: ${quaintity} than exist within the given array. Array length ${itemsList.length}`,
+    );
+  }
+
+  return quaintity > 1
+    ? [...itemsList].sort(() => 0.5 - Math.random()).slice(0, quaintity)
+    : itemsList[Math.floor(Math.random() * itemsList.length)];
+}
+
+export {getRandomString, getRandomArrayItem};
