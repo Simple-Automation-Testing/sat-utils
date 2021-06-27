@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "built/index.js",
   "scripts": {
@@ -13,24 +13,29 @@
     "type": "git",
     "url": "git+https://github.com/Simple-Automation-Testing/sat-utils.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "utisl",
+    "types checkers",
+    "wait for conditions",
+    "async wait for conditions"
+  ],
+  "author": "Potapov Dmitriy",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Simple-Automation-Testing/sat-utils/issues"
   },
   "homepage": "https://github.com/Simple-Automation-Testing/sat-utils#readme",
   "devDependencies": {
-    "@types/mocha": "^8.0.1",
-    "@types/node": "^14.0.27",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^14.17.4",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
-    "eslint": "^7.6.0",
+    "eslint": "^7.29.0",
     "eslint-plugin-chai-expect": "^2.2.0",
     "eslint-plugin-chai-friendly": "^0.6.0",
-    "eslint-plugin-mocha": "^8.0.0",
-    "mocha": "^8.2.0",
+    "eslint-plugin-mocha": "^8.2.0",
+    "mocha": "^8.4.0",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
+    "typescript": "^4.3.4"
   }
 }
