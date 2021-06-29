@@ -3,13 +3,12 @@
 	const {waitForCondition} = require('sat-utils')
 
 	test()
+	waitForCondition.setDefaultOpts({timeout: 2500, interval: 250, message: 'Failed'});
+
 	async function test() {
 		await waitForCondition(async () => {
 			const result = await someAsyncLogic()
 			return result;
-		}, {
-			timeout: 25000,
-			interval: 250,
 		})
 	}
 

@@ -1,10 +1,12 @@
+import {isNumber} from './types';
+
 async function sleep(millisecond: number = 5 * 1000): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, millisecond));
 }
 
 interface IWaiterOpts {
-	timeout: number;
-	interval: number;
+	timeout?: number;
+	interval?: number;
 	dontThrow?: boolean;
 	message?: string;
 	throwCustom?: () => any;
@@ -12,16 +14,27 @@ interface IWaiterOpts {
 	analyseResult?: (...args: any[]) => boolean | Promise<boolean>;
 }
 
-async function waitForCondition(callback, options: IWaiterOpts = {timeout: 3000, interval: 1000}) {
+const defaultOptions = {};
+
+async function waitForCondition(callback, options: IWaiterOpts = {}) {
+	const mergedOpts = {...defaultOptions, ...options};
 	const {
 		message,
-		timeout,
-		interval,
+		timeout = 5000,
+		interval = 250,
 		dontThrow = false,
 		throwCustom,
 		createMessage,
 		analyseResult,
-	} = options;
+	} = mergedOpts;
+
+	if (!isNumber(interval)) {
+		throw new Error('interval should be a number');
+	}
+
+	if (!isNumber(timeout)) {
+		throw new Error('timeout should be a number');
+	}
 
 	const start = Date.now();
 	let result;
@@ -62,5 +75,12 @@ async function waitForCondition(callback, options: IWaiterOpts = {timeout: 3000,
 		throw new Error(errorMessage);
 	}
 }
+
+waitForCondition.setDefaultOpts = function(opts: IWaiterOpts) {
+	Object.keys(defaultOptions).forEach((key) => {
+		delete defaultOptions[key];
+	});
+	Object.assign(defaultOptions, opts);
+};
 
 export {waitForCondition, sleep};
