@@ -5,6 +5,7 @@ const typesEnum = {
   object: '[object Object]',
   array: '[object Array]',
   set: '[object Set]',
+  map: '[object Map]',
   function: '[object Function]',
   asyncFunction: '[object AsyncFunction]',
   promise: '[object Promise]',
@@ -33,6 +34,7 @@ const typesReverseEnum = {
   '[object AsyncFunction]': 'asyncFunction',
   '[object Promise]': 'promise',
   '[object Symbol]': 'symbol',
+  '[object Map]': 'map',
 
   '[object Null]': 'null',
   '[object String]': 'string',
@@ -71,6 +73,10 @@ function isUndefined(arg: any) {
 
 function isSet(arg: any) {
   return Object.prototype.toString.call(arg) === '[object Set]';
+}
+
+function isMap(arg: any) {
+  return Object.prototype.toString.call(arg) === '[object Map]';
 }
 
 function isSymbol(arg: any) {
@@ -116,6 +122,7 @@ export {
   isNull,
   isString,
   isSet,
+  isMap,
   isUndefined,
   isNumber,
   isPromise,

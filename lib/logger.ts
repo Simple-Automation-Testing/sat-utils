@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const collors = {
+const listOfColors = {
   Reset: '\x1b[0m',
   Bright: '\x1b[1m',
   Dim: '\x1b[2m',
@@ -80,13 +80,14 @@ const logger = {
   setLogLevel(level) {
     this.logLevel = level;
   },
-  addCustomLevel(loggerDescription, consoleOutput: string, description: string, color = 'FgWhite') {
+  addCustomLevel(loggerDescription, logLevel: string, description: string, consoleOutput = 'log', color = 'FgWhite') {
     logger[loggerDescription] = (...args) => {
-      console[consoleOutput](`${colors[color]}${description}${collors.Reset}`, ...args);
+      if (logger.logLevel === logLevel) {
+        console[consoleOutput](`${listOfColors[color]}${description}${listOfColors.Reset}`, ...args);
+      }
     };
   }
 };
-
 
 function setLogLevel(level: 'ERROR' | 'WARN' | 'INFO' | 'VERBOSE' | 'MUTE' | string) {
   logger.setLogLevel(level);

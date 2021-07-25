@@ -2,9 +2,9 @@
 ```js
 	const {waitForCondition} = require('sat-utils')
 
-	test()
 	waitForCondition.setDefaultOpts({timeout: 2500, interval: 250, message: 'Failed'});
 
+	test()
 	async function test() {
 		await waitForCondition(async () => {
 			const result = await someAsyncLogic()
@@ -12,6 +12,7 @@
 		})
 	}
 
+	test1()
 	async function test1() {
 		await waitForCondition(async () => {
 			const result = await someAsyncLogic()
@@ -22,6 +23,14 @@
 			interval: 250,
 			throwCustom: () => throw new Error('My custom error throw function')
 		})
+	}
+```
+
+## sleep
+```js
+	const {sleep} = require('sat-utils')
+	async function test() {
+		await sleep(2500);
 	}
 ```
 
@@ -54,6 +63,12 @@
 	const {isSet} = require('sat-utils')
 	// any argument
 	isSet(undefined) // => boolean
+```
+## isMap
+```js
+	const {isMap} = require('sat-utils')
+	// any argument
+	isMap(undefined) // => boolean
 ```
 ## isUndefined
 ```js
@@ -97,23 +112,11 @@
 	// any argument
 	isAsyncFunction(undefined) // => boolean
 ```
-## typesEnum
-```js
-	const {typesEnum} = require('sat-utils')
-	// any argument
-	typesEnum(undefined) // => boolean
-```
-## expectedArg
-```js
-	const {expectedArg} = require('sat-utils')
-	// any argument
-	expectedArg(undefined) // => boolean
-```
 ## isType
 ```js
 	const {isType} = require('sat-utils')
 	// any argument
-	isType(undefined) // => boolean
+	isType(undefined, 'function') // => boolean
 ```
 ## getType
 ```js
