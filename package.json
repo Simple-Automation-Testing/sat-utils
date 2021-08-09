@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "",
   "main": "built/index.js",
   "scripts": {
@@ -17,7 +17,9 @@
     "utisl",
     "types checkers",
     "wait for conditions",
-    "async wait for conditions"
+    "async wait for conditions",
+    "getRandomArrayItem",
+    "getRandomString"
   ],
   "author": "Potapov Dmitriy",
   "license": "ISC",

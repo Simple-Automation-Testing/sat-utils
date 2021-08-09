@@ -1,8 +1,37 @@
+# The purpose of this library is combine utils functions/methods/validators in one place
+
+![npm downloads](https://img.shields.io/npm/dm/sat-utils.svg?style=flat-square)
+
+## Content
+- [waitForCondition](#waitforcondition)
+- [getRandomString](#getrandomstring)
+- [isArray](#isarray)
+- [isObject](#isobject)
+- [isNull](#isnull)
+- [isSet](#isset)
+- [isMap](#ismap)
+- [isUndefined](#isundefined)
+- [isNumber](#isnumber)
+- [isPromise](#ispromise)
+- [isBoolean](#isboolean)
+- [isSymbol](#issymbol)
+- [isFunction](#isfunction)
+- [isAsyncFunction](#isasyncfunction)
+- [isType](#istype)
+- [getType](#gettype)
+- [isPrimitive](#isprimitive)
+- [canBeProxed](#canbeproxed)
+
 ## waitForCondition
 ```js
 	const {waitForCondition} = require('sat-utils')
 
-	waitForCondition.setDefaultOpts({timeout: 2500, interval: 250, message: 'Failed'});
+	waitForCondition.setDefaultOpts({
+		timeout: 2500, // default waiting time is 2500 ms
+		interval: 250,	// default re-check condition interval time is 250 ms
+		message: 'Failed',	// default error message is "Failed"
+		waiterError: TypeError,	// default error is TypeError
+	});
 
 	test()
 	async function test() {
@@ -25,7 +54,24 @@
 		})
 	}
 ```
-
+### getRandomArrayItem
+```js
+	const {getRandomArrayItem} = require('sat-utils')
+	const firstItem = getRandomArrayItem([1,2,3,4]) // 2
+	const [first, second] = getRandomArrayItem([1,2,3,4], 2) // [3, 1]
+	getRandomArrayItem([1,2,3,4], 10) // => RangeError('getRandomArrayItem(): more elements taken ...
+	getRandomArrayItem([]) // => RangeError('getRandomArrayItem(): given array is empty')
+	getRandomArrayItem(null) // => TypeError('getRandomArrayItem(): first argument should be an')
+```
+## getRandomString
+```js
+	const {getRandomString} = require('sat-utils')
+	const str1 = getRandomString(5) // AsRTl
+	const str2 = getRandomString(5, {numbers: true}) // 09326
+	const str3 = getRandomString(5, {lettersAndNumbers: true}) // 0B3a6
+	const str4 = getRandomString(5, {symbols: true}) // !@#$^
+	const str5 = getRandomString(5, {lettersNumbersAndSymbols: true}) // a2#B^
+```
 ## sleep
 ```js
 	const {sleep} = require('sat-utils')
@@ -33,7 +79,6 @@
 		await sleep(2500);
 	}
 ```
-
 ## isArray
 ```js
 	const {isArray} = require('sat-utils')
@@ -130,9 +175,9 @@
 	// any argument
 	isPrimitive(undefined) // => boolean
 ```
-## canBeProxe
+## canBeProxed
 ```js
-	const {canBeProxe} = require('sat-utils')
+	const {canBeProxed} = require('sat-utils')
 	// any argument
-	canBeProxe(undefined) // => boolean
+	canBeProxed(undefined) // => boolean
 ```

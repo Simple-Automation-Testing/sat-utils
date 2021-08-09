@@ -40,6 +40,10 @@ function getRandomString(length, options: IOptions = {}) {
 
 
 function getRandomArrayItem(itemsList: any[], quaintity = 1) {
+  if (!Array.isArray(itemsList)) {
+    throw new TypeError('getRandomArrayItem(): first argument should be an array');
+  }
+
   if (!itemsList.length) {
     throw new RangeError(`getRandomArrayItem(): given array is empty`);
   }

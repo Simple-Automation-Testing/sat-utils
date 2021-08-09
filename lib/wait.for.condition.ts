@@ -12,6 +12,7 @@ interface IWaiterOpts {
 	throwCustom?: () => any;
 	createMessage?: (...args: any[]) => string;
 	analyseResult?: (...args: any[]) => boolean | Promise<boolean>;
+	waiterError?: new (...args: any[]) => any;
 }
 
 const defaultOptions = {};
@@ -26,14 +27,15 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 		throwCustom,
 		createMessage,
 		analyseResult,
+		waiterError = Error,
 	} = mergedOpts;
 
 	if (!isNumber(interval)) {
-		throw new Error('interval should be a number');
+		throw new TypeError('interval should be a number');
 	}
 
 	if (!isNumber(timeout)) {
-		throw new Error('timeout should be a number');
+		throw new TypeError('timeout should be a number');
 	}
 
 	const start = Date.now();
@@ -72,7 +74,7 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 				? message
 				: `Required condition was not achieved during ${timeout} ms`;
 
-		throw new Error(errorMessage);
+		throw new waiterError(errorMessage);
 	}
 }
 
