@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "description": "",
   "main": "built/index.js",
   "scripts": {
@@ -19,10 +19,13 @@
     "wait for conditions",
     "async wait for conditions",
     "getRandomArrayItem",
-    "getRandomString"
+    "getRandomString",
+    "waitForCondition",
+    "async waitForCondition",
+    "async waiter"
   ],
   "author": "Potapov Dmitriy",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Simple-Automation-Testing/sat-utils/issues"
   },

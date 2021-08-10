@@ -21,6 +21,7 @@
 - [getType](#gettype)
 - [isPrimitive](#isprimitive)
 - [canBeProxed](#canbeproxed)
+- [toArray](#toarray)
 
 ## waitForCondition
 ```js
@@ -71,6 +72,9 @@
 	const str3 = getRandomString(5, {lettersAndNumbers: true}) // 0B3a6
 	const str4 = getRandomString(5, {symbols: true}) // !@#$^
 	const str5 = getRandomString(5, {lettersNumbersAndSymbols: true}) // a2#B^
+	const str6 = getRandomString(5, {lowerCase: true}) // abcd^
+
+
 ```
 ## sleep
 ```js
@@ -180,4 +184,12 @@
 	const {canBeProxed} = require('sat-utils')
 	// any argument
 	canBeProxed(undefined) // => boolean
+```
+## toArray
+```js
+		const {toArray} = require('sat-utils')
+
+		const arr1 = toArray(undefined) // []
+		const arr2 = toArray(null) // [null]
+		const arr3 = toArray([1,2,3]) // [1,2,3]
 ```
