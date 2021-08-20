@@ -1,4 +1,4 @@
-import {isObject, isNumber, getType} from './types';
+import {isObject, isNumber, getType, isString} from './types';
 
 const getStr = (str, length) => {
   return Array.from({length})
@@ -84,4 +84,39 @@ function toArray(anyArugment): any[] {
   return Array.isArray(anyArugment) ? Array.from(anyArugment) : [anyArugment];
 }
 
-export {getRandomString, getRandomArrayItem, toArray};
+
+function shuffleArr(arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError(`shuffleArr(): first argument should be an array, current arg is ${getType(arr)}`);
+  }
+  const newArr = Array.from(arr);
+
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+}
+
+function prettifyCamelCase(camelCaseString: string): string {
+  if (!isString(camelCaseString)) {
+    throw new TypeError(`prettifyCamelCase(): first argument should be a striung, current arg is ${getType(camelCaseString)}`);
+  }
+  let humanReadableString = '';
+
+  for (let index = 0; index < camelCaseString.length; index++) {
+    const char = camelCaseString.charAt(index);
+
+    if (index === 0) {
+      humanReadableString += char.toUpperCase();
+    } else if (char !== char.toLowerCase() && char === char.toUpperCase()) {
+      humanReadableString += ` ${char}`;
+    } else {
+      humanReadableString += char;
+    }
+  }
+
+  return humanReadableString;
+}
+
+export {getRandomString, getRandomArrayItem, toArray, shuffleArr, prettifyCamelCase};

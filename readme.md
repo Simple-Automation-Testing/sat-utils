@@ -22,6 +22,8 @@
 - [isPrimitive](#isprimitive)
 - [canBeProxed](#canbeproxed)
 - [toArray](#toarray)
+- [shuffleArr](#shufflearr)
+- [prettifyCamelCase](prettifycamelcase)
 
 ## waitForCondition
 ```js
@@ -62,7 +64,7 @@
 	const [first, second] = getRandomArrayItem([1,2,3,4], 2) // [3, 1]
 	getRandomArrayItem([1,2,3,4], 10) // => RangeError('getRandomArrayItem(): more elements taken ...
 	getRandomArrayItem([]) // => RangeError('getRandomArrayItem(): given array is empty')
-	getRandomArrayItem(null) // => TypeError('getRandomArrayItem(): first argument should be an')
+	getRandomArrayItem(null) // => TypeError 'getRandomArrayItem(): first argument should be an')
 ```
 ## getRandomString
 ```js
@@ -192,4 +194,21 @@
 		const arr1 = toArray(undefined) // []
 		const arr2 = toArray(null) // [null]
 		const arr3 = toArray([1,2,3]) // [1,2,3]
+```
+
+## shuffleArr
+```js
+		const {shuffleArr} = require('sat-utils')
+
+		const arr1 = shuffleArr([2,3,1]) // [1,3,2]
+		shuffleArr({}) // TypeError 'shuffleArr(): first argument should be an array ...'
+
+```
+
+## prettifyCamelCase
+```js
+		const {prettifyCamelCase} = require('sat-utils')
+
+		const pretty = prettifyCamelCase('testCaseId') // Test Case Id
+		prettifyCamelCase({}) //TypeError prettifyCamelCase(): first argument should be a striung, current arg is object
 ```
