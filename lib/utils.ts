@@ -84,4 +84,19 @@ function toArray(anyArugment): any[] {
   return Array.isArray(anyArugment) ? Array.from(anyArugment) : [anyArugment];
 }
 
-export {getRandomString, getRandomArrayItem, toArray};
+
+function shuffleArr(arr) {
+  if (Array.isArray(arr)) {
+    throw new TypeError(`shuffleArr(): first argument should be an array, current arg is ${getType(arr)}`);
+  }
+  const newArr = Array.from(arr);
+
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+}
+
+
+export {getRandomString, getRandomArrayItem, toArray, shuffleArr};

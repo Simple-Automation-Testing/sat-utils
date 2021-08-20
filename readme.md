@@ -22,6 +22,7 @@
 - [isPrimitive](#isprimitive)
 - [canBeProxed](#canbeproxed)
 - [toArray](#toarray)
+- [shuffleArr](#shufflearr)
 
 ## waitForCondition
 ```js
@@ -192,4 +193,13 @@
 		const arr1 = toArray(undefined) // []
 		const arr2 = toArray(null) // [null]
 		const arr3 = toArray([1,2,3]) // [1,2,3]
+```
+
+## shuffleArr
+```js
+		const {shuffleArr} = require('sat-utils')
+
+		const arr1 = shuffleArr([2,3,1]) // [1,3,2]
+		shuffleArr({}) // TypeError('shuffleArr(): first argument should be an array ...')
+
 ```
