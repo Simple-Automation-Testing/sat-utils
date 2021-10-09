@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha ./specs/**/*.spec.ts --require ts-node/register --timeout 30000",
     "test:debug": "mocha ./specs/async.child.methods.spec.ts --require ts-node/register --timeout 30000",
-    "li nt": "eslint --ext .ts ./",
+    "lint": "eslint --ext .ts ./",
     "build": "rm -rf ./built && tsc"
   },
   "repository": {
