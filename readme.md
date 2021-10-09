@@ -24,6 +24,10 @@
 - [toArray](#toarray)
 - [shuffleArr](#shufflearr)
 - [prettifyCamelCase](prettifycamelcase)
+- [isEmptyArray](isemptyarray)
+- [isEmptyObject](isemptyobject)
+- [isNotEmptyObject](isnotemptyobject)
+- [isNotEmptyArray](isnotemptyarray)
 
 ## waitForCondition
 ```js
@@ -211,4 +215,46 @@
 
 		const pretty = prettifyCamelCase('testCaseId') // Test Case Id
 		prettifyCamelCase({}) //TypeError prettifyCamelCase(): first argument should be a striung, current arg is object
+```
+
+## isEmptyArray
+```js
+		const {isEmptyArray} = require('sat-utils')
+
+		const isEmpty = isEmptyArray([]) // true
+		const isEmpty1 = isEmptyArray([1]) // false
+		const isEmpty2 = isEmptyArray(null) // false
+		const isEmpty3 = isEmptyArray({}) // false
+```
+
+## isNotEmptyArray
+```js
+		const {isNotEmptyArray} = require('sat-utils')
+
+		const isEmpty = isNotEmptyArray([]) // false
+		const isEmpty1 = isNotEmptyArray([1]) // true
+		const isEmpty2 = isNotEmptyArray(null) // false
+		const isEmpty3 = isNotEmptyArray({}) // false
+```
+
+## isEmptyObject
+```js
+		const {isEmptyObject} = require('sat-utils')
+
+		const isEmpty = isEmptyObject({}) // true
+		const isEmpty1 = isEmptyObject({a: 1}) // false
+		const isEmpty2 = isEmptyObject([]) // false
+		const isEmpty3 = isEmptyObject([1]) // false
+		const isEmpty4 = isEmptyObject(null) // false
+```
+
+## isEmptyObject
+```js
+		const {isNotEmptyObject} = require('sat-utils')
+
+		const isEmpty = isNotEmptyObject({}) // false
+		const isEmpty1 = isNotEmptyObject({a: 1}) // true
+		const isEmpty2 = isNotEmptyObject([]) // false
+		const isEmpty3 = isNotEmptyObject([1]) // false
+		const isEmpty4 = isNotEmptyObject(null) // false
 ```
