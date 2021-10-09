@@ -116,6 +116,22 @@ function canBeProxed(arg) {
   }
 }
 
+function isEmptyArray(arg: any) {
+  return isArray(arg) && Boolean(arg.length);
+}
+
+function isNotEmptyArray(arg: any) {
+  return isArray(arg) && !!arg.length;
+}
+
+function isEmptyObject(arg: any) {
+  return isObject(arg) && Boolean(Object.keys(arg).length);
+}
+
+function isNotEmptyObject(arg: any) {
+  return isObject(arg) && !!Object.keys(arg).length;
+}
+
 export {
   isArray,
   isObject,
@@ -135,5 +151,9 @@ export {
   isType,
   getType,
   isPrimitive,
-  canBeProxed
+  canBeProxed,
+  isEmptyArray,
+  isEmptyObject,
+  isNotEmptyArray,
+  isNotEmptyObject
 };
