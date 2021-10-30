@@ -8,28 +8,19 @@ const getStr = (str, length) => {
 
 interface IOptions {
   numbers?: boolean;
+  letters?: boolean;
   lettersAndNumbers?: boolean;
   symbols?: boolean;
   lettersNumbersAndSymbols?: boolean;
   lowerCase?: boolean;
 }
 
-function getRandomString(length, options: IOptions = {}) {
+function getRandomString(length, options: IOptions = {letters: true}) {
   const l = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   const s = '!@#$%^&*(((()))_+~?>"|\\}{[]';
   const n = '01234567890';
   const ln = l + n;
   const lns = l + s + n;
-
-  if (!isNumber(length)) {
-    throw new Error(`getRandomString(): first argument should be a number, current arg is ${getType(length)}`);
-  }
-
-  if (!isObject(options)) {
-    throw new Error(`getRandomString(): second argument should be an object, current arg is ${getType(options)}`);
-  }
-
-  const {lowerCase, ...restOpts} = options;
 
   const data = {
     letters: l,
@@ -39,15 +30,30 @@ function getRandomString(length, options: IOptions = {}) {
     lettersNumbersAndSymbols: lns,
   };
 
+  const thowOptsError = () => {
+    throw new Error(`getRandomString(): second argument should be an object with next opts
+        numbers?: boolean;
+        lettersAndNumbers?: boolean;
+        symbols?: boolean;
+        lettersNumbersAndSymbols?: boolean;
+        lowerCase?: boolean;
+    `);
+  };
+
+  if (!isNumber(length)) {
+    throw new Error(`getRandomString(): first argument should be a number, current arg is ${getType(length)}`);
+  }
+
+  if (!isObject(options)) {
+    thowOptsError();
+  }
+
+  const {lowerCase, ...restOpts} = options;
+
   const optsKeys = Object.keys(restOpts);
 
-  if (optsKeys.length && !data[optsKeys[0]]) {
-    throw new Error(`getRandomString(): second argument should be an object with next opts
-      numbers?: boolean;
-      lettersAndNumbers?: boolean;
-      symbols?: boolean;
-      lettersNumbersAndSymbols?: boolean;
-    `);
+  if (!optsKeys.length || !data[optsKeys[0]]) {
+    thowOptsError();
   }
 
   const charsKey = optsKeys[0] || 'letters';
