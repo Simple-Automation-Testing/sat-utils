@@ -106,7 +106,7 @@ function shuffleArr(arr) {
 
 function prettifyCamelCase(camelCaseString: string): string {
   if (!isString(camelCaseString)) {
-    throw new TypeError(`prettifyCamelCase(): first argument should be a striung, current arg is ${getType(camelCaseString)}`);
+    throw new TypeError(`prettifyCamelCase(): first argument should be a string, current arg is ${getType(camelCaseString)}`);
   }
   let humanReadableString = '';
 
@@ -125,4 +125,29 @@ function prettifyCamelCase(camelCaseString: string): string {
   return humanReadableString;
 }
 
-export {getRandomString, getRandomArrayItem, toArray, shuffleArr, prettifyCamelCase};
+function execNumberExpression(expression: string, numberArg: number) {
+  if (!isString(expression)) {
+    throw new TypeError(`checkNumberExpression(): first argument should be a string, current arg is ${getType(numberArg)}`);
+  }
+  if (!isNumber(numberArg)) {
+    throw new TypeError(`checkNumberExpression(): second argument should be a number, current arg is ${getType(numberArg)}`);
+  }
+
+
+  try {
+    const expressions = expression.toLowerCase().split('and');
+
+    return expressions.every((expressionPart) => eval(`${numberArg} ${expressionPart}`));
+  } catch (e) {
+    return false;
+  }
+}
+
+export {
+  getRandomString,
+  getRandomArrayItem,
+  toArray,
+  shuffleArr,
+  prettifyCamelCase,
+  execNumberExpression,
+};

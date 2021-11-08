@@ -28,6 +28,7 @@
 - [isEmptyObject](isemptyobject)
 - [isNotEmptyObject](isnotemptyobject)
 - [isNotEmptyArray](isnotemptyarray)
+- [execNumberExpression](execnumberexpression)
 
 ## waitForCondition
 ```js
@@ -257,4 +258,15 @@
 		const isEmpty2 = isNotEmptyObject([]) // false
 		const isEmpty3 = isNotEmptyObject([1]) // false
 		const isEmpty4 = isNotEmptyObject(null) // false
+```
+
+## execNumberExpression
+```js
+		const {execNumberExpression} = require('sat-utils')
+
+		const isTruly = execNumberExpression('>10', 11) // true
+		const isTruly1 = execNumberExpression('>10 and <12', 11) // true
+		const isTruly2 = execNumberExpression('>10 and <13 and !== 12', 11) // true
+		const isTruly3 = execNumberExpression('<9', 11) // false
+		const isTruly4 = execNumberExpression('!==11', 11) // false
 ```
