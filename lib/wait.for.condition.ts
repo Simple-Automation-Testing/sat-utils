@@ -8,6 +8,7 @@ interface IWaiterOpts {
 	timeout?: number;
 	interval?: number;
 	dontThrow?: boolean;
+	falseIfError?: boolean;
 	message?: string;
 	throwCustom?: () => any;
 	createMessage?: (...args: any[]) => string;
@@ -27,6 +28,7 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 		throwCustom,
 		createMessage,
 		analyseResult,
+		falseIfError = true,
 		waiterError = Error,
 	} = mergedOpts;
 
@@ -43,12 +45,18 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 
 	while (Date.now() - start < timeout) {
 
-		result = await callback();
-
-		if (analyseResult) {
-			if (await analyseResult(result)) {
-				return result;
+		if (falseIfError) {
+			try {
+				result = await callback();
+			} catch {
+				result = false;
 			}
+		} else {
+			result = await callback();
+		}
+
+		if (analyseResult && await analyseResult(result)) {
+			return result;
 		}
 
 		if (result) {
@@ -61,7 +69,6 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 	if (dontThrow) {
 		return result;
 	}
-
 
 	if (throwCustom) {
 		return throwCustom();
