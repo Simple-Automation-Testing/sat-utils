@@ -19,54 +19,56 @@ interface ICompareOpts {
 
 function compareToPatter(dataToCheck, pattern, options?: ICompareOpts) {
 	const {separator = '->', ...opts} = options || {};
-	let failIndex = null;
+	const failIndex = null;
 	let message = '';
 
 	function compare(data, piece, opts: ICompareOpts = {}) {
+		const resultData = {result: false, messagePart: ''};
+
 		const {strictStrings = true, strictArrays = true} = opts;
 
 		if (isPrimitive(piece) && isPrimitive(data)) {
-			const compareResult = isString(piece) && isString(data) && !strictStrings ? data.includes(piece) : data === piece;
+			resultData.result = isString(piece) && isString(data) && !strictStrings ? data.includes(piece) : data === piece;
 
-			if (!compareResult) {
-				message += `Message: expected: ${piece}, actual: ${data}`;
+			if (!resultData.result) {
+				resultData.messagePart += `Message: expected: ${piece}, actual: ${data}`;
 			}
 
-			return compareResult;
+			return resultData;
 		}
 
 		if (isObject(piece) && isObject(data)) {
-			return Object.keys(piece).every((key) => {
+			resultData.result = Object.keys(piece).every((key) => {
 				const compareResult = compare(data[key], piece[key], opts);
-				if (!compareResult) {
-					message += `message key:${key}`;
-				}
 
-				return compareResult;
+				resultData.messagePart += compareResult.messagePart;
+
+				return compareResult.result;
 			});
+			return resultData;
 		}
 
 		if (isArray(data)) {
 			const {length, ...pieceWithoutLength} = piece;
 			if (checkLenghtIfRequired(length, data.length)) {
-				return data[strictArrays ? 'every' : 'some']((dataItem, index) => {
+				resultData.messagePart = data[strictArrays ? 'every' : 'some']((dataItem, index) => {
 					const compareResult = compare(dataItem, pieceWithoutLength, opts);
-					if (!compareResult) {
-						failIndex = index;
-					}
-					return compareResult;
+
+					resultData.messagePart += compareResult.messagePart;
+
+					return compareResult.result;
 				});
+				return resultData;
 			} else {
-				message += `Message: expected length: ${length}, actual lenght: ${data.length}`;
+				resultData.messagePart += `Message: expected length: ${length}, actual lenght: ${data.length}`;
 			}
 		}
 
 		if (getType(data) !== getType(piece)) {
-			message += `Message: seems like types are not comparable, expected: ${getType(piece)}, actual: ${getType(data)}`;
+			resultData.messagePart += `Message: seems like types are not comparable, expected: ${getType(piece)}, actual: ${getType(data)}`;
 		}
 
-
-		return false;
+		return result;
 	}
 
 	const result = compare(dataToCheck, pattern, opts);
