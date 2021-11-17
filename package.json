@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "Utils library",
   "main": "built/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "url": "git+https://github.com/Simple-Automation-Testing/sat-utils.git"
   },
   "keywords": [
-    "utisl",
+    "utils",
     "types checkers",
     "wait for conditions",
     "async wait for conditions",
@@ -23,7 +23,9 @@
     "waitForCondition",
     "async waitForCondition",
     "async waiter",
-    "pretty camel case"
+    "pretty camel case",
+    "compare item to pattern",
+    "compare"
   ],
   "author": "Potapov Dmitriy",
   "license": "MIT",

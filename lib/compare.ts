@@ -17,68 +17,62 @@ interface ICompareOpts {
 	separator?: string;
 }
 
-function compareToPatter(dataToCheck, pattern, options?: ICompareOpts) {
+function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 	const {separator = '->', ...opts} = options || {};
-	const failIndex = null;
 	let message = '';
 
-	function compare(data, piece, opts: ICompareOpts = {}) {
-		const resultData = {result: false, messagePart: ''};
-
+	function compare(data, piece, opts: ICompareOpts = {}, arrayIndex?) {
 		const {strictStrings = true, strictArrays = true} = opts;
 
 		if (isPrimitive(piece) && isPrimitive(data)) {
-			resultData.result = isString(piece) && isString(data) && !strictStrings ? data.includes(piece) : data === piece;
+			const compareResult = isString(piece) && isString(data) && !strictStrings ? data.includes(piece) : data === piece;
 
-			if (!resultData.result) {
-				resultData.messagePart += `Message: expected: ${piece}, actual: ${data}`;
+			if (!compareResult) {
+				message += `Message: expected: ${piece}, actual: ${data}`;
 			}
 
-			return resultData;
+			return compareResult;
 		}
 
 		if (isObject(piece) && isObject(data)) {
-			resultData.result = Object.keys(piece).every((key) => {
+			return Object.keys(piece).every((key) => {
 				const compareResult = compare(data[key], piece[key], opts);
+				if (!compareResult) {
+					message += `message key:${isNumber(arrayIndex) ? `[${arrayIndex}]${key}` : `${key}`}`;
+				}
 
-				resultData.messagePart += compareResult.messagePart;
-
-				return compareResult.result;
+				return compareResult;
 			});
-			return resultData;
 		}
 
 		if (isArray(data)) {
 			const {length, ...pieceWithoutLength} = piece;
 			if (checkLenghtIfRequired(length, data.length)) {
-				resultData.messagePart = data[strictArrays ? 'every' : 'some']((dataItem, index) => {
-					const compareResult = compare(dataItem, pieceWithoutLength, opts);
-
-					resultData.messagePart += compareResult.messagePart;
-
-					return compareResult.result;
+				return data[strictArrays ? 'every' : 'some']((dataItem, index) => {
+					const compareResult = compare(dataItem, pieceWithoutLength, opts, index);
+					return compareResult;
 				});
-				return resultData;
 			} else {
-				resultData.messagePart += `Message: expected length: ${length}, actual lenght: ${data.length}`;
+				message += `Message: expected length: ${length}, actual lenght: ${data.length}`;
+				return false;
 			}
 		}
 
 		if (getType(data) !== getType(piece)) {
-			resultData.messagePart += `Message: seems like types are not comparable, expected: ${getType(piece)}, actual: ${getType(data)}`;
+			message += `Message: seems like types are not comparable, expected: ${getType(piece)}, actual: ${getType(data)}`;
 		}
 
-		return result;
+
+		return false;
 	}
 
 	const result = compare(dataToCheck, pattern, opts);
 	// clean up message
 	message = message.split('message key:').reverse().join(separator).trim();
 	if (result) message = '';
-	if (isNumber(failIndex)) message = message.replace('Message:', `[${failIndex}] Message:`);
 	return {result, message};
 }
 
 export {
-	compareToPatter
+	compareToPattern
 };
