@@ -178,7 +178,7 @@
 ```js
 	const {getType} = require('sat-utils')
 	// any argument
-	getType(undefined) // => boolean
+	getType(undefined) // => string
 ```
 ## isPrimitive
 ```js
