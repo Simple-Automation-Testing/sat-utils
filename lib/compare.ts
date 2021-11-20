@@ -1,5 +1,5 @@
 import {isArray, isObject, isPrimitive, isString, isUndefined, isNumber, getType} from './types';
-import {execNumberExpression} from './utils';
+import {execNumberExpression, toArray} from './utils';
 
 function checkLenghtIfRequired(expectedLength, actualLength) {
 	if (isUndefined(expectedLength)) {
@@ -15,10 +15,12 @@ interface ICompareOpts {
 	strictStrings?: boolean;
 	strictArrays?: boolean;
 	separator?: string;
+	ignoreProperties?: string | string[];
 }
 
 function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
-	const {separator = '->', ...opts} = options || {};
+	const {separator = '->', ignoreProperties, ...opts} = options || {};
+	const propertiesWhichWillBeIgnored = toArray(ignoreProperties);
 	let message = '';
 
 	function compare(data, piece, opts: ICompareOpts = {}, arrayIndex?) {
@@ -35,14 +37,19 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 		}
 
 		if (isObject(piece) && isObject(data)) {
-			return Object.keys(piece).every((key) => {
-				const compareResult = compare(data[key], piece[key], opts);
-				if (!compareResult) {
-					message += `message key:${isNumber(arrayIndex) ? `[${arrayIndex}]${key}` : `${key}`}`;
-				}
+			return Object.keys(piece)
+				.filter((key) => {
+					if (propertiesWhichWillBeIgnored.length === 0) return true;
+					else return !propertiesWhichWillBeIgnored.includes(key);
+				})
+				.every((key) => {
+					const compareResult = compare(data[key], piece[key], opts);
+					if (!compareResult) {
+						message += `message key:${isNumber(arrayIndex) ? `[${arrayIndex}]${key}` : `${key}`}`;
+					}
 
-				return compareResult;
-			});
+					return compareResult;
+				});
 		}
 
 		if (isArray(data)) {

@@ -98,6 +98,22 @@ describe('SPEC', function() {
 		deepStrictEqual(message, '', 'Message should be empty');
 	});
 
+	it('[P] compareToPattern ignoreProperties', function() {
+		const pattern = {
+			c: {a: 3},
+			shouldBeIgnored: {a: 'b'}
+		};
+
+		const data = {
+			c: {a: 3},
+			shouldBeIgnored: {a: 'xx'},
+		};
+
+		const {result, message} = compareToPattern(data, pattern, {ignoreProperties: 'shouldBeIgnored'});
+		deepStrictEqual(result, true, 'Should be same');
+		deepStrictEqual(message, '', 'Message should be empty');
+	});
+
 	it('[N] compareToPattern missed fields', function() {
 		{
 			const pattern = {

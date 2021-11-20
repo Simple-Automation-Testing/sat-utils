@@ -23,13 +23,13 @@
 - [canBeProxed](#canbeproxed)
 - [toArray](#toarray)
 - [shuffleArr](#shufflearr)
-- [prettifyCamelCase](prettifycamelcase)
-- [isEmptyArray](isemptyarray)
-- [isEmptyObject](isemptyobject)
-- [isNotEmptyObject](isnotemptyobject)
-- [isNotEmptyArray](isnotemptyarray)
-- [execNumberExpression](execnumberexpression)
-- [compareToPattern](comparetopattern)
+- [prettifyCamelCase](#prettifycamelcase)
+- [isEmptyArray](#isemptyarray)
+- [isEmptyObject](#isemptyobject)
+- [isNotEmptyObject](#isnotemptyobject)
+- [isNotEmptyArray](#isnotemptyarray)
+- [execNumberExpression](#execnumberexpression)
+- [compareToPattern](#comparetopattern)
 
 ## waitForCondition
 ```js
