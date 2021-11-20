@@ -125,7 +125,7 @@ function isNotEmptyArray(arg: any) {
 }
 
 function isEmptyObject(arg: any) {
-  return isObject(arg) && Boolean(Object.keys(arg).length);
+  return isObject(arg) && !Object.keys(arg).length;
 }
 
 function isNotEmptyObject(arg: any) {

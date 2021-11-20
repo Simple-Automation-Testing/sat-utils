@@ -1,4 +1,4 @@
-import {isArray, isObject, isPrimitive, isString, isUndefined, isNumber, getType} from './types';
+import {isArray, isObject, isPrimitive, isString, isUndefined, isNumber, getType, isEmptyObject} from './types';
 import {execNumberExpression, toArray} from './utils';
 
 function checkLenghtIfRequired(expectedLength, actualLength) {
@@ -52,12 +52,35 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 				});
 		}
 
+		if (isArray(data) && isArray(piece)) {
+			if (checkLenghtIfRequired(piece.length, data.length)) {
+				return data.every((dataItem, index) => compare(dataItem, piece[index], opts, index));
+			} else {
+				return false;
+			}
+		}
+
 		if (isArray(data)) {
 			const {length, ...pieceWithoutLength} = piece;
+			const {comparePrimitive, comparePrimitives, ...pieceWithoutPrimitives} = pieceWithoutLength;
+
+			if (
+				isEmptyObject(pieceWithoutPrimitives)
+				&& checkLenghtIfRequired(length, data.length)
+				&& !('comparePrimitive' in pieceWithoutLength)
+				&& !('comparePrimitives' in pieceWithoutLength)
+			) {
+				return true;
+			}
+
 			if (checkLenghtIfRequired(length, data.length)) {
 				return data[strictArrays ? 'every' : 'some']((dataItem, index) => {
-					const compareResult = compare(dataItem, pieceWithoutLength, opts, index);
-					return compareResult;
+					if (isPrimitive(comparePrimitive) && ('comparePrimitive' in pieceWithoutLength)) {
+						return compare(dataItem, comparePrimitive, opts, index);
+					} else if (isArray(comparePrimitives) && ('comparePrimitives' in pieceWithoutLength)) {
+						return compare(dataItem, comparePrimitives[index], opts, index);
+					}
+					return compare(dataItem, pieceWithoutLength, opts, index);
 				});
 			} else {
 				message += `Message: expected length: ${length}, actual lenght: ${data.length}`;

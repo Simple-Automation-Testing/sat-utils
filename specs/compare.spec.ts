@@ -98,6 +98,62 @@ describe('SPEC', function() {
 		deepStrictEqual(message, '', 'Message should be empty');
 	});
 
+	it('[P] compareToPattern check length only', function() {
+		const pattern = {
+			c: {length: 3}
+		};
+
+		const data = {
+			c: [1, 1, 1]
+		};
+
+		const {result, message} = compareToPattern(data, pattern, {strictArrays: false});
+		deepStrictEqual(result, true, 'Should be same');
+		deepStrictEqual(message, '', 'Message should be empty');
+	});
+
+	it('[P] compareToPattern check comparePrimitive', function() {
+		const pattern = {
+			c: {comparePrimitive: 1}
+		};
+
+		const data = {
+			c: [1, 1, 1]
+		};
+
+		const {result, message} = compareToPattern(data, pattern, {strictArrays: false});
+		deepStrictEqual(result, true, 'Should be same');
+		deepStrictEqual(message, '', 'Message should be empty');
+	});
+
+	it('[P] compareToPattern check comparePrimitives', function() {
+		const pattern = {
+			c: {comparePrimitives: [1, 1, 1]}
+		};
+
+		const data = {
+			c: [1, 1, 1]
+		};
+
+		const {result, message} = compareToPattern(data, pattern, {strictArrays: false});
+		deepStrictEqual(result, true, 'Should be same');
+		deepStrictEqual(message, '', 'Message should be empty');
+	});
+
+	it('[P] compareToPattern check compareArrays', function() {
+		const pattern = {
+			c: [1, 1, 1],
+		};
+
+		const data = {
+			c: [1, 1, 1]
+		};
+
+		const {result, message} = compareToPattern(data, pattern, {strictArrays: false});
+		deepStrictEqual(result, true, 'Should be same');
+		deepStrictEqual(message, '', 'Message should be empty');
+	});
+
 	it('[P] compareToPattern ignoreProperties', function() {
 		const pattern = {
 			c: {a: 3},
