@@ -10,7 +10,7 @@ interface IWaiterOpts {
 	dontThrow?: boolean;
 	falseIfError?: boolean;
 	message?: string;
-	throwCustom?: () => any;
+	throwCustom?: (currentError?) => any;
 	createMessage?: (...args: any[]) => string;
 	analyseResult?: (...args: any[]) => boolean | Promise<boolean>;
 	waiterError?: new (...args: any[]) => any;
@@ -19,6 +19,7 @@ interface IWaiterOpts {
 const defaultOptions = {};
 
 async function waitForCondition(callback, options: IWaiterOpts = {}) {
+	let errorWhichWasThrown;
 	const mergedOpts = {...defaultOptions, ...options};
 	const {
 		message,
@@ -48,7 +49,8 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 		if (falseIfError) {
 			try {
 				result = await callback();
-			} catch {
+			} catch (error) {
+				errorWhichWasThrown = error;
 				result = false;
 			}
 		} else {
@@ -71,12 +73,12 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 	}
 
 	if (throwCustom) {
-		return throwCustom();
+		return throwCustom(errorWhichWasThrown);
 	}
 
 	if (!result) {
 		const errorMessage = createMessage
-			? createMessage(timeout)
+			? createMessage(timeout, errorWhichWasThrown)
 			: message
 				? message
 				: `Required condition was not achieved during ${timeout} ms`;
