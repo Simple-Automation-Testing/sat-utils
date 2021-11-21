@@ -213,7 +213,7 @@ describe('SPEC', function() {
 			deepStrictEqual(result, false, 'Should not be same');
 			deepStrictEqual(
 				message,
-				'b->[3]c->Message: seems like types are not comparable, expected: object, actual: string',
+				'b->c[3]->Message: seems like types are not comparable, expected: object, actual: string',
 				'Message should be empty'
 			);
 		}
@@ -238,7 +238,7 @@ describe('SPEC', function() {
 
 			const {result, message} = compareToPattern(data, pattern);
 			deepStrictEqual(result, false, 'Should not be same');
-			deepStrictEqual(message, 'b->[3]c->d->[2]text->Message: expected: 1, actual: undefined', 'Message should be empty');
+			deepStrictEqual(message, 'b->c[3]->d->text[2]->Message: expected: 1, actual: undefined', 'Message should be empty');
 		}
 	});
 });

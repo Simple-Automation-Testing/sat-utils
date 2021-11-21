@@ -45,7 +45,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 				.every((key) => {
 					const compareResult = compare(data[key], piece[key], opts);
 					if (!compareResult) {
-						message += `message key:${isNumber(arrayIndex) ? `[${arrayIndex}]${key}` : `${key}`}`;
+						message += `message key:${isNumber(arrayIndex) ? `${key}[${arrayIndex}]` : `${key}`}`;
 					}
 
 					return compareResult;

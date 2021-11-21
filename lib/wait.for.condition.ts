@@ -45,7 +45,6 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 	let result;
 
 	while (Date.now() - start < timeout) {
-
 		if (falseIfError) {
 			try {
 				result = await callback();
@@ -72,18 +71,12 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 		return result;
 	}
 
-	if (throwCustom) {
-		return throwCustom(errorWhichWasThrown);
-	}
-
 	if (!result) {
-		const errorMessage = createMessage
-			? createMessage(timeout, errorWhichWasThrown)
-			: message
-				? message
-				: `Required condition was not achieved during ${timeout} ms`;
+		if (message) throw new waiterError(message);
+		if (createMessage) throw new waiterError(createMessage(timeout, errorWhichWasThrown));
+		if (throwCustom) return throwCustom(errorWhichWasThrown);
 
-		throw new waiterError(errorMessage);
+		throw new waiterError(`Required condition was not achieved during ${timeout} ms`);
 	}
 }
 

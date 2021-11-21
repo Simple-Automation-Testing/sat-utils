@@ -275,6 +275,7 @@
 ## compareToPattern
 ```js
   const {compareToPattern} = require('sat-utils')
+	//
 	{
 		const data = {
 			a: {text: 'first'},
@@ -288,7 +289,6 @@
 		const {result, message} = compareToPattern(data, pattern)
 		// result is true, message is ''
 	}
-
 	{
 		const data = {
 			a: {text: 'first'},
@@ -302,7 +302,6 @@
 		const {result, message} = compareToPattern(data, pattern)
 		// result is false, message is 'b->c->d->text->Message: expected: second, actual: first'
 	}
-
 	{
 		const data = {
 			a: {text: 'first'},
@@ -314,7 +313,7 @@
 		};
 
 		const {result, message} = compareToPattern(data, pattern)
-		// result is false, message is 'b->c->[0]d->[0]text->Message: expected: second, actual: first'
+		// result is false, message is 'b->c->d[0]->text[0]->Message: expected: second, actual: first'
 	}
 	{
 		const data = {
@@ -328,5 +327,43 @@
 
 		const {result, message} = compareToPattern(data, pattern)
 		// result is false, message is 'false b->c->Message: expected length: 3, actual lenght: 1'
+	}
+	{
+		const data = {
+			a: {text: 'first'},
+			b: {c: [{d: [
+				{text: 'first 1'},
+				{text: 'first 2'},
+				{text: 'first 3'}
+			]}]}
+		};
+
+		const pattern = {
+			b: {c: {d: {text: 'first'}}}
+		};
+
+		const {result, message} = compareToPattern(data, pattern, {
+			strictStrings: false,
+		})
+		// result is true, message is ''
+	}
+	{
+		const data = {
+			a: {text: 'first'},
+			b: {c: [{d: [
+				{text: 'first 1'},
+				{text: 'first 2'},
+				{text: 'first 3'}
+			]}]}
+		};
+
+		const pattern = {
+			b: {c: {d: {text: 'first 2'}}}
+		};
+
+		const {result, message} = compareToPattern(data, pattern, {
+			strictArrays: false,
+		})
+		// result is true, message is ''
 	}
 ```
