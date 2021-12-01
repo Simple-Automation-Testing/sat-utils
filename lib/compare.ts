@@ -61,24 +61,30 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 		}
 
 		if (isArray(data)) {
-			const {length, ...pieceWithoutLength} = piece;
-			const {comparePrimitive, comparePrimitives, ...pieceWithoutPrimitives} = pieceWithoutLength;
+			const {length, ignoreIndexes, ...pieceWithoutLength} = piece;
+			const {toCompare, ...pieceWithoutPrimitives} = pieceWithoutLength;
+
 
 			if (
 				isEmptyObject(pieceWithoutPrimitives)
 				&& checkLenghtIfRequired(length, data.length)
-				&& !('comparePrimitive' in pieceWithoutLength)
-				&& !('comparePrimitives' in pieceWithoutLength)
+				&& !('toCompare' in pieceWithoutLength)
 			) {
 				return true;
 			}
 
 			if (checkLenghtIfRequired(length, data.length)) {
-				return data[strictArrays ? 'every' : 'some']((dataItem, index) => {
-					if (isPrimitive(comparePrimitive) && ('comparePrimitive' in pieceWithoutLength)) {
-						return compare(dataItem, comparePrimitive, opts, index);
-					} else if (isArray(comparePrimitives) && ('comparePrimitives' in pieceWithoutLength)) {
-						return compare(dataItem, comparePrimitives[index], opts, index);
+				return data.filter((_item, index) => {
+					if (ignoreIndexes && (isNumber(ignoreIndexes) || isArray(ignoreIndexes))) {
+						const ignore = toArray(ignoreIndexes);
+						return !ignore.includes(index);
+					}
+					return true;
+				})[strictArrays ? 'every' : 'some']((dataItem, index, arr) => {
+					if (isPrimitive(toCompare) && ('toCompare' in pieceWithoutLength)) {
+						return compare(dataItem, toCompare, opts, index);
+					} else if (isArray(toCompare)) {
+						return compare(dataItem, toCompare[index], opts, index);
 					}
 					return compare(dataItem, pieceWithoutLength, opts, index);
 				});

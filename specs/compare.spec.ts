@@ -99,8 +99,62 @@ describe('SPEC', function() {
 	});
 
 	it('[P] compareToPattern check length only', function() {
+		{
+			const pattern = {
+				c: {length: 3}
+			};
+
+			const data = {
+				c: [1, 1, 1]
+			};
+
+			const {result, message} = compareToPattern(data, pattern, {strictArrays: false});
+			deepStrictEqual(result, true, 'Should be same');
+			deepStrictEqual(message, '', 'Message should be empty');
+		}
+		{
+			const data = {
+				topItem: {
+					arrayItem: [
+						{
+							item1: true,
+							item2: true,
+							item3: false
+						},
+						{
+							item1: true,
+							item2: true,
+							item3: false
+						},
+						{
+							item1: true,
+							item2: true,
+							item3: false
+						},
+						{
+							item1: true,
+							item2: true,
+							item3: false
+						}
+					]
+				}
+			};
+
+			const pattern = {
+				topItem: {
+					arrayItem: {
+						item1: true,
+						item2: true,
+						item3: {length: '>=0 and <=3'}
+					}
+				}
+			};
+		}
+	});
+
+	it('[P] compareToPattern check toCompare primitive', function() {
 		const pattern = {
-			c: {length: 3}
+			c: {toCompare: 1}
 		};
 
 		const data = {
@@ -112,9 +166,9 @@ describe('SPEC', function() {
 		deepStrictEqual(message, '', 'Message should be empty');
 	});
 
-	it('[P] compareToPattern check comparePrimitive', function() {
+	it('[P] compareToPattern check toCompare array', function() {
 		const pattern = {
-			c: {comparePrimitive: 1}
+			c: {toCompare: [1, 1, 1]}
 		};
 
 		const data = {
@@ -126,18 +180,32 @@ describe('SPEC', function() {
 		deepStrictEqual(message, '', 'Message should be empty');
 	});
 
-	it('[P] compareToPattern check comparePrimitives', function() {
+	it('[P] compareToPattern check toCompare array with ignore indexes', function() {
 		const pattern = {
-			c: {comparePrimitives: [1, 1, 1]}
+			c: {toCompare: [1, 1, 1], ignoreIndexes: [0, 1]}
 		};
 
 		const data = {
-			c: [1, 1, 1]
+			c: [2, 3, 1, 1, 1]
 		};
 
-		const {result, message} = compareToPattern(data, pattern, {strictArrays: false});
+		const {result, message} = compareToPattern(data, pattern);
 		deepStrictEqual(result, true, 'Should be same');
 		deepStrictEqual(message, '', 'Message should be empty');
+	});
+
+	it('[N] compareToPattern check toCompare array with ignore indexes', function() {
+		const pattern = {
+			c: {toCompare: [1, 1, 1], ignoreIndexes: [0, 4]}
+		};
+
+		const data = {
+			c: [2, 3, 1, 1, 1]
+		};
+
+		const {result, message} = compareToPattern(data, pattern);
+		deepStrictEqual(result, false, 'Should not same');
+		deepStrictEqual(message, 'c->Message: expected: 1, actual: 3', 'Message should be empty');
 	});
 
 	it('[P] compareToPattern check compareArrays', function() {
