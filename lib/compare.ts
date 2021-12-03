@@ -36,12 +36,18 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 			return compareResult;
 		}
 
+		if (propertiesWhichWillBeIgnored.length && isObject(piece)) {
+			piece = Object.keys(piece)
+				.filter((key) => !propertiesWhichWillBeIgnored.includes(key))
+				.reduce((requiredKeys, key) => {
+					requiredKeys[key] = piece[key];
+
+					return requiredKeys;
+				}, {});
+		}
+
 		if (isObject(piece) && isObject(data)) {
 			return Object.keys(piece)
-				.filter((key) => {
-					if (propertiesWhichWillBeIgnored.length === 0) return true;
-					else return !propertiesWhichWillBeIgnored.includes(key);
-				})
 				.every((key) => {
 					const compareResult = compare(data[key], piece[key], opts);
 					if (!compareResult) {
