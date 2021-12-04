@@ -205,7 +205,7 @@ describe('SPEC', function() {
 
 		const {result, message} = compareToPattern(data, pattern);
 		deepStrictEqual(result, false, 'Should not same');
-		deepStrictEqual(message, 'c->Message: expected: 1, actual: 3', 'Message should be empty');
+		deepStrictEqual(message, 'c[0]->Message: expected: 1, actual: 3', 'Message should be empty');
 	});
 
 	it('[P] compareToPattern check compareArrays', function() {

@@ -19,18 +19,18 @@ interface ICompareOpts {
 }
 
 function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
-	const {separator = '->', ignoreProperties, ...opts} = options || {};
+	const {separator = '->', ignoreProperties, strictStrings = true, strictArrays = true} = options || {};
 	const propertiesWhichWillBeIgnored = toArray(ignoreProperties);
 	let message = '';
 
-	function compare(data, piece, opts: ICompareOpts = {}, arrayIndex?) {
-		const {strictStrings = true, strictArrays = true} = opts;
+	function compare(data, piece, arrayIndex?) {
 
 		if (isPrimitive(piece) && isPrimitive(data)) {
 			const compareResult = isString(piece) && isString(data) && !strictStrings ? data.includes(piece) : data === piece;
 
 			if (!compareResult) {
-				message += `Message: expected: ${piece}, actual: ${data}`;
+				const indexMessage = isNumber(arrayIndex) ? `>>[${arrayIndex}] ` : '';
+				message += `${indexMessage}Message: expected: ${piece}, actual: ${data}`;
 			}
 
 			return compareResult;
@@ -49,7 +49,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 		if (isObject(piece) && isObject(data)) {
 			return Object.keys(piece)
 				.every((key) => {
-					const compareResult = compare(data[key], piece[key], opts);
+					const compareResult = compare(data[key], piece[key]);
 					if (!compareResult) {
 						message += `message key:${isNumber(arrayIndex) ? `${key}[${arrayIndex}]` : `${key}`}`;
 					}
@@ -60,7 +60,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 
 		if (isArray(data) && isArray(piece)) {
 			if (checkLenghtIfRequired(piece.length, data.length)) {
-				return data.every((dataItem, index) => compare(dataItem, piece[index], opts, index));
+				return data.every((dataItem, index) => compare(dataItem, piece[index], index));
 			} else {
 				return false;
 			}
@@ -71,11 +71,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 			const {toCompare, ...pieceWithoutPrimitives} = pieceWithoutLength;
 
 
-			if (
-				isEmptyObject(pieceWithoutPrimitives)
-				&& checkLenghtIfRequired(length, data.length)
-				&& !('toCompare' in pieceWithoutLength)
-			) {
+			if (isEmptyObject(pieceWithoutPrimitives) && checkLenghtIfRequired(length, data.length) && !('toCompare' in pieceWithoutLength)) {
 				return true;
 			}
 
@@ -86,13 +82,13 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 						return !ignore.includes(index);
 					}
 					return true;
-				})[strictArrays ? 'every' : 'some']((dataItem, index, arr) => {
+				})[strictArrays ? 'every' : 'some']((dataItem, index) => {
 					if (isPrimitive(toCompare) && ('toCompare' in pieceWithoutLength)) {
-						return compare(dataItem, toCompare, opts, index);
+						return compare(dataItem, toCompare, index);
 					} else if (isArray(toCompare)) {
-						return compare(dataItem, toCompare[index], opts, index);
+						return compare(dataItem, toCompare[index], index);
 					}
-					return compare(dataItem, pieceWithoutLength, opts, index);
+					return compare(dataItem, pieceWithoutLength, index);
 				});
 			} else {
 				message += `Message: expected length: ${length}, actual lenght: ${data.length}`;
@@ -104,13 +100,17 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 			message += `Message: seems like types are not comparable, expected: ${getType(piece)}, actual: ${getType(data)}`;
 		}
 
-
 		return false;
 	}
 
-	const result = compare(dataToCheck, pattern, opts);
+	const result = compare(dataToCheck, pattern);
 	// clean up message
-	message = message.split('message key:').reverse().join(separator).trim();
+	message = message.split('message key:')
+		.reverse()
+		.join(separator)
+		.trim()
+		.replace(new RegExp(`${separator}>>`, 'ig'), '')
+		.replace(new RegExp(` Message:`, 'ig'), `${separator}Message:`);
 	if (result) message = '';
 	return {result, message};
 }
