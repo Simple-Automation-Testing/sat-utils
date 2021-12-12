@@ -1,5 +1,5 @@
 import {deepStrictEqual} from 'assert';
-import {getRandomString, execNumberExpression, waitForCondition} from '../lib';
+import {getRandomString, execNumberExpression, waitForCondition, prettifyCamelCaseToDelimeter} from '../lib';
 
 describe('SPEC', function() {
 	it('[P] getRandomString', function() {
@@ -60,5 +60,18 @@ describe('SPEC', function() {
 		} catch (error) {
 			deepStrictEqual(throwError, error);
 		}
+	});
+
+	it('[P] prettifyCamelCaseToDelimeter', function() {
+		const str = 'prettifyCamelCaseToDelimeter';
+
+		const res1 = prettifyCamelCaseToDelimeter(str);
+		deepStrictEqual('prettify_camel_case_to_delimeter', res1);
+
+		const res2 = prettifyCamelCaseToDelimeter(str, '__');
+		deepStrictEqual('prettify__camel__case__to__delimeter', res2);
+
+		const res3 = prettifyCamelCaseToDelimeter(str, '_', true);
+		deepStrictEqual('PRETTIFY_CAMEL_CASE_TO_DELIMETER', res3);
 	});
 });

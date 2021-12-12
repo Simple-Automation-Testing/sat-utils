@@ -30,6 +30,7 @@
 - [isNotEmptyArray](#isnotemptyarray)
 - [execNumberExpression](#execnumberexpression)
 - [compareToPattern](#comparetopattern)
+- [prettifyCamelCaseToDelimeter](#prettifycamelcasetodelimeter)
 
 ## waitForCondition
 ```js
@@ -44,10 +45,10 @@
 
 	test()
 	async function test() {
-  await waitForCondition(async () => {
-  	const result = await someAsyncLogic()
-  	return result;
-  })
+  	await waitForCondition(async () => {
+  		const result = await someAsyncLogic()
+  		return result;
+  	})
 	}
 
 	test1()
@@ -366,4 +367,12 @@
 		})
 		// result is true, message is ''
 	}
+```
+
+## prettifyCamelCaseToDelimeter
+```js
+	const {compareToPattern} = require('sat-utils')
+	const res1 = prettifyCamelCaseToDelimeter(str) // prettify_camel_case_to_delimeter
+	const res2 = prettifyCamelCaseToDelimeter(str, '__') // prettify__camel__case__to__delimeter
+	const res3 = prettifyCamelCaseToDelimeter(str, '_', true) // PRETTIFY_CAMEL_CASE_TO_DELIMETER
 ```

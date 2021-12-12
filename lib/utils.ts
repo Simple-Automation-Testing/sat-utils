@@ -1,4 +1,4 @@
-import {isObject, isNumber, getType, isString} from './types';
+import {isObject, isNumber, getType, isString, isBoolean} from './types';
 
 const getStr = (str, length) => {
   return Array.from({length})
@@ -143,6 +143,29 @@ function execNumberExpression(expression: string, numberArg: number) {
   }
 }
 
+const prettifyCamelCaseToDelimeter = (name, delimeter = '_', allToUpper = false) => {
+  if (!isString(name)) {
+    throw new TypeError(`prettifyCamelCaseToDelimeter(): first argument should be a string, current arg is ${getType(name)}`);
+  }
+  if (!isString(delimeter)) {
+    throw new TypeError(`prettifyCamelCaseToDelimeter(): second argument should be a string, current arg is ${getType(delimeter)}`);
+  }
+  if (!isBoolean(allToUpper)) {
+    throw new TypeError(`prettifyCamelCaseToDelimeter(): third argument should be a string, current arg is ${getType(allToUpper)}`);
+  }
+  return name
+    .split('')
+    .map((char: string) => {
+      const isInUpper = char !== char.toLowerCase();
+      const toEndView = allToUpper ? char.toUpperCase() : char.toLowerCase();
+      if (isInUpper) {
+        return `${delimeter}${toEndView}`;
+      }
+      return toEndView;
+    })
+    .join('');
+};
+
 export {
   getRandomString,
   getRandomArrayItem,
@@ -150,4 +173,5 @@ export {
   shuffleArr,
   prettifyCamelCase,
   execNumberExpression,
+  prettifyCamelCaseToDelimeter,
 };
