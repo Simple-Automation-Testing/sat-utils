@@ -29,7 +29,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 			const compareResult = isString(piece) && isString(data) && !strictStrings ? data.includes(piece) : data === piece;
 
 			if (!compareResult) {
-				const indexMessage = isNumber(arrayIndex) ? `>>[${arrayIndex}] ` : '';
+				const indexMessage = isNumber(arrayIndex) ? `[${arrayIndex}]` : '';
 				message += `${indexMessage}Message: expected: ${piece}, actual: ${data}`;
 			}
 
@@ -51,7 +51,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 				.every((key) => {
 					const compareResult = compare(data[key], piece[key]);
 					if (!compareResult) {
-						message += `message key:${isNumber(arrayIndex) ? `${key}[${arrayIndex}]` : `${key}`}`;
+						message += ` message key: ${isNumber(arrayIndex) ? `${key}[${arrayIndex}]` : `${key}`}`;
 					}
 
 					return compareResult;
@@ -104,14 +104,31 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 	}
 
 	const result = compare(dataToCheck, pattern);
-	// clean up message
-	message = message.split('message key:')
-		.reverse()
-		.join(separator)
-		.trim()
-		.replace(new RegExp(`${separator}>>`, 'ig'), '')
-		.replace(new RegExp(` Message:`, 'ig'), `${separator}Message:`);
-	if (result) message = '';
+
+	if (result) {
+		message = '';
+		// clean up message
+	} else {
+		const indexPattern = /(\[\d\])/;
+		message = message.split(' message key: ').reverse().reduce((acc, item, index, arr) => {
+			if (index === 0) {
+				acc += `${item}${separator}`;
+			} else if (item.match(indexPattern)) {
+				const prevIndex = item.match(indexPattern)[0];
+				const key = item.replace(indexPattern, '');
+				const isSeparator = arr.length - 1 === index ? '' : separator;
+				acc = acc.replace(new RegExp(`(${separator})$`), `${prevIndex}${separator}${key}${isSeparator}`);
+			} else if (arr.length - 1 === index) {
+				acc += `${item}`;
+			} else {
+				acc += `${item}${separator}`;
+			}
+
+			return acc;
+		}, '').trim();
+	}
+
+
 	return {result, message};
 }
 
