@@ -9,6 +9,7 @@ interface IWaiterOpts {
 	interval?: number;
 	dontThrow?: boolean;
 	falseIfError?: boolean;
+	stopIfNoError?: boolean;
 	message?: string;
 	throwCustom?: (currentError?) => any;
 	createMessage?: (...args: any[]) => string;
@@ -30,6 +31,7 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 		createMessage,
 		analyseResult,
 		falseIfError = true,
+		stopIfNoError,
 		waiterError = Error,
 	} = mergedOpts;
 
@@ -48,6 +50,9 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 		if (falseIfError) {
 			try {
 				result = await callback();
+
+				if (stopIfNoError) return result;
+
 			} catch (error) {
 				errorWhichWasThrown = error;
 				result = false;
@@ -76,7 +81,7 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 		if (createMessage) throw new waiterError(createMessage(timeout, errorWhichWasThrown));
 		if (throwCustom) return throwCustom(errorWhichWasThrown);
 
-		throw new waiterError(`Required condition was not achieved during ${timeout} ms`);
+		throw new waiterError(`Required condition was not achieved during ${timeout} ms. ${errorWhichWasThrown ? errorWhichWasThrown : ''}`);
 	}
 }
 

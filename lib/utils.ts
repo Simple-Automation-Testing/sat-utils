@@ -15,7 +15,14 @@ interface IOptions {
   lowerCase?: boolean;
 }
 
-function getRandomString(length, options: IOptions = {letters: true}) {
+function getRandomString(length, opts: IOptions = {letters: true}) {
+  const allowedOptions = ['numbers', 'letters', 'lettersAndNumbers', 'symbols', 'lettersNumbersAndSymbols'];
+  const options = {...opts};
+
+  if (!Object.keys(options).some((k) => allowedOptions.includes(k) && options[k])) {
+    options['letters'] = true;
+  }
+
   const l = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   const s = '!@#$%^&*(((()))_+~?>"|\\}{[]';
   const n = '01234567890';

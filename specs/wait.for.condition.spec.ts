@@ -12,6 +12,22 @@ describe('SPEC', function() {
 		deepStrictEqual(result, false);
 	});
 
+	it('[P] waitForCondition stopIfNoError', async function() {
+		const returnFalse = async () => Promise.resolve(false);
+		const result = await waitForCondition(returnFalse, {stopIfNoError: true});
+
+		deepStrictEqual(result, false);
+	});
+
+	it.skip('[N] waitForCondition stopIfNoError', async function() {
+		const returnFalse = async () => {
+			throw new Error('AAAA');
+		};
+		const result = await waitForCondition(returnFalse, {stopIfNoError: true});
+
+		deepStrictEqual(result, false);
+	});
+
 	it('[N] waitForCondition falseIfError', async function() {
 		const throwError = new Error('TEST');
 		const throwFunction = () => {
@@ -26,36 +42,3 @@ describe('SPEC', function() {
 	});
 });
 
-
-const check = {
-	a: {
-		text: 'first'
-	},
-	b: {
-		c: {
-			d: {text: 'second'}
-		}
-	},
-	c: {
-		length: 1,
-		a: {
-			b: {text: 'array text1'}
-		}
-	}
-};
-
-const result = {
-	a: {
-		text: 'first'
-	},
-	b: {
-		c: {
-			d: {text: 'second'}
-		}
-	},
-	c: [{
-		a: {
-			b: {text: 'array text'}
-		}
-	}]
-};
