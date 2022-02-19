@@ -7,14 +7,17 @@ async function sleep(millisecond: number = 5 * 1000): Promise<void> {
 interface IWaiterOpts {
 	timeout?: number;
 	interval?: number;
-	dontThrow?: boolean;
-	falseIfError?: boolean;
-	stopIfNoError?: boolean;
 	message?: string;
+
 	throwCustom?: (currentError?) => any;
 	createMessage?: (...args: any[]) => string;
 	analyseResult?: (...args: any[]) => boolean | Promise<boolean>;
 	waiterError?: new (...args: any[]) => any;
+	callEveryCycle?: () => Promise<void> | any;
+
+	dontThrow?: boolean;
+	falseIfError?: boolean;
+	stopIfNoError?: boolean;
 }
 
 const defaultOptions = {};
@@ -33,6 +36,7 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 		falseIfError = true,
 		stopIfNoError,
 		waiterError = Error,
+		callEveryCycle,
 	} = mergedOpts;
 
 	if (!isNumber(interval)) {
@@ -67,6 +71,10 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
 
 		if (result) {
 			return result;
+		}
+
+		if (callEveryCycle) {
+			await callEveryCycle();
 		}
 
 		await sleep(interval);
