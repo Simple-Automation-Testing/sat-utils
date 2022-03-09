@@ -6,7 +6,7 @@ const getStr = (str, length) => {
     .join('');
 };
 
-interface IOptions {
+type IOptions = {
   numbers?: boolean;
   letters?: boolean;
   lettersAndNumbers?: boolean;
@@ -70,7 +70,7 @@ function getRandomString(length, opts: IOptions = {letters: true}) {
   return lowerCase ? randomStr.toLowerCase() : randomStr;
 }
 
-function getRandomArrayItem(itemsList: any[], quaintity = 1): any | any[] {
+function getRandomArrayItem<T>(itemsList: any[], quaintity = 1): T | T[] {
   if (!Array.isArray(itemsList)) {
     throw new TypeError(`getRandomArrayItem(): first argument should be an array, current arg is ${getType(itemsList)}`);
   }
@@ -89,7 +89,7 @@ function getRandomArrayItem(itemsList: any[], quaintity = 1): any | any[] {
     : itemsList[Math.floor(Math.random() * itemsList.length)];
 }
 
-function toArray(anyArugment): any[] {
+function toArray<T = any>(anyArugment): T[] {
   if (anyArugment === undefined) {
     return [];
   }

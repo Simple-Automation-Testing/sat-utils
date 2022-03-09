@@ -4,7 +4,7 @@ async function sleep(millisecond: number = 5 * 1000): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, millisecond));
 }
 
-interface IWaiterOpts {
+type IWaiterOpts = {
 	timeout?: number;
 	interval?: number;
 	message?: string;
