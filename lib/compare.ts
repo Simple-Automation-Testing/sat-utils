@@ -77,7 +77,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 
 			if (checkLenghtIfRequired(length, data.length)) {
 				return data.filter((_item, index) => {
-					if (ignoreIndexes && (isNumber(ignoreIndexes) || isArray(ignoreIndexes))) {
+					if (isNumber(ignoreIndexes) || isArray(ignoreIndexes)) {
 						const ignore = toArray(ignoreIndexes);
 						return !ignore.includes(index);
 					}
