@@ -2,6 +2,48 @@ import {deepStrictEqual} from 'assert';
 import {compareToPattern} from '../lib';
 
 describe('SPEC', function() {
+	it('[P] compareToPattern _check_number', function() {
+		{
+			const pattern = {
+				field: '_check_number > 10',
+			};
+			const data = {
+				field: 11,
+			};
+
+			const {result, message} = compareToPattern(data, pattern);
+			deepStrictEqual(result, true, 'Should be same');
+			deepStrictEqual(message, '', 'Message should be empty');
+		}
+		{
+			const pattern = {
+				field: '_check_number > 10 and < 12',
+			};
+			const data = {
+				field: 11,
+			};
+
+			const {result, message} = compareToPattern(data, pattern);
+			deepStrictEqual(result, true, 'Should be same');
+			deepStrictEqual(message, '', 'Message should be empty');
+		}
+	});
+
+	it('[N] compareToPattern _check_number', function() {
+		{
+			const pattern = {
+				field: '_check_number > 11',
+			};
+			const data = {
+				field: 11,
+			};
+
+			const {result, message} = compareToPattern(data, pattern);
+			deepStrictEqual(result, false, 'Should be same');
+			deepStrictEqual(message, 'field->Message: expected: _check_number > 11, actual: 11', 'Message should not be empty');
+		}
+	});
+
 	it('[P] compareToPattern onlyObject', function() {
 		const pattern = {
 			a: {text: 'first'},

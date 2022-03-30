@@ -70,7 +70,7 @@ function getRandomString(length, opts: IOptions = {letters: true}) {
   return lowerCase ? randomStr.toLowerCase() : randomStr;
 }
 
-function getRandomArrayItem<T>(itemsList: any[], quaintity = 1): T | T[] {
+function getRandomArrayItem(itemsList: any[], quaintity = 1) {
   if (!Array.isArray(itemsList)) {
     throw new TypeError(`getRandomArrayItem(): first argument should be an array, current arg is ${getType(itemsList)}`);
   }
@@ -89,7 +89,7 @@ function getRandomArrayItem<T>(itemsList: any[], quaintity = 1): T | T[] {
     : itemsList[Math.floor(Math.random() * itemsList.length)];
 }
 
-function toArray<T = any>(anyArugment): T[] {
+function toArray(anyArugment) {
   if (anyArugment === undefined) {
     return [];
   }
