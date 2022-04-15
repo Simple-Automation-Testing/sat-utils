@@ -80,10 +80,20 @@ const logger = {
   setLogLevel(level) {
     this.logLevel = level;
   },
-  addCustomLevel(loggerDescription, logLevel: string, description: string, consoleOutput = 'log', color = 'FgWhite') {
-    logger[loggerDescription] = (...args) => {
+  addCustomLevel(
+    loggerDescription,
+    logLevel: string,
+    description: string,
+    consoleOutput = 'log',
+    descriptionColor = 'FgWhite',
+    messageColor,
+  ) {
+    logger[loggerDescription] = (message, ...args) => {
       if (logger.logLevel === logLevel) {
-        console[consoleOutput](`${listOfColors[color]}${description}${listOfColors.Reset}`, ...args);
+        const descriptionPart = `${listOfColors[descriptionColor]}${description}${listOfColors.Reset}`;
+        const messagePart = messageColor ? `${listOfColors[messageColor]}${message}${listOfColors.Reset}`: message;
+
+        console[consoleOutput](`${descriptionPart}`, messagePart, ...args);
       }
     };
   }
