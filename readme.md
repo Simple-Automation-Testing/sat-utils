@@ -31,6 +31,7 @@
 - [execNumberExpression](#execnumberexpression)
 - [compareToPattern](#comparetopattern)
 - [prettifyCamelCaseToDelimeter](#prettifycamelcasetodelimeter)
+- [getDirFilesList](#getdirfileslist)
 
 ## waitForCondition
 ```js
@@ -375,4 +376,10 @@
 	const res1 = prettifyCamelCaseToDelimeter(str) // prettify_camel_case_to_delimeter
 	const res2 = prettifyCamelCaseToDelimeter(str, '__') // prettify__camel__case__to__delimeter
 	const res3 = prettifyCamelCaseToDelimeter(str, '_', true) // PRETTIFY_CAMEL_CASE_TO_DELIMETER
+```
+
+## getDirFilesList
+```js
+	const {getDirFilesList} = require('sat-utils')
+	const files = getDirFilesList('./node_modules') // all absolute file pathes in node_module folder
 ```
