@@ -173,6 +173,18 @@ const prettifyCamelCaseToDelimeter = (name, delimeter = '_', allToUpper = false)
     .join('');
 };
 
+const camelize = (str) => {
+  if (!isString(str)) {
+    throw new TypeError(`camelize(): first argument should be a string, current arg is ${getType(str)}`);
+  }
+
+  return str
+    .replace(/^\w|[A-Z]|\b\w/g, function(word, index) {
+      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    })
+    .replace(/\s+/g, '');
+};
+
 export {
   getRandomString,
   getRandomArrayItem,
@@ -181,4 +193,5 @@ export {
   prettifyCamelCase,
   execNumberExpression,
   prettifyCamelCaseToDelimeter,
+  camelize,
 };
