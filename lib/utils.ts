@@ -185,6 +185,15 @@ const camelize = (str) => {
     .replace(/\s+/g, '');
 };
 
+const safeJSONstringify = (data, inline = false, returnIfError = '') => {
+  try {
+    const shouldBeStringified = inline ? [data] : [data, null, '\t'];
+    return JSON.stringify.apply(global, shouldBeStringified);
+  } catch {
+    return returnIfError;
+  }
+};
+
 export {
   getRandomString,
   getRandomArrayItem,
@@ -194,4 +203,5 @@ export {
   execNumberExpression,
   prettifyCamelCaseToDelimeter,
   camelize,
+  safeJSONstringify,
 };

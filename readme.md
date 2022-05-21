@@ -32,6 +32,8 @@
 - [compareToPattern](#comparetopattern)
 - [prettifyCamelCaseToDelimeter](#prettifycamelcasetodelimeter)
 - [getDirFilesList](#getdirfileslist)
+- [safeJSONstringify](#safejsonstringify)
+- [camelize](#camelize)
 
 ## waitForCondition
 ```js
@@ -382,4 +384,18 @@
 ```js
 	const {getDirFilesList} = require('sat-utils')
 	const files = getDirFilesList('./node_modules') // all absolute file pathes in node_module folder
+```
+
+## safeJSONstringify
+```js
+	const {safeJSONstringify} = require('sat-utils')
+	console.log(safeJSONstringify({}))
+	console.log(safeJSONstringify(Object))
+	console.log(safeJSONstringify(new Proxy()))
+```
+
+## camelize
+```js
+	const {camelize} = require('sat-utils')
+	console.log(camelize('here is my camel string')) // hereIsMyCamelString
 ```
