@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-len
-type expectedArg = 'object' | 'array' | 'set' | 'function' | 'asyncFunction' | 'promise' | 'null' | 'string' | 'undefined' | 'symbol' | 'number' | 'boolean';
+type expectedArg = 'regExp' |  'object' | 'array' | 'set' | 'function' | 'asyncFunction' | 'promise' | 'null' | 'string' | 'undefined' | 'symbol' | 'number' | 'boolean';
 
 const typesEnum = {
   object: '[object Object]',
@@ -9,13 +9,14 @@ const typesEnum = {
   function: '[object Function]',
   asyncFunction: '[object AsyncFunction]',
   promise: '[object Promise]',
+  regExp: '[object RegExp]',
 
   null: '[object Null]',
   string: '[object String]',
   undefined: '[object Undefined]',
   symbol: '[object Symbol]',
   number: '[object Number]',
-  boolean: '[object Boolean]'
+  boolean: '[object Boolean]',
 };
 
 const pritiveTypes = [
@@ -35,6 +36,7 @@ const typesReverseEnum = {
   '[object Promise]': 'promise',
   '[object Symbol]': 'symbol',
   '[object Map]': 'map',
+  '[object RegExp]': 'regExp',
 
   '[object Null]': 'null',
   '[object String]': 'string',
@@ -52,55 +54,59 @@ function getType(arg: any) {
 }
 
 function isObject(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Object]';
+  return Object.prototype.toString.call(arg) === typesEnum.object;
 }
 
 function isArray(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Array]';
+  return Object.prototype.toString.call(arg) === typesEnum.array;
 }
 
 function isNull(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Null]';
+  return Object.prototype.toString.call(arg) === typesEnum.null;
 }
 
 function isString(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object String]';
+  return Object.prototype.toString.call(arg) === typesEnum.string;
 }
 
 function isUndefined(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Undefined]';
+  return Object.prototype.toString.call(arg) === typesEnum.undefined;
 }
 
 function isSet(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Set]';
+  return Object.prototype.toString.call(arg) === typesEnum.set;
 }
 
 function isMap(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Map]';
+  return Object.prototype.toString.call(arg) === typesEnum.map;
 }
 
 function isSymbol(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Symbol]';
+  return Object.prototype.toString.call(arg) === typesEnum.symbol;
 }
 
 function isNumber(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Number]' && !isNaN(arg);
+  return Object.prototype.toString.call(arg) === typesEnum.number && !isNaN(arg);
 }
 
 function isBoolean(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Boolean]';
+  return Object.prototype.toString.call(arg) === typesEnum.boolean;
 }
 
 function isFunction(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Function]';
+  return Object.prototype.toString.call(arg) === typesEnum.function;
 }
 
 function isAsyncFunction(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object AsyncFunction]';
+  return Object.prototype.toString.call(arg) === typesEnum.asyncFunction;
 }
 
 function isPromise(arg: any) {
-  return Object.prototype.toString.call(arg) === '[object Promise]';
+  return Object.prototype.toString.call(arg) === typesEnum.promise;
+}
+
+function isRegExp(arg: any) {
+  return Object.prototype.toString.call(arg) === typesEnum.regExp;
 }
 
 function isType(arg, typeArg: expectedArg) {
@@ -145,6 +151,7 @@ export {
   isBoolean,
   isSymbol,
   isFunction,
+  isRegExp,
   isAsyncFunction,
   typesEnum,
   expectedArg,
@@ -155,5 +162,5 @@ export {
   isEmptyArray,
   isEmptyObject,
   isNotEmptyArray,
-  isNotEmptyObject
+  isNotEmptyObject,
 };

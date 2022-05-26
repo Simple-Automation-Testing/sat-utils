@@ -14,6 +14,7 @@
 - [isNumber](#isnumber)
 - [isPromise](#ispromise)
 - [isBoolean](#isboolean)
+- [isRegExp](#isregexp)
 - [isSymbol](#issymbol)
 - [isFunction](#isfunction)
 - [isAsyncFunction](#isasyncfunction)
@@ -106,6 +107,13 @@
 	const {isObject} = require('sat-utils')
 	// any argument
 	isObject(undefined) // => boolean
+```
+
+## isRegExp
+```js
+	const {isRegExp} = require('sat-utils')
+	// any argument
+	isRegExp(/a/ig) // => boolean
 ```
 ## isNull
 ```js
