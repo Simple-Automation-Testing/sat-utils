@@ -24,6 +24,7 @@
 - [canBeProxed](#canbeproxed)
 - [toArray](#toarray)
 - [shuffleArr](#shufflearr)
+- [shuffleArrMutable](#shufflearrmutable)
 - [prettifyCamelCase](#prettifycamelcase)
 - [isEmptyArray](#isemptyarray)
 - [isEmptyObject](#isemptyobject)
@@ -35,6 +36,7 @@
 - [getDirFilesList](#getdirfileslist)
 - [safeJSONstringify](#safejsonstringify)
 - [camelize](#camelize)
+- [safeHasOwnPropery](#safehasownpropery)
 
 ## waitForCondition
 ```js
@@ -223,6 +225,19 @@
 
 ```
 
+## shuffleArrMutable
+```js
+  const {shuffleArrMutable} = require('sat-utils')
+
+
+	const arr = [1, 2, 3, 4, 5];
+	shuffleArrMutable(arr);
+
+	console.log(arr) // [ 5, 2, 4, 1, 3 ]
+
+  shuffleArrMutable({}) // TypeError 'shuffleArr(): first argument should be an array ...'
+```
+
 ## prettifyCamelCase
 ```js
   const {prettifyCamelCase} = require('sat-utils')
@@ -406,4 +421,15 @@
 ```js
 	const {camelize} = require('sat-utils')
 	console.log(camelize('here is my camel string')) // hereIsMyCamelString
+```
+
+## safeHasOwnPropery
+```js
+	const {safeHasOwnPropery} = require('sat-utils')
+
+	safeHasOwnPropery({a: 1}, 'a')// true
+	safeHasOwnPropery({a: 1}, 'b')// false
+	safeHasOwnPropery(undefined, 'b')// false
+	safeHasOwnPropery(null, 'b')// false
+	safeHasOwnPropery(function test() { /** */ }, 'name')// true
 ```

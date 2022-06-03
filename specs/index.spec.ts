@@ -1,7 +1,15 @@
 import {deepStrictEqual} from 'assert';
-import {getRandomString, execNumberExpression, waitForCondition, prettifyCamelCaseToDelimeter} from '../lib';
+import {getRandomString, execNumberExpression, waitForCondition, prettifyCamelCaseToDelimeter, safeHasOwnPropery} from '../lib';
 
 describe('SPEC', function() {
+	it('[P] safeHasOwnPropery', function() {
+		deepStrictEqual(safeHasOwnPropery({a: 1}, 'a'), true);
+		deepStrictEqual(safeHasOwnPropery({a: 1}, 'b'), false);
+		deepStrictEqual(safeHasOwnPropery(undefined, 'b'), false);
+		deepStrictEqual(safeHasOwnPropery(null, 'b'), false);
+		deepStrictEqual(safeHasOwnPropery(function test() { /** */ }, 'name'), true);
+	});
+
 	it('[P] getRandomString', function() {
 		const firstRes = getRandomString(1);
 		deepStrictEqual(firstRes.length, 1, 'Should be one letter in random string');

@@ -1,10 +1,10 @@
-import {isObject, isNumber, getType, isString, isBoolean} from './types';
+import {isObject, isNumber, getType, isString, isBoolean, isUndefined, isNull} from './types';
 
-const getStr = (str, length) => {
+function getStr(str, length) {
   return Array.from({length})
     .map(() => str.charAt(Math.floor(Math.random() * str.length)))
     .join('');
-};
+}
 
 type IOptions = {
   numbers?: boolean;
@@ -98,17 +98,22 @@ function toArray(anyArugment) {
 }
 
 
+function shuffleArrMutable(arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError(`shuffleArrMutable(): first argument should be an array, current arg is ${getType(arr)}`);
+  }
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
 function shuffleArr(arr) {
   if (!Array.isArray(arr)) {
     throw new TypeError(`shuffleArr(): first argument should be an array, current arg is ${getType(arr)}`);
   }
-  const newArr = Array.from(arr);
 
-  for (let i = newArr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-  }
-  return newArr;
+  return shuffleArrMutable(Array.from(arr));
 }
 
 function prettifyCamelCase(camelCaseString: string): string {
@@ -150,7 +155,7 @@ function execNumberExpression(expression: string, numberArg: number) {
   }
 }
 
-const prettifyCamelCaseToDelimeter = (name, delimeter = '_', allToUpper = false) => {
+function prettifyCamelCaseToDelimeter(name, delimeter = '_', allToUpper = false) {
   if (!isString(name)) {
     throw new TypeError(`prettifyCamelCaseToDelimeter(): first argument should be a string, current arg is ${getType(name)}`);
   }
@@ -171,9 +176,9 @@ const prettifyCamelCaseToDelimeter = (name, delimeter = '_', allToUpper = false)
       return toEndView;
     })
     .join('');
-};
+}
 
-const camelize = (str) => {
+function camelize(str) {
   if (!isString(str)) {
     throw new TypeError(`camelize(): first argument should be a string, current arg is ${getType(str)}`);
   }
@@ -183,25 +188,40 @@ const camelize = (str) => {
       return index === 0 ? word.toLowerCase() : word.toUpperCase();
     })
     .replace(/\s+/g, '');
-};
+}
 
-const safeJSONstringify = (data, inline = false, returnIfError = '') => {
+function safeJSONstringify(data, inline = false, returnIfError = '') {
   try {
     const shouldBeStringified = inline ? [data] : [data, null, '\t'];
     return JSON.stringify.apply(global, shouldBeStringified);
   } catch {
     return returnIfError;
   }
-};
+}
+
+function safeHasOwnPropery(item: any, key: string) {
+  if (!isString(key)) {
+    throw new TypeError(`safeHasOwnPropery(): second argument should be a string, current arg is ${getType(key)}`);
+  }
+
+  if (isUndefined(item) || isNull(item)) {
+    return false;
+  }
+
+  return Object.prototype.hasOwnProperty.call(item, key);
+}
+
 
 export {
   getRandomString,
   getRandomArrayItem,
   toArray,
-  shuffleArr,
   prettifyCamelCase,
   execNumberExpression,
   prettifyCamelCaseToDelimeter,
   camelize,
   safeJSONstringify,
+  shuffleArr,
+  shuffleArrMutable,
+  safeHasOwnPropery,
 };
