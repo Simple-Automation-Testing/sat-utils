@@ -22,8 +22,9 @@ function shuffleArr(arr) {
   if (!Array.isArray(arr)) {
     throw new TypeError(`shuffleArr(): first argument should be an array, current arg is ${getType(arr)}`);
   }
-
-  return shuffleArrMutable(Array.from(arr));
+  const newArr = Array.from(arr);
+  shuffleArrMutable(newArr);
+  return newArr;
 }
 
 function prettifyCamelCase(camelCaseString: string): string {
