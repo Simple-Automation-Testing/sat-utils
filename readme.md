@@ -37,6 +37,7 @@
 - [safeJSONstringify](#safejsonstringify)
 - [camelize](#camelize)
 - [safeHasOwnPropery](#safehasownpropery)
+- [chunkArr](#chunkarr)
 
 ## waitForCondition
 ```js
@@ -432,4 +433,12 @@
 	safeHasOwnPropery(undefined, 'b')// false
 	safeHasOwnPropery(null, 'b')// false
 	safeHasOwnPropery(function test() { /** */ }, 'name')// true
+```
+
+## chunkArr
+```js
+	const {chunkArr} = require('sat-utils')
+
+	chunkArr([1,2,3], 2) // [[1, 3], [2]]
+	chunkArr([1,2,3], 2, true) // [[1, 2], [3]]
 ```

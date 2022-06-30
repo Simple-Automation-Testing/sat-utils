@@ -8,6 +8,50 @@ function toArray(anyArugment) {
   return Array.isArray(anyArugment) ? Array.from(anyArugment) : [anyArugment];
 }
 
+function chunkArr(arr: any[], chunksAmount: number, followIndex: boolean = false) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError(`chunkArr(): first argument should be an array, current arg is ${getType(arr)}`);
+  }
+
+  if (!isNumber(chunksAmount)) {
+    throw new TypeError(`chunkArr(): second argument should be a number, current arg is ${getType(chunksAmount)}`);
+  }
+
+  if (!isBoolean(followIndex)) {
+    throw new TypeError(`chunkArr(): third argument should be a boolean, current arg is ${getType(followIndex)}`);
+  }
+
+  const copied = toArray(arr);
+
+  if (!followIndex) {
+    const chunked = Array.from({ length: chunksAmount }).map(() => []);
+
+    let index = 0;
+
+    for (const item of copied) {
+      chunked[index].push(item);
+      index++;
+
+      if (index === chunked.length) {
+        index = 0;
+      }
+    }
+
+    return chunked.filter(chunk => chunk.length);
+  } else {
+    const chunkMax = Math.ceil(copied.length / chunksAmount);
+    const chunkReg = Math.floor(copied.length / chunksAmount);
+
+    const chunked = [];
+
+    for (let i = 0; i < chunksAmount; i++) {
+      chunked.push(copied.splice(0, i ? chunkReg : chunkMax));
+    }
+
+    return chunked.filter(chunk => chunk.length);
+  }
+}
+
 function shuffleArrMutable(arr) {
   if (!Array.isArray(arr)) {
     throw new TypeError(`shuffleArrMutable(): first argument should be an array, current arg is ${getType(arr)}`);
@@ -66,7 +110,7 @@ function execNumberExpression(expression: string, numberArg: number) {
     const expressions = expression.toLowerCase().split('and');
 
     return expressions.every(expressionPart => eval(`${numberArg} ${expressionPart}`));
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -143,4 +187,5 @@ export {
   shuffleArr,
   shuffleArrMutable,
   safeHasOwnPropery,
+  chunkArr,
 };
