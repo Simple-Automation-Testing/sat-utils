@@ -1,5 +1,18 @@
 // eslint-disable-next-line max-len
-type expectedArg = 'regExp' |  'object' | 'array' | 'set' | 'function' | 'asyncFunction' | 'promise' | 'null' | 'string' | 'undefined' | 'symbol' | 'number' | 'boolean';
+type expectedArg =
+  | 'regExp'
+  | 'object'
+  | 'array'
+  | 'set'
+  | 'function'
+  | 'asyncFunction'
+  | 'promise'
+  | 'null'
+  | 'string'
+  | 'undefined'
+  | 'symbol'
+  | 'number'
+  | 'boolean';
 
 const typesEnum = {
   object: '[object Object]',
@@ -20,11 +33,18 @@ const typesEnum = {
 };
 
 const pritiveTypes = [
-  '[object Null]', 'null',
-  '[object String]', 'string',
-  '[object Undefined]', 'undefined',
-  '[object Number]', 'number',
-  '[object Boolean]', 'boolean'
+  '[object Null]',
+  'null',
+  '[object String]',
+  'string',
+  '[object Undefined]',
+  'undefined',
+  '[object Number]',
+  'number',
+  '[object Boolean]',
+  'boolean',
+  '[object Symbol]',
+  'symbol',
 ];
 
 const typesReverseEnum = {
@@ -34,15 +54,15 @@ const typesReverseEnum = {
   '[object Function]': 'function',
   '[object AsyncFunction]': 'asyncFunction',
   '[object Promise]': 'promise',
-  '[object Symbol]': 'symbol',
   '[object Map]': 'map',
   '[object RegExp]': 'regExp',
 
+  '[object Symbol]': 'symbol',
   '[object Null]': 'null',
   '[object String]': 'string',
   '[object Undefined]': 'undefined',
   '[object Number]': 'number',
-  '[object Boolean]': 'boolean'
+  '[object Boolean]': 'boolean',
 };
 
 function isPrimitive(arg: any) {
@@ -86,7 +106,7 @@ function isSymbol(arg: any) {
 }
 
 function isNumber(arg: any) {
-  return Object.prototype.toString.call(arg) === typesEnum.number && !isNaN(arg);
+  return Object.prototype.toString.call(arg) === typesEnum.number && !Number.isNaN(arg);
 }
 
 function isBoolean(arg: any) {
@@ -117,7 +137,7 @@ function canBeProxed(arg) {
   try {
     new Proxy(arg, {});
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
