@@ -10,7 +10,7 @@ type IWaiterOpts = {
 	message?: string;
 
 	throwCustom?: (currentError?) => any;
-	createMessage?: (...args: any[]) => string;
+	createMessage?: (...args: any[]) => string | Promise<string>;
 	analyseResult?: (...args: any[]) => boolean | Promise<boolean>;
 	waiterError?: new (...args: any[]) => any;
 	callEveryCycle?: () => Promise<void> | any;
