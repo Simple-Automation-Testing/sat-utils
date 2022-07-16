@@ -1,6 +1,13 @@
-import { isObject, isNumber, getType } from './types';
+import { isObject, isNumber, isString, getType } from './types';
 
 function getRandomSubString(str: string, length: number) {
+  if (!isString(str)) {
+    throw new TypeError(`getRandomSubString(): first argument should be a string, current arg is ${getType(str)}`);
+  }
+  if (!isNumber(length)) {
+    throw new TypeError(`getRandomSubString(): second argument should be a number, current arg is ${getType(length)}`);
+  }
+
   return Array.from({ length })
     .map(() => str.charAt(Math.floor(Math.random() * str.length)))
     .join('');
@@ -16,10 +23,25 @@ type IOptions = {
 };
 
 function getRandomString(length, opts: IOptions = { letters: true }) {
-  const allowedOptions = ['numbers', 'letters', 'lettersAndNumbers', 'symbols', 'lettersNumbersAndSymbols'];
+  const allowedOptions = new Set(['numbers', 'letters', 'lettersAndNumbers', 'symbols', 'lettersNumbersAndSymbols']);
+
+  const thowOptsError = () => {
+    throw new Error(`getRandomString(): second argument should be an object with next opts
+        numbers?: boolean;
+        lettersAndNumbers?: boolean;
+        symbols?: boolean;
+        lettersNumbersAndSymbols?: boolean;
+        lowerCase?: boolean;
+    `);
+  };
+
+  if (!isObject(opts)) {
+    thowOptsError();
+  }
+
   const options = { ...opts };
 
-  if (!Object.keys(options).some(k => allowedOptions.includes(k) && options[k])) {
+  if (!Object.keys(options).some(k => allowedOptions.has(k) && options[k])) {
     options['letters'] = true;
   }
 
@@ -37,22 +59,8 @@ function getRandomString(length, opts: IOptions = { letters: true }) {
     lettersNumbersAndSymbols: lns,
   };
 
-  const thowOptsError = () => {
-    throw new Error(`getRandomString(): second argument should be an object with next opts
-        numbers?: boolean;
-        lettersAndNumbers?: boolean;
-        symbols?: boolean;
-        lettersNumbersAndSymbols?: boolean;
-        lowerCase?: boolean;
-    `);
-  };
-
   if (!isNumber(length)) {
     throw new Error(`getRandomString(): first argument should be a number, current arg is ${getType(length)}`);
-  }
-
-  if (!isObject(options)) {
-    thowOptsError();
   }
 
   const { lowerCase, ...restOpts } = options;

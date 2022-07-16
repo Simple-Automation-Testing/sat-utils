@@ -13,7 +13,6 @@ type IWaiterOpts = {
   stopIfNoError?: boolean;
 
   message?: string | ((timeout: number, callbackError?: any) => Promise<string> | string);
-  throwCustom?: (timeout: number, callbackError?: any) => any;
   analyseResult?: (...args: any[]) => boolean | Promise<boolean>;
   waiterError?: new (...args: any[]) => any;
   callEveryCycle?: () => Promise<void> | any;
@@ -29,7 +28,6 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
     timeout = 5000,
     interval = 250,
     dontThrow = false,
-    throwCustom,
     analyseResult,
     falseIfError = true,
     stopIfNoError,
@@ -93,7 +91,6 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
         callbackError,
       );
     }
-    if (throwCustom) return throwCustom(timeout, callbackError);
 
     throw new waiterError(errorMessage);
   }

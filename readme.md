@@ -67,7 +67,7 @@
   	analyseResult: (result) => result.status === 200;
   	timeout: 25000,
   	interval: 250,
-  	throwCustom: (time) => throw new Error(`My custom error throw function with time ${time}`)
+  	message: (time) => throw new Error(`My custom error throw function with time ${time}`)
   })
 	}
 ```
