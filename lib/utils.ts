@@ -71,12 +71,18 @@ function shuffleArr(arr) {
   return newArr;
 }
 
-function prettifyCamelCase(camelCaseString: string): string {
+function prettifyCamelCase(camelCaseString: string, onlyFirstWordInUpperCase = false): string {
   if (!isString(camelCaseString)) {
     throw new TypeError(
       `prettifyCamelCase(): first argument should be a string, current arg is ${getType(camelCaseString)}`,
     );
   }
+  if (!isBoolean(onlyFirstWordInUpperCase)) {
+    throw new TypeError(
+      `prettifyCamelCase(): second argument should be a boolean, current arg is ${getType(onlyFirstWordInUpperCase)}`,
+    );
+  }
+
   let humanReadableString = '';
 
   for (let index = 0; index < camelCaseString.length; index++) {
@@ -91,7 +97,12 @@ function prettifyCamelCase(camelCaseString: string): string {
     }
   }
 
-  return humanReadableString;
+  return onlyFirstWordInUpperCase
+    ? humanReadableString
+        .split(' ')
+        .map((word, index) => (index === 0 ? word : word.toLocaleLowerCase()))
+        .join(' ')
+    : humanReadableString;
 }
 
 function execNumberExpression(expression: string, numberArg: number) {
@@ -180,8 +191,8 @@ function safeHasOwnPropery(item: any, key: string) {
 export {
   toArray,
   prettifyCamelCase,
-  execNumberExpression,
   prettifyCamelCaseToDelimeter,
+  execNumberExpression,
   camelize,
   safeJSONstringify,
   shuffleArr,

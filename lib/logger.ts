@@ -103,6 +103,8 @@ function createLogger() {
       };
     },
   };
+
+  return logger;
 }
 
 export { createLogger, colors };

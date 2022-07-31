@@ -1,13 +1,13 @@
 {
   "name": "sat-utils",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Utils library",
   "main": "built/index.js",
   "scripts": {
     "test": "mocha ./specs/**/*.spec.ts --require ts-node/register --timeout 30000",
     "test:debug": "mocha ./specs/async.child.methods.spec.ts --require ts-node/register --timeout 30000",
     "lint": "eslint --ext .ts ./",
-    "build": "rm -rf ./built && tsc"
+    "tsc": "rm -rf ./built && tsc"
   },
   "repository": {
     "type": "git",

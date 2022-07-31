@@ -1,22 +1,12 @@
-import {
-  isArray,
-  isObject,
-  isPrimitive,
-  isString,
-  isUndefined,
-  isNumber,
-  getType,
-  isEmptyObject,
-} from './types';
+/* eslint-disable sonarjs/cognitive-complexity */
+import { isArray, isObject, isPrimitive, isString, isUndefined, isNumber, getType, isEmptyObject } from './types';
 import { execNumberExpression, toArray } from './utils';
 
 function checkLenghtIfRequired(expectedLength, actualLength) {
   if (isUndefined(expectedLength)) {
     return true;
   }
-  const expectedLengthExpression = isNumber(expectedLength)
-    ? `===${expectedLength}`
-    : expectedLength;
+  const expectedLengthExpression = isNumber(expectedLength) ? `===${expectedLength}` : expectedLength;
 
   return execNumberExpression(expectedLengthExpression, actualLength);
 }
@@ -29,12 +19,7 @@ interface ICompareOpts {
 }
 
 function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
-  const {
-    separator = '->',
-    ignoreProperties,
-    strictStrings = true,
-    strictArrays = true,
-  } = options || {};
+  const { separator = '->', ignoreProperties, strictStrings = true, strictArrays = true } = options || {};
   const propertiesWhichWillBeIgnored = toArray(ignoreProperties);
   let message = '';
 
@@ -43,7 +28,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
       let compareResult;
       if (isString(data) && isString(piece)) {
         compareResult = !strictStrings ? data.includes(piece) : data === piece;
-      } else if (isNumber(data) && isString(piece) && (piece.indexOf('_check_number') === 0)) {
+      } else if (isNumber(data) && isString(piece) && piece.indexOf('_check_number') === 0) {
         compareResult = execNumberExpression(piece.replace('_check_number', '').trim(), data);
       } else {
         compareResult = data === piece;
@@ -60,7 +45,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
 
     if (propertiesWhichWillBeIgnored.length && isObject(piece)) {
       piece = Object.keys(piece)
-        .filter((key) => !propertiesWhichWillBeIgnored.includes(key))
+        .filter(key => !propertiesWhichWillBeIgnored.includes(key))
         .reduce((requiredKeys, key) => {
           requiredKeys[key] = piece[key];
 
@@ -69,12 +54,12 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
     }
 
     if (isObject(piece) && isObject(data)) {
-      return Object.keys(piece).every((key) => {
+      return Object.keys(piece).every(key => {
         const compareResult = compare(data[key], piece[key]);
         if (!compareResult) {
-          message += ` message key: ${
-            isNumber(arrayIndex) ? `${key}[${arrayIndex}]` : `${key}`
-          }`;
+          const indexMessage = isNumber(arrayIndex) ? `${key}[${arrayIndex}]` : `${key}`;
+
+          message += ` message key: ${indexMessage}`;
         }
 
         return compareResult;
@@ -82,13 +67,10 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
     }
 
     if (isArray(data) && isArray(piece)) {
-      if (checkLenghtIfRequired(piece.length, data.length)) {
-        return data.every((dataItem, index) =>
-          compare(dataItem, piece[index], index)
-        );
-      } else {
-        return false;
-      }
+      return (
+        checkLenghtIfRequired(piece.length, data.length) &&
+        data.every((dataItem, index) => compare(dataItem, piece[index], index))
+      );
     }
 
     if (isArray(data)) {
@@ -111,7 +93,8 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
               return !ignore.includes(index);
             }
             return true;
-          })[strictArrays ? 'every' : 'some']((dataItem, index) => {
+          })
+          [strictArrays ? 'every' : 'some']((dataItem, index) => {
             if (isPrimitive(toCompare) && 'toCompare' in pieceWithoutLength) {
               return compare(dataItem, toCompare, index);
             } else if (isArray(toCompare)) {
@@ -126,9 +109,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
     }
 
     if (getType(data) !== getType(piece)) {
-      message += `Message: seems like types are not comparable, expected: ${getType(
-        piece
-      )}, actual: ${getType(data)}`;
+      message += `Message: seems like types are not comparable, expected: ${getType(piece)}, actual: ${getType(data)}`;
     }
 
     return false;
@@ -140,21 +121,18 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
     message = '';
     // clean up message
   } else {
-    const indexPattern = /(\[\d\])/;
+    const indexPattern = /(\[\d])/;
     message = message
       .split(' message key: ')
       .reverse()
       .reduce((acc, item, index, arr) => {
         if (index === 0) {
           acc += `${item}${separator}`;
-        } else if (item.match(indexPattern)) {
+        } else if (indexPattern.test(item)) {
           const prevIndex = item.match(indexPattern)[0];
           const key = item.replace(indexPattern, '');
           const isSeparator = arr.length - 1 === index ? '' : separator;
-          acc = acc.replace(
-            new RegExp(`(${separator})$`),
-            `${prevIndex}${separator}${key}${isSeparator}`
-          );
+          acc = acc.replace(new RegExp(`(${separator})$`), `${prevIndex}${separator}${key}${isSeparator}`);
         } else if (arr.length - 1 === index) {
           acc += `${item}`;
         } else {
