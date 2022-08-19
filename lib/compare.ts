@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 import { isArray, isObject, isPrimitive, isString, isUndefined, isNumber, getType, isEmptyObject } from './types';
-import { execNumberExpression, toArray } from './utils';
+import { execNumberExpression, toArray, safeHasOwnPropery } from './utils';
 
 function checkLenghtIfRequired(expectedLength, actualLength) {
   if (isUndefined(expectedLength)) {
@@ -11,15 +11,22 @@ function checkLenghtIfRequired(expectedLength, actualLength) {
   return execNumberExpression(expectedLengthExpression, actualLength);
 }
 
-interface ICompareOpts {
-  strictStrings?: boolean;
-  strictArrays?: boolean;
+type TCompareOpts = {
+  stringEquals?: boolean;
+  everyArrayItem?: boolean;
+  allowEmptyArray?: boolean;
   separator?: string;
   ignoreProperties?: string | string[];
-}
+};
 
-function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
-  const { separator = '->', ignoreProperties, strictStrings = true, strictArrays = true } = options || {};
+function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
+  const {
+    separator = '->',
+    ignoreProperties,
+    stringEquals = true,
+    everyArrayItem = true,
+    allowEmptyArray = false,
+  } = options || {};
   const propertiesWhichWillBeIgnored = toArray(ignoreProperties);
   let message = '';
 
@@ -27,7 +34,7 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
     if (isPrimitive(piece) && isPrimitive(data)) {
       let compareResult;
       if (isString(data) && isString(piece)) {
-        compareResult = !strictStrings ? data.includes(piece) : data === piece;
+        compareResult = !stringEquals ? data.includes(piece) : data === piece;
       } else if (isNumber(data) && isString(piece) && piece.indexOf('_check_number') === 0) {
         compareResult = execNumberExpression(piece.replace('_check_number', '').trim(), data);
       } else {
@@ -73,19 +80,19 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
       );
     }
 
-    if (isArray(data)) {
-      const { length, ignoreIndexes, ...pieceWithoutLength } = piece;
-      const { toCompare, ...pieceWithoutPrimitives } = pieceWithoutLength;
+    if (isArray(data) && isObject(piece)) {
+      const { length, ignoreIndexes, toCompare, ...checkDataPiece } = piece;
+      const lengthToCheck = safeHasOwnPropery(piece, 'length') ? length : allowEmptyArray ? '>0' : undefined;
 
       if (
-        isEmptyObject(pieceWithoutPrimitives) &&
-        checkLenghtIfRequired(length, data.length) &&
-        !('toCompare' in pieceWithoutLength)
+        isEmptyObject(checkDataPiece) &&
+        checkLenghtIfRequired(lengthToCheck, data.length) &&
+        !safeHasOwnPropery(piece, 'toCompare')
       ) {
         return true;
       }
 
-      if (checkLenghtIfRequired(length, data.length)) {
+      if (checkLenghtIfRequired(lengthToCheck, data.length)) {
         return data
           .filter((_item, index) => {
             if (isNumber(ignoreIndexes) || isArray(ignoreIndexes)) {
@@ -94,16 +101,16 @@ function compareToPattern(dataToCheck, pattern, options?: ICompareOpts) {
             }
             return true;
           })
-          [strictArrays ? 'every' : 'some']((dataItem, index) => {
-            if (isPrimitive(toCompare) && 'toCompare' in pieceWithoutLength) {
+          [everyArrayItem ? 'every' : 'some']((dataItem, index) => {
+            if (isPrimitive(toCompare) && safeHasOwnPropery(piece, 'toCompare')) {
               return compare(dataItem, toCompare, index);
             } else if (isArray(toCompare)) {
               return compare(dataItem, toCompare[index], index);
             }
-            return compare(dataItem, pieceWithoutLength, index);
+            return compare(dataItem, checkDataPiece, index);
           });
       } else {
-        message += `Message: expected length: ${length}, actual lenght: ${data.length}`;
+        message += `Message: expected length: ${lengthToCheck}, actual lenght: ${data.length}`;
         return false;
       }
     }

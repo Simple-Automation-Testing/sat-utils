@@ -1,4 +1,5 @@
-import { isNumber, getType, isString, isBoolean, isUndefined, isNull } from './types';
+/* eslint-disable sonarjs/cognitive-complexity, unicorn/no-object-as-default-parameter*/
+import { isNumber, getType, isString, isBoolean, isUndefined, isNull, isObject } from './types';
 
 function toArray(anyArugment) {
   if (anyArugment === undefined) {
@@ -71,17 +72,53 @@ function shuffleArr(arr) {
   return newArr;
 }
 
-function prettifyCamelCase(camelCaseString: string, onlyFirstWordInUpperCase = false): string {
+type TcamelCase = {
+  firstWordUpperCase?: boolean;
+  allUpperCase?: boolean;
+  joinWords?: string;
+};
+function prettifyCamelCase(
+  camelCaseString: string,
+  _opts: TcamelCase = { firstWordUpperCase: false, joinWords: ' ' },
+): string {
+  const defaultOpts = { firstWordUpperCase: false, joinWords: ' ', allUpperCase: false };
+
   if (!isString(camelCaseString)) {
     throw new TypeError(
       `prettifyCamelCase(): first argument should be a string, current arg is ${getType(camelCaseString)}`,
     );
   }
-  if (!isBoolean(onlyFirstWordInUpperCase)) {
+  if (!isObject(_opts)) {
+    throw new TypeError(`prettifyCamelCase(): second argument should be an object, current arg is ${getType(_opts)}`);
+  }
+
+  const opts = { ...defaultOpts, ..._opts };
+
+  if (!isBoolean(opts.firstWordUpperCase)) {
     throw new TypeError(
-      `prettifyCamelCase(): second argument should be a boolean, current arg is ${getType(onlyFirstWordInUpperCase)}`,
+      `prettifyCamelCase(): second argument  "firstWordUpperCase" property should be a boolean, current arg is ${getType(
+        opts.firstWordUpperCase,
+      )}`,
     );
   }
+
+  if (!isBoolean(opts.allUpperCase)) {
+    throw new TypeError(
+      `prettifyCamelCase(): second argument  "allUpperCase" property should be a boolean, current arg is ${getType(
+        opts.firstWordUpperCase,
+      )}`,
+    );
+  }
+
+  if (!isString(opts.joinWords)) {
+    throw new TypeError(
+      `prettifyCamelCase(): second argument  "joinWords" property should be a string, current arg is ${getType(
+        opts.joinWords,
+      )}`,
+    );
+  }
+
+  const { firstWordUpperCase, joinWords, allUpperCase } = opts;
 
   let humanReadableString = '';
 
@@ -91,18 +128,20 @@ function prettifyCamelCase(camelCaseString: string, onlyFirstWordInUpperCase = f
     if (index === 0) {
       humanReadableString += char.toUpperCase();
     } else if (char !== char.toLowerCase() && char === char.toUpperCase()) {
-      humanReadableString += ` ${char}`;
+      humanReadableString += `${joinWords}${char}`;
     } else {
       humanReadableString += char;
     }
   }
 
-  return onlyFirstWordInUpperCase
+  const firstWordUp = firstWordUpperCase
     ? humanReadableString
         .split(' ')
         .map((word, index) => (index === 0 ? word : word.toLocaleLowerCase()))
         .join(' ')
     : humanReadableString;
+
+  return allUpperCase ? firstWordUp.toUpperCase() : firstWordUp;
 }
 
 function execNumberExpression(expression: string, numberArg: number) {
@@ -124,35 +163,6 @@ function execNumberExpression(expression: string, numberArg: number) {
   } catch {
     return false;
   }
-}
-
-function prettifyCamelCaseToDelimeter(name, delimeter = '_', allToUpper = false) {
-  if (!isString(name)) {
-    throw new TypeError(
-      `prettifyCamelCaseToDelimeter(): first argument should be a string, current arg is ${getType(name)}`,
-    );
-  }
-  if (!isString(delimeter)) {
-    throw new TypeError(
-      `prettifyCamelCaseToDelimeter(): second argument should be a string, current arg is ${getType(delimeter)}`,
-    );
-  }
-  if (!isBoolean(allToUpper)) {
-    throw new TypeError(
-      `prettifyCamelCaseToDelimeter(): third argument should be a string, current arg is ${getType(allToUpper)}`,
-    );
-  }
-  return name
-    .split('')
-    .map((char: string) => {
-      const isInUpper = char !== char.toLowerCase();
-      const toEndView = allToUpper ? char.toUpperCase() : char.toLowerCase();
-      if (isInUpper) {
-        return `${delimeter}${toEndView}`;
-      }
-      return toEndView;
-    })
-    .join('');
 }
 
 function camelize(str) {
@@ -191,7 +201,6 @@ function safeHasOwnPropery(item: any, key: string) {
 export {
   toArray,
   prettifyCamelCase,
-  prettifyCamelCaseToDelimeter,
   execNumberExpression,
   camelize,
   safeJSONstringify,

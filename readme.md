@@ -32,7 +32,6 @@
 - [isNotEmptyArray](#isnotemptyarray)
 - [execNumberExpression](#execnumberexpression)
 - [compareToPattern](#comparetopattern)
-- [prettifyCamelCaseToDelimeter](#prettifycamelcasetodelimeter)
 - [getDirFilesList](#getdirfileslist)
 - [safeJSONstringify](#safejsonstringify)
 - [camelize](#camelize)
@@ -243,8 +242,10 @@
 ```js
   const {prettifyCamelCase} = require('sat-utils')
 
-  const pretty = prettifyCamelCase('testCaseId') // Test Case Id
-  prettifyCamelCase({}) //TypeError prettifyCamelCase(): first argument should be a striung, current arg is object
+	const res1 = prettifyCamelCase(str); // Prettify Camel Case
+  const res2 = prettifyCamelCase(str, { joinWords: '__' }); // Prettify__Camel__Case
+  const res3 = prettifyCamelCase(str, { allUpperCase: true, joinWords: '_' }); // PRETTIFY_CAMEL_CASE
+  const res4 = prettifyCamelCase(str, { firstWordUpperCase: true }); // Prettify camel case
 ```
 
 ## isEmptyArray
@@ -371,7 +372,7 @@
 		};
 
 		const {result, message} = compareToPattern(data, pattern, {
-			strictStrings: false,
+			stringEquals: false,
 		})
 		// result is true, message is ''
 	}
@@ -390,18 +391,10 @@
 		};
 
 		const {result, message} = compareToPattern(data, pattern, {
-			strictArrays: false,
+			everyArrayItem: false,
 		})
 		// result is true, message is ''
 	}
-```
-
-## prettifyCamelCaseToDelimeter
-```js
-	const {compareToPattern} = require('sat-utils')
-	const res1 = prettifyCamelCaseToDelimeter(str) // prettify_camel_case_to_delimeter
-	const res2 = prettifyCamelCaseToDelimeter(str, '__') // prettify__camel__case__to__delimeter
-	const res3 = prettifyCamelCaseToDelimeter(str, '_', true) // PRETTIFY_CAMEL_CASE_TO_DELIMETER
 ```
 
 ## getDirFilesList
