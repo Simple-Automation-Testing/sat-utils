@@ -21,7 +21,7 @@ describe('SPEC', function () {
       const data = {
         field: [],
       };
-      const { result, message } = compareToPattern(data, pattern, { allowEmptyArray: true });
+      const { result, message } = compareToPattern(data, pattern, { allowEmptyArray: false });
       deepStrictEqual(result, false, 'Should be same');
       deepStrictEqual(message, 'field->Message: expected length: >0, actual lenght: 0', 'Message should not be empty');
     }
@@ -32,7 +32,7 @@ describe('SPEC', function () {
       const data = {
         field: [],
       };
-      const { result, message } = compareToPattern(data, pattern, { allowEmptyArray: true });
+      const { result, message } = compareToPattern(data, pattern, { allowEmptyArray: false });
       deepStrictEqual(result, true, 'Should be same');
       deepStrictEqual(message, '', 'Message should be empty');
     }

@@ -25,7 +25,7 @@ function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
     ignoreProperties,
     stringEquals = true,
     everyArrayItem = true,
-    allowEmptyArray = false,
+    allowEmptyArray = true,
   } = options || {};
   const propertiesWhichWillBeIgnored = toArray(ignoreProperties);
   let message = '';
@@ -82,7 +82,7 @@ function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
 
     if (isArray(data) && isObject(piece)) {
       const { length, ignoreIndexes, toCompare, ...checkDataPiece } = piece;
-      const lengthToCheck = safeHasOwnPropery(piece, 'length') ? length : allowEmptyArray ? '>0' : undefined;
+      const lengthToCheck = safeHasOwnPropery(piece, 'length') ? length : !allowEmptyArray ? '>0' : undefined;
 
       if (
         isEmptyObject(checkDataPiece) &&
