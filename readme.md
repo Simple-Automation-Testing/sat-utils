@@ -37,6 +37,8 @@
 - [camelize](#camelize)
 - [safeHasOwnPropery](#safehasownpropery)
 - [chunkArr](#chunkarr)
+- [millisecondsToMinutes](#millisecondstominutes)
+- [getRandomSubString](#getrandomsubstring)
 
 ## waitForCondition
 ```js
@@ -434,4 +436,17 @@
 
 	chunkArr([1,2,3], 2) // [[1, 3], [2]]
 	chunkArr([1,2,3], 2, true) // [[1, 2], [3]]
+```
+
+## millisecondsToMinutes
+```js
+	const {millisecondsToMinutes} = require('sat-utils')
+
+	millisecondsToMinutes(100_000) // 1:40
+```
+## getRandomSubString
+```js
+	const {getRandomSubString} = require('sat-utils')
+
+	getRandomSubString('abcdefgj', 3) // fgf
 ```

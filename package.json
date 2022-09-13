@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Utils library",
   "main": "built/index.js",
   "scripts": {
@@ -25,7 +25,8 @@
     "async waiter",
     "pretty camel case",
     "compare item to pattern",
-    "compare"
+    "compare",
+    "get random data"
   ],
   "author": "Potapov Dmitriy",
   "license": "MIT",

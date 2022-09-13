@@ -149,7 +149,7 @@ describe('SPEC', function () {
     deepStrictEqual(message, '', 'Message should be empty');
   });
 
-  it('[P] compareToPattern stringEquals false', function () {
+  it('[P] compareToPattern stringIncludes true', function () {
     const pattern = {
       c: {
         length: 1,
@@ -161,7 +161,41 @@ describe('SPEC', function () {
       c: [{ a: 'long string with different parts' }],
     };
 
-    const { result, message } = compareToPattern(data, pattern, { stringEquals: false });
+    const { result, message } = compareToPattern(data, pattern, { stringIncludes: true });
+    deepStrictEqual(result, true, 'Should be same');
+    deepStrictEqual(message, '', 'Message should be empty');
+  });
+
+  it('[P] compareToPattern _data_includes', function () {
+    const pattern = {
+      c: {
+        length: 1,
+        a: '_data_includes=different part',
+      },
+    };
+
+    const data = {
+      c: [{ a: 'long string with different parts' }],
+    };
+
+    const { result, message } = compareToPattern(data, pattern);
+    deepStrictEqual(result, true, 'Should be same');
+    deepStrictEqual(message, '', 'Message should be empty');
+  });
+
+  it('[P] compareToPattern _pattern_includes', function () {
+    const pattern = {
+      c: {
+        length: 1,
+        a: '_pattern_includes=long string with different parts',
+      },
+    };
+
+    const data = {
+      c: [{ a: 'different part' }],
+    };
+
+    const { result, message } = compareToPattern(data, pattern);
     deepStrictEqual(result, true, 'Should be same');
     deepStrictEqual(message, '', 'Message should be empty');
   });

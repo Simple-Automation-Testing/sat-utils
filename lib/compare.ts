@@ -12,7 +12,7 @@ function checkLenghtIfRequired(expectedLength, actualLength) {
 }
 
 type TCompareOpts = {
-  stringEquals?: boolean;
+  stringIncludes?: boolean;
   everyArrayItem?: boolean;
   allowEmptyArray?: boolean;
   separator?: string;
@@ -23,7 +23,7 @@ function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
   const {
     separator = '->',
     ignoreProperties,
-    stringEquals = true,
+    stringIncludes,
     everyArrayItem = true,
     allowEmptyArray = true,
   } = options || {};
@@ -33,8 +33,13 @@ function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
   function compare(data, piece, arrayIndex?) {
     if (isPrimitive(piece) && isPrimitive(data)) {
       let compareResult;
-      if (isString(data) && isString(piece)) {
-        compareResult = !stringEquals ? data.includes(piece) : data === piece;
+
+      if (isString(data) && isString(piece) && stringIncludes) {
+        compareResult = data.includes(piece);
+      } else if (isString(data) && isString(piece) && piece.indexOf('_pattern_includes=') === 0) {
+        compareResult = piece.replace('_pattern_includes=', '').includes(data);
+      } else if (isString(data) && isString(piece) && piece.indexOf('_data_includes=') === 0) {
+        compareResult = data.includes(piece.replace('_data_includes=', ''));
       } else if (isNumber(data) && isString(piece) && piece.indexOf('_check_number') === 0) {
         compareResult = execNumberExpression(piece.replace('_check_number', '').trim(), data);
       } else {
