@@ -41,7 +41,7 @@ describe('SPEC', function () {
   it('[P] compareToPattern _check_number', function () {
     {
       const pattern = {
-        field: '_check_number > 10',
+        field: '_check_number= > 10',
       };
       const data = {
         field: 11,
@@ -53,7 +53,7 @@ describe('SPEC', function () {
     }
     {
       const pattern = {
-        field: '_check_number > 10 and < 12',
+        field: '_check_number= > 10 and < 12',
       };
       const data = {
         field: 11,
@@ -68,7 +68,7 @@ describe('SPEC', function () {
   it('[N] compareToPattern _check_number', function () {
     {
       const pattern = {
-        field: '_check_number > 11',
+        field: '_check_number= > 11',
       };
       const data = {
         field: 11,

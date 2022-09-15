@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Utils library",
   "main": "built/index.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "waitForCondition",
     "async waitForCondition",
     "async waiter",
+    "awaiter",
     "pretty camel case",
     "compare item to pattern",
     "compare",
