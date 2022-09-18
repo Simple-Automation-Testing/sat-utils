@@ -2,6 +2,49 @@ import { deepStrictEqual } from 'assert';
 import { compareToPattern } from '../lib';
 
 describe('SPEC', function () {
+  it('[P] compareToPattern allowNumberTypecast', function () {
+    {
+      const pattern = {
+        field: { a: 1 },
+      };
+      const data = {
+        field: { a: '1' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { allowNumberTypecast: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {
+        field: { a: 1 },
+      };
+      const data = {
+        field: { a: '        1          ' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { allowNumberTypecast: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern allowNumberTypecast', function () {
+    {
+      const pattern = {
+        field: { a: 1 },
+      };
+      const data = {
+        field: { a: '12dsadas' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { allowNumberTypecast: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: data should match to pattern expected: number 1, actual: string 12dsadas',
+        'Message should be empty',
+      );
+    }
+  });
+
   it('[P] compareToPattern allowEmptyArray', function () {
     {
       const pattern = {
@@ -76,11 +119,7 @@ describe('SPEC', function () {
 
       const { result, message } = compareToPattern(data, pattern);
       deepStrictEqual(result, false, 'Should be same');
-      deepStrictEqual(
-        message,
-        'field->Message: expected: _check_number > 11, actual: 11',
-        'Message should not be empty',
-      );
+      deepStrictEqual(message, 'field->Message: expected: > 11, actual: 11', 'Message should not be empty');
     }
   });
 
@@ -442,7 +481,7 @@ describe('SPEC', function () {
       deepStrictEqual(result, false, 'Should not be same');
       deepStrictEqual(
         message,
-        'b[3]->c->d[2]->text->Message: expected: 1, actual: undefined',
+        'b[3]->c->d[2]->text->Message: data should match to pattern expected: number 1, actual: undefined undefined',
         'Message should be empty',
       );
     }

@@ -4,13 +4,13 @@ import { execNumberExpression, toArray, safeHasOwnPropery } from './utils';
 
 function getErrorMessage(data, piece) {
   if (isNumber(data) && isString(piece) && piece.indexOf('_check_number=') === 0) {
-    return `not equal types. expected: ${getType(piece)} ${piece}, actual: ${getType(data)} ${data}`;
+    return `expected: ${piece.replace('_check_number=', '').trim()}, actual: ${data}`;
   } else if (isString(data) && isString(piece) && piece.indexOf('_pattern_includes=') === 0) {
     return `pattern does not include data expected: ${piece.replace('_pattern_includes=', '')} to include ${data}`;
   } else if (isString(data) && isString(piece) && piece.indexOf('_data_includes=') === 0) {
     return `data does not include pattern expected: ${piece.replace('_data_includes=', '')} to be part of ${data}`;
   } else if (getType(data) !== getType(piece)) {
-    return `data should match to pattern expected: ${piece.replace('_data_includes=', '')}, actual ${data}`;
+    return `data should match to pattern expected: ${getType(piece)} ${piece}, actual: ${getType(data)} ${data}`;
   }
 
   return `expected: ${piece}, actual: ${data}`;
@@ -29,6 +29,7 @@ type TCompareOpts = {
   stringIncludes?: boolean;
   everyArrayItem?: boolean;
   allowEmptyArray?: boolean;
+  allowNumberTypecast?: boolean;
   separator?: string;
   ignoreProperties?: string | string[];
 };
@@ -38,6 +39,7 @@ function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
     separator = '->',
     ignoreProperties,
     stringIncludes,
+    allowNumberTypecast,
     everyArrayItem = true,
     allowEmptyArray = true,
   } = options || {};
@@ -48,7 +50,9 @@ function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
     if (isPrimitive(piece) && isPrimitive(data)) {
       let compareResult;
 
-      if (isNumber(data) && isString(piece) && piece.indexOf('_check_number=') === 0) {
+      if (allowNumberTypecast && ((isNumber(data) && isString(piece)) || (isNumber(piece) && isString(data)))) {
+        compareResult = data == piece;
+      } else if (isNumber(data) && isString(piece) && piece.indexOf('_check_number=') === 0) {
         compareResult = execNumberExpression(piece.replace('_check_number=', '').trim(), data);
       } else if (isString(data) && isString(piece) && piece.indexOf('_pattern_includes=') === 0) {
         compareResult = piece.replace('_pattern_includes=', '').includes(data);
