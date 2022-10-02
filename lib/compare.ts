@@ -1,14 +1,55 @@
 /* eslint-disable sonarjs/cognitive-complexity */
-import { isArray, isObject, isPrimitive, isString, isUndefined, isNumber, getType, isEmptyObject } from './types';
+import {
+  isArray,
+  isObject,
+  isPrimitive,
+  isString,
+  isUndefined,
+  isNumber,
+  getType,
+  isEmptyObject,
+  isRegExp,
+} from './types';
 import { execNumberExpression, toArray, safeHasOwnPropery } from './utils';
+import { getRandomString } from './randomizer';
+
+const { toDataIncludes, checkThatDataIncludes, removeDataIncludesId } = (function () {
+  const checkIncludesId = `${getRandomString(7)}_check_number=`;
+
+  return {
+    toDataIncludes: (item: string) => `${checkIncludesId}${item}`,
+    checkThatDataIncludes: (item: string) => item.indexOf(checkIncludesId) === 0,
+    removeDataIncludesId: (item: string) => item.replace(checkIncludesId, ''),
+  };
+})();
+
+const { toPatternIncludes, checkThatPatternIncludes, removePatternIncludesId } = (function () {
+  const patternIncludesId = `${getRandomString(7)}_pattern_includes=`;
+
+  return {
+    toPatternIncludes: (item: string) => `${patternIncludesId}${item}`,
+    checkThatPatternIncludes: (item: string) => item.indexOf(patternIncludesId) === 0,
+    removePatternIncludesId: (item: string) => item.replace(patternIncludesId, ''),
+  };
+})();
+
+const { toCheckNumber, checkThatCheckNumber, removeCheckNumberId } = (function () {
+  const patternIncludesId = `${getRandomString(7)}_check_number=`;
+
+  return {
+    toCheckNumber: (item: string) => `${patternIncludesId}${item}`,
+    checkThatCheckNumber: (item: string) => item.indexOf(patternIncludesId) === 0,
+    removeCheckNumberId: (item: string) => item.replace(patternIncludesId, ''),
+  };
+})();
 
 function getErrorMessage(data, piece) {
-  if (isNumber(data) && isString(piece) && piece.indexOf('_check_number=') === 0) {
-    return `expected: ${piece.replace('_check_number=', '').trim()}, actual: ${data}`;
-  } else if (isString(data) && isString(piece) && piece.indexOf('_pattern_includes=') === 0) {
-    return `pattern does not include data expected: ${piece.replace('_pattern_includes=', '')} to include ${data}`;
-  } else if (isString(data) && isString(piece) && piece.indexOf('_data_includes=') === 0) {
-    return `data does not include pattern expected: ${piece.replace('_data_includes=', '')} to be part of ${data}`;
+  if (isNumber(data) && isString(piece) && checkThatCheckNumber(piece)) {
+    return `expected: ${removeCheckNumberId(piece).trim()}, actual: ${data}`;
+  } else if (isString(data) && isString(piece) && checkThatPatternIncludes(piece)) {
+    return `pattern does not include data expected: ${removePatternIncludesId(piece)} to include ${data}`;
+  } else if (isString(data) && isString(piece) && checkThatDataIncludes(piece)) {
+    return `data does not include pattern expected: ${removeDataIncludesId(piece)} to be part of ${data}`;
   } else if (getType(data) !== getType(piece)) {
     return `data should match to pattern expected: ${getType(piece)} ${piece}, actual: ${getType(data)} ${data}`;
   }
@@ -34,7 +75,13 @@ type TCompareOpts = {
   ignoreProperties?: string | string[];
 };
 
-function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
+type TCompareToPattern = ((data: any, patter: any, options?: TCompareOpts) => { result: boolean; message: string }) & {
+  toDataIncludes: (arg: string) => string;
+  toPatternIncludes: (arg: string) => string;
+  toCheckNumber: (arg: string) => string;
+};
+
+const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, options?: TCompareOpts) {
   const {
     separator = '->',
     ignoreProperties,
@@ -52,14 +99,16 @@ function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
 
       if (allowNumberTypecast && ((isNumber(data) && isString(piece)) || (isNumber(piece) && isString(data)))) {
         compareResult = data == piece;
-      } else if (isNumber(data) && isString(piece) && piece.indexOf('_check_number=') === 0) {
-        compareResult = execNumberExpression(piece.replace('_check_number=', '').trim(), data);
-      } else if (isString(data) && isString(piece) && piece.indexOf('_pattern_includes=') === 0) {
-        compareResult = piece.replace('_pattern_includes=', '').includes(data);
-      } else if (isString(data) && isString(piece) && piece.indexOf('_data_includes=') === 0) {
-        compareResult = data.includes(piece.replace('_data_includes=', ''));
+      } else if (isNumber(data) && isString(piece) && checkThatCheckNumber(piece)) {
+        compareResult = execNumberExpression(removeCheckNumberId(piece).trim(), data);
+      } else if (isString(data) && isString(piece) && checkThatPatternIncludes(piece)) {
+        compareResult = removePatternIncludesId(piece).includes(data);
+      } else if (isString(data) && isString(piece) && checkThatDataIncludes(piece)) {
+        compareResult = data.includes(removeDataIncludesId(piece));
       } else if (isString(data) && isString(piece) && stringIncludes) {
         compareResult = data.includes(piece);
+      } else if (isString(data) && isRegExp(piece)) {
+        compareResult = (piece as RegExp).test(data);
       } else {
         compareResult = data === piece;
       }
@@ -175,6 +224,10 @@ function compareToPattern(dataToCheck, pattern, options?: TCompareOpts) {
   }
 
   return { result, message };
-}
+} as any;
+
+compareToPattern.toCheckNumber = toCheckNumber;
+compareToPattern.toDataIncludes = toDataIncludes;
+compareToPattern.toPatternIncludes = toPatternIncludes;
 
 export { compareToPattern };

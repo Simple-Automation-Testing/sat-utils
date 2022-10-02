@@ -364,6 +364,19 @@ const { compareToPattern } = require('sat-utils');
   };
 
   const pattern = {
+    b: { c: { d: { text: /.*/ } } },
+  };
+
+  const { result, message } = compareToPattern(data, pattern);
+  // result is true, message is ''
+}
+{
+  const data = {
+    a: { text: 'first' },
+    b: { c: { d: { text: 'second' } } },
+  };
+
+  const pattern = {
     b: { c: { d: { text: 'second' } } },
   };
 

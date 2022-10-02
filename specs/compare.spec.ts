@@ -84,7 +84,7 @@ describe('SPEC', function () {
   it('[P] compareToPattern _check_number', function () {
     {
       const pattern = {
-        field: '_check_number= > 10',
+        field: compareToPattern.toCheckNumber('> 10'),
       };
       const data = {
         field: 11,
@@ -96,7 +96,7 @@ describe('SPEC', function () {
     }
     {
       const pattern = {
-        field: '_check_number= > 10 and < 12',
+        field: compareToPattern.toCheckNumber('> 10 and < 12'),
       };
       const data = {
         field: 11,
@@ -111,7 +111,7 @@ describe('SPEC', function () {
   it('[N] compareToPattern _check_number', function () {
     {
       const pattern = {
-        field: '_check_number= > 11',
+        field: compareToPattern.toCheckNumber(' > 11'),
       };
       const data = {
         field: 11,
@@ -209,7 +209,7 @@ describe('SPEC', function () {
     const pattern = {
       c: {
         length: 1,
-        a: '_data_includes=different part',
+        a: compareToPattern.toDataIncludes('different part'),
       },
     };
 
@@ -226,7 +226,7 @@ describe('SPEC', function () {
     const pattern = {
       c: {
         length: 1,
-        a: '_pattern_includes=long string with different parts',
+        a: compareToPattern.toPatternIncludes('long string with different parts'),
       },
     };
 
