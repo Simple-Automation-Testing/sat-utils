@@ -452,6 +452,42 @@ const { compareToPattern } = require('sat-utils');
   });
   // result is true, message is ''
 }
+{
+  const data = {
+    a: { text: 'first' },
+  };
+
+  const pattern = {
+    a: { text: compareToPattern.patternToLowercase('FIRST') },
+  };
+
+  const { result, message } = compareToPattern(data, pattern);
+  // result is true, message is ''
+}
+{
+  const data = {
+    a: { text: 'FIRST' },
+  };
+
+  const pattern = {
+    a: { text: compareToPattern.dataToUppercase('first') },
+  };
+
+  const { result, message } = compareToPattern(data, pattern);
+  // result is true, message is ''
+}
+{
+  const data = {
+    a: { text: 'FIRST' },
+  };
+
+  const pattern = {
+    a: { text: compareToPattern.patternToUppercase('first') },
+  };
+
+  const { result, message } = compareToPattern(data, pattern);
+  // result is true, message is ''
+}
 ```
 
 ## getDirFilesList

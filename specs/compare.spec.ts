@@ -2,6 +2,294 @@ import { deepStrictEqual } from 'assert';
 import { compareToPattern } from '../lib';
 
 describe('SPEC', function () {
+  it('[P] compareToPattern patternToLowercase', function () {
+    {
+      const pattern = {
+        field: { a: compareToPattern.patternToLowercase('12ADS') },
+      };
+      const data = {
+        field: { a: '12ads' },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {
+        field: { a: compareToPattern.patternToLowercase('12ADS') },
+      };
+      const data = {
+        field: { a: '12ads12342121' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringIncludes: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern patternToLowercase', function () {
+    {
+      const pattern = {
+        field: { a: compareToPattern.patternToLowercase('12ADS') },
+      };
+      const data = {
+        field: { a: '12ads222' },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: expected: 12ads, actual: 12ads222 pattern is lowercased',
+        'Message should be empty',
+      );
+    }
+  });
+
+  it('[P] compareToPattern patternToUppercase', function () {
+    {
+      const pattern = {
+        field: { a: compareToPattern.patternToUppercase('12ads') },
+      };
+      const data = {
+        field: { a: '12ADS' },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {
+        field: { a: compareToPattern.patternToUppercase('12ads') },
+      };
+      const data = {
+        field: { a: '12ADS12342121' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringIncludes: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern patternToUppercase', function () {
+    {
+      const pattern = {
+        field: { a: compareToPattern.patternToUppercase('12ads') },
+      };
+      const data = {
+        field: { a: '12ADS121' },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: expected: 12ADS, actual: 12ADS121 pattern is uppercased',
+        'Message should be empty',
+      );
+    }
+  });
+
+  it('[P] compareToPattern dataToLowercase', function () {
+    {
+      const pattern = {
+        field: { a: compareToPattern.dataToLowercase('12ads') },
+      };
+      const data = {
+        field: { a: '12ADS' },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {
+        field: { a: compareToPattern.dataToLowercase('12ads') },
+      };
+      const data = {
+        field: { a: '12ADS12342121' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringIncludes: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern dataToLowercase', function () {
+    {
+      const pattern = {
+        field: { a: compareToPattern.dataToLowercase('12ads111') },
+      };
+      const data = {
+        field: { a: '12ADS' },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: expected: 12ads111, actual: 12ads data is lowercased',
+        'Message should be empty',
+      );
+    }
+  });
+
+  it('[P] compareToPattern dataToUppercase', function () {
+    {
+      const pattern = {
+        field: { a: compareToPattern.dataToUppercase('12ADS') },
+      };
+      const data = {
+        field: { a: '12ads' },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {
+        field: { a: compareToPattern.dataToUppercase('12ADS') },
+      };
+      const data = {
+        field: { a: '12ads12342121' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringIncludes: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern dataToUppercase', function () {
+    {
+      const pattern = {
+        field: { a: compareToPattern.dataToUppercase('12ADS') },
+      };
+      const data = {
+        field: { a: '12adsaaa' },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: expected: 12ADS, actual: 12ADSAAA data is uppercased',
+        'Message should be empty',
+      );
+    }
+  });
+
+  it('[P] compareToPattern stringLowercase', function () {
+    {
+      const pattern = {
+        field: { a: '12ADS' },
+      };
+      const data = {
+        field: { a: '12ads' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringLowercase: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {
+        field: { a: '12ads' },
+      };
+      const data = {
+        field: { a: '12ADS' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringLowercase: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern stringLowercase', function () {
+    {
+      const pattern = {
+        field: { a: '12ADSa' },
+      };
+      const data = {
+        field: { a: '12asd' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringLowercase: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: expected: 12adsa, actual: 12asd data and pattern are lowercased',
+        'Message should be empty',
+      );
+    }
+    {
+      const pattern = {
+        field: { a: '12asd' },
+      };
+      const data = {
+        field: { a: '12ADSa' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringLowercase: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: expected: 12asd, actual: 12adsa data and pattern are lowercased',
+        'Message should be empty',
+      );
+    }
+  });
+
+  it('[P] compareToPattern stringUppercase', function () {
+    {
+      const pattern = {
+        field: { a: '12ADS' },
+      };
+      const data = {
+        field: { a: '12ads' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringUppercase: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {
+        field: { a: '12ads' },
+      };
+      const data = {
+        field: { a: '12ADS' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringUppercase: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern stringLowercase', function () {
+    {
+      const pattern = {
+        field: { a: '12ADSa' },
+      };
+      const data = {
+        field: { a: '12asd' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringUppercase: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: expected: 12ADSA, actual: 12ASD data and pattern are uppercased',
+        'Message should be empty',
+      );
+    }
+    {
+      const pattern = {
+        field: { a: '12asd' },
+      };
+      const data = {
+        field: { a: '12ADSa' },
+      };
+      const { result, message } = compareToPattern(data, pattern, { stringUppercase: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->Message: expected: 12ASD, actual: 12ADSA data and pattern are uppercased',
+        'Message should be empty',
+      );
+    }
+  });
+
   it('[P] compareToPattern allowNumberTypecast', function () {
     {
       const pattern = {
@@ -24,24 +312,6 @@ describe('SPEC', function () {
       const { result, message } = compareToPattern(data, pattern, { allowNumberTypecast: true });
       deepStrictEqual(result, true, 'Should be same');
       deepStrictEqual(message, '', 'Message should be empty');
-    }
-  });
-
-  it('[N] compareToPattern allowNumberTypecast', function () {
-    {
-      const pattern = {
-        field: { a: 1 },
-      };
-      const data = {
-        field: { a: '12dsadas' },
-      };
-      const { result, message } = compareToPattern(data, pattern, { allowNumberTypecast: true });
-      deepStrictEqual(result, false, 'Should be same');
-      deepStrictEqual(
-        message,
-        'field->a->Message: data should match to pattern expected: number 1, actual: string 12dsadas',
-        'Message should be empty',
-      );
     }
   });
 
@@ -119,7 +389,7 @@ describe('SPEC', function () {
 
       const { result, message } = compareToPattern(data, pattern);
       deepStrictEqual(result, false, 'Should be same');
-      deepStrictEqual(message, 'field->Message: expected: > 11, actual: 11', 'Message should not be empty');
+      deepStrictEqual(message, 'field->Message: expected: 11 > 11', 'Message should not be empty');
     }
   });
 
@@ -481,7 +751,7 @@ describe('SPEC', function () {
       deepStrictEqual(result, false, 'Should not be same');
       deepStrictEqual(
         message,
-        'b[3]->c->d[2]->text->Message: data should match to pattern expected: number 1, actual: undefined undefined',
+        'b[3]->c->d[2]->text->Message: expected: 1, actual: undefined',
         'Message should be empty',
       );
     }

@@ -1,61 +1,16 @@
 /* eslint-disable sonarjs/cognitive-complexity */
-import {
-  isArray,
-  isObject,
-  isPrimitive,
-  isString,
-  isUndefined,
-  isNumber,
-  getType,
-  isEmptyObject,
-  isRegExp,
-} from './types';
+import { isArray, isObject, isPrimitive, isUndefined, isNumber, getType, isEmptyObject, isRegExp } from './types';
 import { execNumberExpression, toArray, safeHasOwnPropery } from './utils';
-import { getRandomString } from './randomizer';
-
-const { toDataIncludes, checkThatDataIncludes, removeDataIncludesId } = (function () {
-  const checkIncludesId = `${getRandomString(7)}_check_number=`;
-
-  return {
-    toDataIncludes: (item: string) => `${checkIncludesId}${item}`,
-    checkThatDataIncludes: (item: string) => item.indexOf(checkIncludesId) === 0,
-    removeDataIncludesId: (item: string) => item.replace(checkIncludesId, ''),
-  };
-})();
-
-const { toPatternIncludes, checkThatPatternIncludes, removePatternIncludesId } = (function () {
-  const patternIncludesId = `${getRandomString(7)}_pattern_includes=`;
-
-  return {
-    toPatternIncludes: (item: string) => `${patternIncludesId}${item}`,
-    checkThatPatternIncludes: (item: string) => item.indexOf(patternIncludesId) === 0,
-    removePatternIncludesId: (item: string) => item.replace(patternIncludesId, ''),
-  };
-})();
-
-const { toCheckNumber, checkThatCheckNumber, removeCheckNumberId } = (function () {
-  const patternIncludesId = `${getRandomString(7)}_check_number=`;
-
-  return {
-    toCheckNumber: (item: string) => `${patternIncludesId}${item}`,
-    checkThatCheckNumber: (item: string) => item.indexOf(patternIncludesId) === 0,
-    removeCheckNumberId: (item: string) => item.replace(patternIncludesId, ''),
-  };
-})();
-
-function getErrorMessage(data, piece) {
-  if (isNumber(data) && isString(piece) && checkThatCheckNumber(piece)) {
-    return `expected: ${removeCheckNumberId(piece).trim()}, actual: ${data}`;
-  } else if (isString(data) && isString(piece) && checkThatPatternIncludes(piece)) {
-    return `pattern does not include data expected: ${removePatternIncludesId(piece)} to include ${data}`;
-  } else if (isString(data) && isString(piece) && checkThatDataIncludes(piece)) {
-    return `data does not include pattern expected: ${removeDataIncludesId(piece)} to be part of ${data}`;
-  } else if (getType(data) !== getType(piece)) {
-    return `data should match to pattern expected: ${getType(piece)} ${piece}, actual: ${getType(data)} ${data}`;
-  }
-
-  return `expected: ${piece}, actual: ${data}`;
-}
+import {
+  toCheckNumber,
+  toDataIncludes,
+  toPatternIncludes,
+  dataToUppercase,
+  dataToLowercase,
+  patternToLowercase,
+  patternToUppercase,
+  comparePrimitives,
+} from './compare/result.handlers';
 
 function checkLenghtIfRequired(expectedLength, actualLength) {
   if (isUndefined(expectedLength)) {
@@ -66,12 +21,19 @@ function checkLenghtIfRequired(expectedLength, actualLength) {
   return execNumberExpression(expectedLengthExpression, actualLength);
 }
 
-type TCompareOpts = {
+export type TCompareOpts = {
+  // strings
   stringIncludes?: boolean;
+  stringLowercase?: boolean;
+  stringUppercase?: boolean;
+  // arrays
   everyArrayItem?: boolean;
   allowEmptyArray?: boolean;
+  // typecast
   allowNumberTypecast?: boolean;
+  // separator
   separator?: string;
+  // to ignore
   ignoreProperties?: string | string[];
 };
 
@@ -79,47 +41,35 @@ type TCompareToPattern = ((data: any, patter: any, options?: TCompareOpts) => { 
   toDataIncludes: (arg: string) => string;
   toPatternIncludes: (arg: string) => string;
   toCheckNumber: (arg: string) => string;
+  dataToUppercase: (arg: string) => string;
+  dataToLowercase: (arg: string) => string;
+  patternToLowercase: (arg: string) => string;
+  patternToUppercase: (arg: string) => string;
 };
 
 const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, options?: TCompareOpts) {
   const {
     separator = '->',
     ignoreProperties,
-    stringIncludes,
-    allowNumberTypecast,
     everyArrayItem = true,
     allowEmptyArray = true,
+
+    ...primitivesOpts
   } = options || {};
   const propertiesWhichWillBeIgnored = toArray(ignoreProperties);
   let message = '';
 
   function compare(data, piece, arrayIndex?) {
-    if (isPrimitive(piece) && isPrimitive(data)) {
-      let compareResult;
+    if (isPrimitive(data) && (isPrimitive(piece) || isRegExp(piece))) {
+      const { comparisonMessage, comparisonResult } = comparePrimitives(data, piece, primitivesOpts);
 
-      if (allowNumberTypecast && ((isNumber(data) && isString(piece)) || (isNumber(piece) && isString(data)))) {
-        compareResult = data == piece;
-      } else if (isNumber(data) && isString(piece) && checkThatCheckNumber(piece)) {
-        compareResult = execNumberExpression(removeCheckNumberId(piece).trim(), data);
-      } else if (isString(data) && isString(piece) && checkThatPatternIncludes(piece)) {
-        compareResult = removePatternIncludesId(piece).includes(data);
-      } else if (isString(data) && isString(piece) && checkThatDataIncludes(piece)) {
-        compareResult = data.includes(removeDataIncludesId(piece));
-      } else if (isString(data) && isString(piece) && stringIncludes) {
-        compareResult = data.includes(piece);
-      } else if (isString(data) && isRegExp(piece)) {
-        compareResult = (piece as RegExp).test(data);
-      } else {
-        compareResult = data === piece;
-      }
-
-      if (!compareResult) {
+      if (!comparisonResult) {
         const indexMessage = isNumber(arrayIndex) ? `[${arrayIndex}]` : '';
 
-        message += `${indexMessage}Message: ${getErrorMessage(data, piece)}`;
+        message += `${indexMessage}Message: ${comparisonMessage}`;
       }
 
-      return compareResult;
+      return comparisonResult;
     }
 
     if (propertiesWhichWillBeIgnored.length && isObject(piece)) {
@@ -224,10 +174,14 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
   }
 
   return { result, message };
-} as any;
+} as TCompareToPattern;
 
 compareToPattern.toCheckNumber = toCheckNumber;
 compareToPattern.toDataIncludes = toDataIncludes;
 compareToPattern.toPatternIncludes = toPatternIncludes;
+compareToPattern.dataToUppercase = dataToUppercase;
+compareToPattern.dataToLowercase = dataToLowercase;
+compareToPattern.patternToLowercase = patternToLowercase;
+compareToPattern.patternToUppercase = patternToUppercase;
 
 export { compareToPattern };

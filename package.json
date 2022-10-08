@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utils library",
   "main": "built/index.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "pretty camel case",
     "compare item to pattern",
     "compare",
+    "data comparison",
     "get random data"
   ],
   "author": "Potapov Dmitriy",
