@@ -18,6 +18,8 @@
 - [isRegExp](#isregexp)
 - [isSymbol](#issymbol)
 - [isFunction](#isfunction)
+- [isDate](#isdate)
+- [isArguments](#isarguments)
 - [isAsyncFunction](#isasyncfunction)
 - [isType](#istype)
 - [getType](#gettype)
@@ -209,6 +211,22 @@ isSymbol(undefined); // => boolean
 const { isFunction } = require('sat-utils');
 // any argument
 isFunction(undefined); // => boolean
+```
+
+## isDate
+
+```js
+const { isDate } = require('sat-utils');
+// any argument
+isDate(new Date()); // => boolean
+```
+
+## isArguments
+
+```js
+const { isArguments } = require('sat-utils');
+// any argument
+isArguments(new Date()); // => boolean
 ```
 
 ## isAsyncFunction

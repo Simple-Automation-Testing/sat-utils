@@ -30,6 +30,7 @@ const typesEnum = {
   symbol: '[object Symbol]',
   number: '[object Number]',
   boolean: '[object Boolean]',
+  arguments: '[object Arguments]',
 };
 
 const pritiveTypes = [
@@ -129,6 +130,14 @@ function isRegExp(arg: any) {
   return Object.prototype.toString.call(arg) === typesEnum.regExp;
 }
 
+function isDate(arg: any) {
+  return arg instanceof Date;
+}
+
+function isArguments(arg: any) {
+  return Object.prototype.toString.call(arg) === typesEnum.arguments;
+}
+
 function isType(arg, typeArg: expectedArg) {
   return Object.prototype.toString.call(arg) === typesEnum[typeArg];
 }
@@ -173,6 +182,8 @@ export {
   isFunction,
   isRegExp,
   isAsyncFunction,
+  isDate,
+  isArguments,
   typesEnum,
   expectedArg,
   isType,
