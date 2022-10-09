@@ -3,7 +3,7 @@ import { execNumberExpression } from '../utils';
 import { getRandomString } from '../randomizer';
 
 const { toDataIncludes, checkThatDataIncludes, removeDataIncludesId } = (function () {
-  const checkIncludesId = `${getRandomString(7)}_check_number=`;
+  const checkIncludesId = `${getRandomString(7)}_data_includes=`;
 
   return {
     toDataIncludes: (item: string) => `${checkIncludesId}${item}`,
