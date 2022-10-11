@@ -1,4 +1,4 @@
-import { isNumber, isString, isRegExp } from '../types';
+import { isDate, isNumber, isString, isRegExp } from '../types';
 import { execNumberExpression } from '../utils';
 import { getRandomString } from '../randomizer';
 
@@ -105,27 +105,27 @@ function comparePrimitives(
   if (isPatternToUpper) {
     pattern = (removePatternUppercase(pattern) as string).toUpperCase();
 
-    messagePostfix += ' pattern is uppercased';
+    messagePostfix += 'pattern is uppercased';
   }
 
   if (isPatternToLower) {
     pattern = (removePatternLowercase(pattern) as string).toLowerCase();
 
-    messagePostfix += ' pattern is lowercased';
+    messagePostfix += 'pattern is lowercased';
   }
 
   if (isDataToUpper && areBothStrings) {
     pattern = removeDataUppercase(pattern) as string;
     data = (data as string).toUpperCase();
 
-    messagePostfix += ' data is uppercased';
+    messagePostfix += 'data is uppercased';
   }
 
   if (isDataToLower && areBothStrings) {
     pattern = removeDataLowercase(pattern) as string;
     data = (data as string).toLowerCase();
 
-    messagePostfix += ' data is lowercased';
+    messagePostfix += 'data is lowercased';
   }
 
   if (isDataInclude) {
@@ -140,47 +140,51 @@ function comparePrimitives(
     data = (data as string).toLowerCase();
     pattern = (pattern as string).toLowerCase();
 
-    messagePostfix += ' data and pattern are lowercased';
+    messagePostfix += 'data and pattern are lowercased';
   }
 
   if (areBothStrings && stringUppercase) {
     data = (data as string).toUpperCase();
     pattern = (pattern as string).toUpperCase();
 
-    messagePostfix += ' data and pattern are uppercased';
+    messagePostfix += 'data and pattern are uppercased';
   }
 
-  if (isNumber(data) && isString(pattern) && checkThatCheckNumber(pattern)) {
+  if (isDate(data) && isDate(pattern)) {
+    comparisonResult = +data === +pattern;
+
+    comparisonMessage = `expected: ${pattern}, actual: ${data} `;
+  } else if (isNumber(data) && isString(pattern) && checkThatCheckNumber(pattern)) {
     const expression = removeCheckNumberId(pattern).trim();
 
     comparisonResult = execNumberExpression(expression, data);
 
-    comparisonMessage = `expected: ${data} ${expression}`;
+    comparisonMessage = `expected: ${data} ${expression} `;
   } else if (allowNumberTypecast && ((isNumber(data) && isString(pattern)) || (isNumber(pattern) && isString(data)))) {
     comparisonResult = data == pattern;
 
-    comparisonMessage = `expected: ${pattern}, actual: ${data}`;
+    comparisonMessage = `expected: ${pattern}, actual: ${data} `;
     messagePostfix += ' typecast is allowed';
   } else if (areBothStrings && isPatternInclude) {
     comparisonResult = (pattern as string).includes(data);
 
-    comparisonMessage = `expected: pattern ${pattern} string should include data ${data}`;
+    comparisonMessage = `expected: pattern ${pattern} string should include data ${data} `;
   } else if (areBothStrings && isDataInclude) {
     comparisonResult = (data as string).includes(pattern);
 
-    comparisonMessage = `expected: data ${data} string should include pattern ${pattern}`;
+    comparisonMessage = `expected: data ${data} string should include pattern ${pattern} `;
   } else if (areBothStrings && stringIncludes) {
     comparisonResult = data.includes(pattern);
 
-    comparisonMessage = `expected: data ${data} string should include pattern ${pattern}`;
+    comparisonMessage = `expected: data ${data} string should include pattern ${pattern} `;
   } else if (isString(data) && isRegExp(pattern)) {
     comparisonResult = (pattern as RegExp).test(data);
 
-    comparisonMessage = `expected: data ${data} string should match to regex ${pattern.toString()}`;
+    comparisonMessage = `expected: data ${data} string should match to regex ${pattern.toString()} `;
   } else {
     comparisonResult = data === pattern;
 
-    comparisonMessage = `expected: ${pattern}, actual: ${data}`;
+    comparisonMessage = `expected: ${pattern}, actual: ${data} `;
   }
 
   return { comparisonResult, comparisonMessage: `${comparisonMessage}${messagePostfix}` };

@@ -27,6 +27,8 @@ export type TCompareOpts = {
   stringLowercase?: boolean;
   stringUppercase?: boolean;
   // arrays
+  dataIncldesMembers?: boolean;
+  patternIncludesMember?: boolean;
   everyArrayItem?: boolean;
   allowEmptyArray?: boolean;
   // typecast
@@ -51,8 +53,11 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
   const {
     separator = '->',
     ignoreProperties,
+
     everyArrayItem = true,
     allowEmptyArray = true,
+    patternIncludesMember,
+    dataIncldesMembers,
 
     ...primitivesOpts
   } = options || {};
@@ -96,10 +101,42 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     }
 
     if (isArray(data) && isArray(piece)) {
-      return (
-        checkLenghtIfRequired(piece.length, data.length) &&
-        data.every((dataItem, index) => compare(dataItem, piece[index], index))
-      );
+      if (!dataIncldesMembers && !patternIncludesMember && !checkLenghtIfRequired(piece.length, data.length)) {
+        message += `Message: expected length: ${piece.length}, actual lenght: ${data.length}`;
+        return false;
+      }
+
+      if (dataIncldesMembers && data.lenght < piece.lenght) {
+        message += `Message: data can not include all pattern member because of expected length: ${piece.length}, actual lenght: ${data.length}`;
+        return false;
+      }
+
+      if (patternIncludesMember && data.lenght > piece.lenght) {
+        message += `Message: pattern can not include all pattern member because of expected length: ${piece.length}, actual lenght: ${data.length}`;
+        return false;
+      }
+
+      if (dataIncldesMembers) {
+        const result = piece.every(pieceItem => data.some(dataItem => compare(dataItem, pieceItem)));
+
+        if (!result) {
+          message += 'Message: data does not include all pattern members';
+        }
+
+        return result;
+      }
+
+      if (patternIncludesMember) {
+        const result = data.every(dataItem => piece.some(pieceItem => compare(dataItem, pieceItem)));
+
+        if (!result) {
+          message += 'Message: pattern does not include all data members';
+        }
+
+        return result;
+      }
+
+      return data.every((dataItem, index) => compare(dataItem, piece[index], index));
     }
 
     if (isArray(data) && isObject(piece)) {
