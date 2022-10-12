@@ -28,7 +28,7 @@ export type TCompareOpts = {
   stringUppercase?: boolean;
   // arrays
   dataIncldesMembers?: boolean;
-  patternIncludesMember?: boolean;
+  patternIncludesMembers?: boolean;
   everyArrayItem?: boolean;
   allowEmptyArray?: boolean;
   // typecast
@@ -56,7 +56,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
 
     everyArrayItem = true,
     allowEmptyArray = true,
-    patternIncludesMember,
+    patternIncludesMembers,
     dataIncldesMembers,
 
     ...primitivesOpts
@@ -101,7 +101,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     }
 
     if (isArray(data) && isArray(piece)) {
-      if (!dataIncldesMembers && !patternIncludesMember && !checkLenghtIfRequired(piece.length, data.length)) {
+      if (!dataIncldesMembers && !patternIncludesMembers && !checkLenghtIfRequired(piece.length, data.length)) {
         message += `Message: expected length: ${piece.length}, actual lenght: ${data.length}`;
         return false;
       }
@@ -111,7 +111,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
         return false;
       }
 
-      if (patternIncludesMember && data.lenght > piece.lenght) {
+      if (patternIncludesMembers && data.lenght > piece.lenght) {
         message += `Message: pattern can not include all pattern member because of expected length: ${piece.length}, actual lenght: ${data.length}`;
         return false;
       }
@@ -126,7 +126,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
         return result;
       }
 
-      if (patternIncludesMember) {
+      if (patternIncludesMembers) {
         const result = data.every(dataItem => piece.some(pieceItem => compare(dataItem, pieceItem)));
 
         if (!result) {
