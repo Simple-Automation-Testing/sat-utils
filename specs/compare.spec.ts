@@ -52,9 +52,7 @@ describe('SPEC', function () {
     }
   });
 
-  // dataIncldesMembers?: boolean;
-  // patternIncludesMembers?: boolean;
-  it('[P] compareToPattern dataIncldesMembers', function () {
+  it('[P] compareToPattern dataIncludesMembers', function () {
     {
       const pattern = {
         field: { a: [1, 3, 2] },
@@ -62,7 +60,7 @@ describe('SPEC', function () {
       const data = {
         field: { a: [1, 2, 3, 4] },
       };
-      const { result, message } = compareToPattern(data, pattern, { dataIncldesMembers: true });
+      const { result, message } = compareToPattern(data, pattern, { dataIncludesMembers: true });
       deepStrictEqual(result, true, 'Should be same');
       deepStrictEqual(message, '', 'Message should be empty');
     }
@@ -73,7 +71,7 @@ describe('SPEC', function () {
       const data = {
         field: { a: [1, 2, 3, 4] },
       };
-      const { result, message } = compareToPattern(data, pattern, { dataIncldesMembers: true });
+      const { result, message } = compareToPattern(data, pattern, { dataIncludesMembers: true });
       deepStrictEqual(result, true, 'Should be same');
       deepStrictEqual(message, '', 'Message should be empty');
     }
@@ -84,13 +82,13 @@ describe('SPEC', function () {
       const data = {
         field: { a: [] },
       };
-      const { result, message } = compareToPattern(data, pattern, { dataIncldesMembers: true });
+      const { result, message } = compareToPattern(data, pattern, { dataIncludesMembers: true });
       deepStrictEqual(result, true, 'Should be same');
       deepStrictEqual(message, '', 'Message should be empty');
     }
   });
 
-  it('[N] compareToPattern dataIncldesMembers', function () {
+  it('[N] compareToPattern dataIncludesMembers', function () {
     {
       const pattern = {
         field: { a: [1, 3, 5] },
@@ -98,7 +96,7 @@ describe('SPEC', function () {
       const data = {
         field: { a: [1, 2, 3, 4] },
       };
-      const { result, message } = compareToPattern(data, pattern, { dataIncldesMembers: true });
+      const { result, message } = compareToPattern(data, pattern, { dataIncludesMembers: true });
       deepStrictEqual(result, false, 'Should be same');
       deepStrictEqual(
         message,
@@ -113,7 +111,7 @@ describe('SPEC', function () {
       const data = {
         field: { a: [] },
       };
-      const { result, message } = compareToPattern(data, pattern, { dataIncldesMembers: true });
+      const { result, message } = compareToPattern(data, pattern, { dataIncludesMembers: true });
       deepStrictEqual(result, false, 'Should be same');
       deepStrictEqual(
         message,
@@ -128,7 +126,7 @@ describe('SPEC', function () {
       const data = {
         field: { a: [] },
       };
-      const { result, message } = compareToPattern(data, pattern, { dataIncldesMembers: true });
+      const { result, message } = compareToPattern(data, pattern, { dataIncludesMembers: true });
       deepStrictEqual(result, true, 'Should be same');
       deepStrictEqual(message, '', 'Message should be empty');
     }
@@ -815,6 +813,70 @@ describe('SPEC', function () {
     const { result, message } = compareToPattern(data, pattern, { everyArrayItem: false });
     deepStrictEqual(result, true, 'Should be same');
     deepStrictEqual(message, '', 'Message should be empty');
+  });
+
+  it('[P] compareToPattern check toCompare array dataIncludesMembers', function () {
+    const pattern = {
+      c: { toCompare: [1] },
+    };
+
+    const data = {
+      c: [1, 1, 1],
+    };
+
+    const { result, message } = compareToPattern(data, pattern, { dataIncludesMembers: true });
+    deepStrictEqual(result, true, 'Should be same');
+    deepStrictEqual(message, '', 'Message should be empty');
+  });
+
+  it('[N] compareToPattern check toCompare array dataIncludesMembers', function () {
+    const pattern = {
+      c: { toCompare: [2] },
+    };
+
+    const data = {
+      c: [1, 1, 1],
+    };
+
+    const { result, message } = compareToPattern(data, pattern, { dataIncludesMembers: true });
+    deepStrictEqual(result, false, 'Should be same');
+    deepStrictEqual(
+      message,
+      'c->Message: expected: 2, actual: 1 Message: expected: 2, actual: 1 Message: expected: 2, actual: 1 Message: data does not include all pattern members',
+      'Message should be empty',
+    );
+  });
+
+  it('[P] compareToPattern check toCompare array patternIncludesMembers', function () {
+    const pattern = {
+      c: { toCompare: [2, 2, 2, 3] },
+    };
+
+    const data = {
+      c: [2, 3],
+    };
+
+    const { result, message } = compareToPattern(data, pattern, { patternIncludesMembers: true });
+    deepStrictEqual(result, true, 'Should be same');
+    deepStrictEqual(message, '', 'Message should be empty');
+  });
+
+  it('[N] compareToPattern check toCompare array patternIncludesMembers', function () {
+    const pattern = {
+      c: { toCompare: [2, 2] },
+    };
+
+    const data = {
+      c: [5],
+    };
+
+    const { result, message } = compareToPattern(data, pattern, { patternIncludesMembers: true });
+    deepStrictEqual(result, false, 'Should be same');
+    deepStrictEqual(
+      message,
+      'c->Message: expected: 2, actual: 5 Message: expected: 2, actual: 5 Message: pattern does not include all data members',
+      'Message should be empty',
+    );
   });
 
   it('[P] compareToPattern check toCompare array with ignore indexes', function () {

@@ -27,7 +27,7 @@ export type TCompareOpts = {
   stringLowercase?: boolean;
   stringUppercase?: boolean;
   // arrays
-  dataIncldesMembers?: boolean;
+  dataIncludesMembers?: boolean;
   patternIncludesMembers?: boolean;
   everyArrayItem?: boolean;
   allowEmptyArray?: boolean;
@@ -57,7 +57,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     everyArrayItem = true,
     allowEmptyArray = true,
     patternIncludesMembers,
-    dataIncldesMembers,
+    dataIncludesMembers,
 
     ...primitivesOpts
   } = options || {};
@@ -65,6 +65,53 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
   let message = '';
 
   function compare(data, piece, arrayIndex?) {
+    function compareArrays(dataArray, patternArray) {
+      if (
+        !dataIncludesMembers &&
+        !patternIncludesMembers &&
+        !checkLenghtIfRequired(patternArray.length, dataArray.length)
+      ) {
+        message += `Message: expected length: ${patternArray.length}, actual lenght: ${dataArray.length}`;
+        return false;
+      }
+
+      if (dataIncludesMembers && dataArray.lenght < patternArray.lenght) {
+        message += `Message: data can not include all pattern member because of expected length: ${patternArray.length}, actual lenght: ${dataArray.length}`;
+        return false;
+      }
+
+      if (patternIncludesMembers && dataArray.lenght > patternArray.lenght) {
+        message += `Message: pattern can not include all pattern member because of expected length: ${patternArray.length}, actual lenght: ${dataArray.length}`;
+        return false;
+      }
+
+      if (dataIncludesMembers) {
+        const result = patternArray.every(patternArrayItem =>
+          dataArray.some(dataArrayItem => compare(dataArrayItem, patternArrayItem)),
+        );
+
+        if (!result) {
+          message += 'Message: data does not include all pattern members';
+        }
+
+        return result;
+      }
+
+      if (patternIncludesMembers) {
+        const result = dataArray.every(dataArrayItem =>
+          patternArray.some(patternArrayItem => compare(dataArrayItem, patternArrayItem)),
+        );
+
+        if (!result) {
+          message += 'Message: pattern does not include all data members';
+        }
+
+        return result;
+      }
+
+      return dataArray.every((dataArrayItem, index) => compare(dataArrayItem, patternArray[index], index));
+    }
+
     if (isPrimitive(data) && (isPrimitive(piece) || isRegExp(piece))) {
       const { comparisonMessage, comparisonResult } = comparePrimitives(data, piece, primitivesOpts);
 
@@ -101,42 +148,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     }
 
     if (isArray(data) && isArray(piece)) {
-      if (!dataIncldesMembers && !patternIncludesMembers && !checkLenghtIfRequired(piece.length, data.length)) {
-        message += `Message: expected length: ${piece.length}, actual lenght: ${data.length}`;
-        return false;
-      }
-
-      if (dataIncldesMembers && data.lenght < piece.lenght) {
-        message += `Message: data can not include all pattern member because of expected length: ${piece.length}, actual lenght: ${data.length}`;
-        return false;
-      }
-
-      if (patternIncludesMembers && data.lenght > piece.lenght) {
-        message += `Message: pattern can not include all pattern member because of expected length: ${piece.length}, actual lenght: ${data.length}`;
-        return false;
-      }
-
-      if (dataIncldesMembers) {
-        const result = piece.every(pieceItem => data.some(dataItem => compare(dataItem, pieceItem)));
-
-        if (!result) {
-          message += 'Message: data does not include all pattern members';
-        }
-
-        return result;
-      }
-
-      if (patternIncludesMembers) {
-        const result = data.every(dataItem => piece.some(pieceItem => compare(dataItem, pieceItem)));
-
-        if (!result) {
-          message += 'Message: pattern does not include all data members';
-        }
-
-        return result;
-      }
-
-      return data.every((dataItem, index) => compare(dataItem, piece[index], index));
+      return compareArrays(data, piece);
     }
 
     if (isArray(data) && isObject(piece)) {
@@ -152,22 +164,24 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
       }
 
       if (checkLenghtIfRequired(lengthToCheck, data.length)) {
-        return data
-          .filter((_item, index) => {
-            if (isNumber(ignoreIndexes) || isArray(ignoreIndexes)) {
-              const ignore = toArray(ignoreIndexes);
-              return !ignore.includes(index);
-            }
-            return true;
-          })
-          [everyArrayItem ? 'every' : 'some']((dataItem, index) => {
-            if (isPrimitive(toCompare) && safeHasOwnPropery(piece, 'toCompare')) {
-              return compare(dataItem, toCompare, index);
-            } else if (isArray(toCompare)) {
-              return compare(dataItem, toCompare[index], index);
-            }
-            return compare(dataItem, checkDataPiece, index);
-          });
+        const dataWithoutIndexesThatShouldBeIgnored = data.filter((_item, index) => {
+          if (isNumber(ignoreIndexes) || isArray(ignoreIndexes)) {
+            const ignore = toArray(ignoreIndexes);
+            return !ignore.includes(index);
+          }
+          return true;
+        });
+
+        if (isArray(toCompare)) {
+          return compareArrays(dataWithoutIndexesThatShouldBeIgnored, toCompare);
+        }
+
+        return dataWithoutIndexesThatShouldBeIgnored[everyArrayItem ? 'every' : 'some']((dataItem, index) => {
+          if (isPrimitive(toCompare) && safeHasOwnPropery(piece, 'toCompare')) {
+            return compare(dataItem, toCompare, index);
+          }
+          return compare(dataItem, checkDataPiece, index);
+        });
       } else {
         message += `Message: expected length: ${lengthToCheck}, actual lenght: ${data.length}`;
         return false;
