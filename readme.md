@@ -42,6 +42,7 @@
 - [chunkArr](#chunkarr)
 - [millisecondsToMinutes](#millisecondstominutes)
 - [getRandomSubString](#getrandomsubstring)
+- [lengthToIndexesArray](#lengthatoindexesarray)
 
 ## waitForCondition
 
@@ -568,4 +569,20 @@ millisecondsToMinutes(100_000); // 1:40
 const { getRandomSubString } = require('sat-utils');
 
 getRandomSubString('abcdefgj', 3); // fgf
+```
+
+## millisecondsToMinutes
+
+```js
+const { millisecondsToMinutes } = require('sat-utils');
+
+millisecondsToMinutes(100_000); // 1:40
+```
+
+## lengthToIndexesArray
+
+```js
+const { lengthToIndexesArray } = require('sat-utils');
+
+lengthToIndexesArray(3); // [0,1,2]
 ```

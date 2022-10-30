@@ -165,7 +165,7 @@ function execNumberExpression(expression: string, numberArg: number) {
   }
 }
 
-function camelize(str) {
+function camelize(str): string {
   if (!isString(str)) {
     throw new TypeError(`camelize(): first argument should be a string, current arg is ${getType(str)}`);
   }
@@ -186,7 +186,7 @@ function safeJSONstringify(data, inline = false, returnIfError = '') {
   }
 }
 
-function safeHasOwnPropery(item: any, key: string) {
+function safeHasOwnPropery(item: any, key: string): boolean {
   if (!isString(key)) {
     throw new TypeError(`safeHasOwnPropery(): second argument should be a string, current arg is ${getType(key)}`);
   }
@@ -198,14 +198,22 @@ function safeHasOwnPropery(item: any, key: string) {
   return Object.prototype.hasOwnProperty.call(item, key);
 }
 
+function lengthToIndexesArray(length: number): number[] {
+  if (!isNumber(length)) {
+    throw new TypeError(`lengthToIndexes(): first argument should be a number, current arg is ${getType(length)}`);
+  }
+  return Array.from({ length }, (_item, index) => index);
+}
+
 export {
   toArray,
   prettifyCamelCase,
   execNumberExpression,
   camelize,
   safeJSONstringify,
-  shuffleArr,
   shuffleArrMutable,
   safeHasOwnPropery,
+  shuffleArr,
   chunkArr,
+  lengthToIndexesArray,
 };
