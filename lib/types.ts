@@ -31,6 +31,7 @@ const typesEnum = {
   number: '[object Number]',
   boolean: '[object Boolean]',
   arguments: '[object Arguments]',
+  buffer: '[object Uint8Array]',
 };
 
 const pritiveTypes = [
@@ -114,6 +115,10 @@ function isBoolean(arg: any) {
   return Object.prototype.toString.call(arg) === typesEnum.boolean;
 }
 
+function isBuffer(arg: any) {
+  return Object.prototype.toString.call(arg) === typesEnum.buffer;
+}
+
 function isFunction(arg: any) {
   return Object.prototype.toString.call(arg) === typesEnum.function;
 }
@@ -183,6 +188,7 @@ export {
   isRegExp,
   isAsyncFunction,
   isDate,
+  isBuffer,
   isArguments,
   typesEnum,
   expectedArg,

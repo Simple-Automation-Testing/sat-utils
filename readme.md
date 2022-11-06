@@ -19,6 +19,7 @@
 - [isSymbol](#issymbol)
 - [isFunction](#isfunction)
 - [isDate](#isdate)
+- [isBuffer](#isbuffer)
 - [isArguments](#isarguments)
 - [isAsyncFunction](#isasyncfunction)
 - [isType](#istype)
@@ -42,7 +43,7 @@
 - [chunkArr](#chunkarr)
 - [millisecondsToMinutes](#millisecondstominutes)
 - [getRandomSubString](#getrandomsubstring)
-- [lengthToIndexesArray](#lengthatoindexesarray)
+- [lengthToIndexesArray](#lengthtoindexesarray)
 
 ## waitForCondition
 
@@ -188,6 +189,14 @@ isNumber(undefined); // => boolean
 const { isPromise } = require('sat-utils');
 // any argument
 isPromise(undefined); // => boolean
+```
+
+## isBuffer
+
+```js
+const { isBuffer } = require('sat-utils');
+// any argument
+isBuffer(undefined); // => boolean
 ```
 
 ## isBoolean
