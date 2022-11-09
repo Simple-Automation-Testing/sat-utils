@@ -44,6 +44,7 @@
 - [millisecondsToMinutes](#millisecondstominutes)
 - [getRandomSubString](#getrandomsubstring)
 - [lengthToIndexesArray](#lengthtoindexesarray)
+- [getRandomNumberFromRange](#getrandomnumberfromrange)
 
 ## waitForCondition
 
@@ -594,4 +595,12 @@ millisecondsToMinutes(100_000); // 1:40
 const { lengthToIndexesArray } = require('sat-utils');
 
 lengthToIndexesArray(3); // [0,1,2]
+```
+
+## getRandomNumberFromRange
+
+```js
+const { getRandomNumberFromRange } = require('sat-utils');
+
+getRandomNumberFromRange(1, 10); // 9
 ```

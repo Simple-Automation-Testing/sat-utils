@@ -205,6 +205,22 @@ function lengthToIndexesArray(length: number): number[] {
   return Array.from({ length }, (_item, index) => index);
 }
 
+function getRandomNumberFromRange(min: number, max: number): number {
+  if (!isNumber(min)) {
+    throw new TypeError(
+      `getRandomNumberFromRange(): first argument should be a number, current arg is ${getType(min)}`,
+    );
+  }
+
+  if (!isNumber(max)) {
+    throw new TypeError(
+      `getRandomNumberFromRange(): second argument should be a number, current arg is ${getType(min)}`,
+    );
+  }
+
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 export {
   toArray,
   prettifyCamelCase,
@@ -216,4 +232,5 @@ export {
   shuffleArr,
   chunkArr,
   lengthToIndexesArray,
+  getRandomNumberFromRange,
 };
