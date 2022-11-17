@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "Utils library",
   "main": "built/index.js",
   "scripts": {
@@ -14,17 +14,17 @@
     "url": "git+https://github.com/Simple-Automation-Testing/sat-utils.git"
   },
   "keywords": [
-    "utils",
+    "asyncRepeat",
+    "asyncMap",
+    "asyncForEach",
+    "async",
     "types checkers",
-    "wait for conditions",
-    "async wait for conditions",
     "getRandomArrayItem",
     "getRandomString",
     "waitForCondition",
     "async waitForCondition",
     "async waiter",
     "awaiter",
-    "pretty camel case",
     "compare item to pattern",
     "compare",
     "data comparison",

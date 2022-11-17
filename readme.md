@@ -45,6 +45,9 @@
 - [getRandomSubString](#getrandomsubstring)
 - [lengthToIndexesArray](#lengthtoindexesarray)
 - [getRandomNumberFromRange](#getrandomnumberfromrange)
+- [asyncRepeat](#asyncrepeat)
+- [asyncMap](#asyncmap)
+- [asyncForEach](#asyncforeach)
 
 ## waitForCondition
 
@@ -603,4 +606,30 @@ lengthToIndexesArray(3); // [0,1,2]
 const { getRandomNumberFromRange } = require('sat-utils');
 
 getRandomNumberFromRange(1, 10); // 9
+```
+
+## asyncRepeat
+
+```js
+const { asyncRepeat } = require('sat-utils');
+
+
+asyncRepeat(5, async () => {/* async logic will be executed 5 times */});
+```
+
+## asyncMap
+```js
+const { asyncMap } = require('sat-utils');
+
+
+asyncMap([1,2,3], async (item, index, arr) =>  item + index).then(console.log);
+```
+
+## asyncForEach
+
+```js
+const { asyncForEach } = require('sat-utils');
+
+
+asyncForEach([1,2,3], async (item, index, arr) => console.log(item, index, arr))
 ```
