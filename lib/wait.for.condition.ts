@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/cognitive-complexity */
-import { isNumber, isString, isFunction, isAsyncFunction } from './types';
+import { isObject, getType, isNumber, isString, isFunction, isAsyncFunction } from './types';
 
 async function sleep(millisecond: number = 5 * 1000): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, millisecond));
@@ -13,14 +13,46 @@ type IWaiterOpts = {
   stopIfNoError?: boolean;
 
   message?: string | ((timeout: number, callbackError?: any) => Promise<string> | string);
-  analyseResult?: (...args: any[]) => boolean | Promise<boolean>;
   waiterError?: new (...args: any[]) => any;
+  analyseResult?: (...args: any[]) => boolean | Promise<boolean>;
+  before?: () => Promise<void> | any;
+  after?: () => Promise<void> | any;
   callEveryCycle?: () => Promise<void> | any;
 };
 
 const defaultOptions = {};
 
+/**
+ * @example
+ * const {waitForCondition} = require('sat-utils');
+ *
+ * waitResult();
+ * async function waitResult() {
+ *  await waitForCondition(async () => new Promise(res => setTimeout(res, 2500)), {
+ *    timeout: 5000,
+ *    interval: 500
+ *  })
+ * }
+ *
+ * @param {Function} callback
+ * @param {!Object} options execution options
+ * @param {number} [options.timeout] execution time
+ * @param {number} [options.interval] call interval
+ * @param {boolean} [options.dontThrow] if during waiting cylce result was not achived - last call back execution result will be returned as a waiting cycle result
+ * @param {boolean} [options.falseIfError] if call back throws an error - counted as negative result
+ * @param {boolean} [options.stopIfNoError] if callback did not throw error - counted as successful result
+ * @param {Error|new (...args: any[]) => any} [options.waiterError] error which will be thrown if result will not achieved
+ * @param {Function} [options.analyseResult] custom analyser of the call back result
+ * @param {Function} [options.before] call before waiting cycle
+ * @param {Function} [options.after] call after waiting cycle, even if result was not achived, if result achived - also will be executed
+ * @param {Function} [options.callEveryCycle] call every time after main call back execution if result was not achived
+ * @returns {any} any result that call back will return
+ */
 async function waitForCondition(callback, options: IWaiterOpts = {}) {
+  if (!isObject(options)) {
+    throw new TypeError(`waitForCondition(): second argument should be an object, current arg is ${getType(options)}`);
+  }
+
   let callbackError;
   const mergedOpts = { ...defaultOptions, ...options };
   const {
@@ -32,19 +64,73 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
     falseIfError = true,
     stopIfNoError,
     waiterError = Error,
-    callEveryCycle,
+    callEveryCycle = () => {},
+    before = () => {},
+    after = () => {},
   } = mergedOpts;
 
+  if (!isFunction(callback) && !isAsyncFunction(callback)) {
+    throw new TypeError(
+      `waitForCondition(): first argument should be a function, async function or arrow function current arg is ${getType(
+        callback,
+      )}`,
+    );
+  }
+
   if (!isNumber(interval)) {
-    throw new TypeError('interval should be a number');
+    throw new TypeError(
+      `waitForCondition(): second argument property "interval" should be a number, current arg is ${getType(interval)}`,
+    );
+  }
+
+  if (!isNumber(interval)) {
+    throw new TypeError(
+      `waitForCondition(): second argument property "interval" should be a number, current arg is ${getType(interval)}`,
+    );
   }
 
   if (!isNumber(timeout)) {
-    throw new TypeError('timeout should be a number');
+    throw new TypeError(
+      `waitForCondition(): second argument property "timeout" should be a number, current arg is ${getType(timeout)}`,
+    );
+  }
+
+  if (!isFunction(before) && !isAsyncFunction(before)) {
+    throw new TypeError(
+      `waitForCondition(): second argument property "before" should be a function, async function or arrow function, current arg is ${getType(
+        before,
+      )}`,
+    );
+  }
+
+  if (!isFunction(after) && !isAsyncFunction(after)) {
+    throw new TypeError(
+      `waitForCondition(): second argument property "after" should be a function, async function or arrow function, current arg is ${getType(
+        before,
+      )}`,
+    );
+  }
+
+  if (!isFunction(callEveryCycle) && !isAsyncFunction(callEveryCycle)) {
+    throw new TypeError(
+      `waitForCondition(): second argument property "callEveryCycle" should be a function, async function or arrow function, current arg is ${getType(
+        callEveryCycle,
+      )}`,
+    );
+  }
+
+  if (analyseResult && !isFunction(analyseResult) && !isAsyncFunction(analyseResult)) {
+    throw new TypeError(
+      `waitForCondition(): second argument property "analyseResult" should be a function, async function or arrow function, current arg is ${getType(
+        analyseResult,
+      )}`,
+    );
   }
 
   const start = Date.now();
   let result;
+
+  await before();
 
   while (Date.now() - start < timeout) {
     if (falseIfError) {
@@ -61,19 +147,22 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
     }
 
     if (analyseResult && (await analyseResult(result))) {
+      await after();
       return result;
     }
 
     if (result) {
+      await after();
+
       return result;
     }
 
-    if (callEveryCycle) {
-      await callEveryCycle();
-    }
+    await callEveryCycle();
 
     await sleep(interval);
   }
+
+  await after();
 
   if (dontThrow) {
     return result;

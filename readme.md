@@ -48,6 +48,7 @@
 - [asyncRepeat](#asyncrepeat)
 - [asyncMap](#asyncmap)
 - [asyncForEach](#asyncforeach)
+- [asyncReduce](#asyncReduce)
 
 ## waitForCondition
 
@@ -613,16 +614,17 @@ getRandomNumberFromRange(1, 10); // 9
 ```js
 const { asyncRepeat } = require('sat-utils');
 
-
-asyncRepeat(5, async () => {/* async logic will be executed 5 times */});
+asyncRepeat(5, async () => {
+  /* async logic will be executed 5 times */
+});
 ```
 
 ## asyncMap
+
 ```js
 const { asyncMap } = require('sat-utils');
 
-
-asyncMap([1,2,3], async (item, index, arr) =>  item + index).then(console.log);
+asyncMap([1, 2, 3], async (item, index, arr) => item + index).then(console.log);
 ```
 
 ## asyncForEach
@@ -630,6 +632,13 @@ asyncMap([1,2,3], async (item, index, arr) =>  item + index).then(console.log);
 ```js
 const { asyncForEach } = require('sat-utils');
 
+asyncForEach([1, 2, 3], async (item, index, arr) => console.log(item, index, arr));
+```
 
-asyncForEach([1,2,3], async (item, index, arr) => console.log(item, index, arr))
+## asyncReduce
+
+```js
+const { asyncReduce } = require('sat-utils');
+
+asyncReduce([1, 2, 3], (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25)), 1).then(console.log); // 7
 ```

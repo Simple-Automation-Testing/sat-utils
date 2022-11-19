@@ -54,6 +54,35 @@ async function asyncMap<T = unknown, R = unknown>(
   return result;
 }
 
+async function asyncReduce<T = unknown, R = unknown>(
+  ctxArray: T[],
+  callBack: (accum: R, item: T, index: number, arr: T[]) => Promise<R | unknown>,
+  ...rest: unknown[] | R[]
+): Promise<R | unknown> {
+  if (!isArray(ctxArray)) {
+    throw new TypeError(`asyncMap(): first argument should be an array, current arg is ${getType(ctxArray)}`);
+  }
+
+  if (!isAsyncFunction(callBack) && !isFunction(callBack)) {
+    throw new TypeError(
+      `asyncMap(): second argument should be a function or async function, current arg is ${getType(callBack)}`,
+    );
+  }
+
+  const [_first, ...restCtxArr] = ctxArray;
+
+  let accumHolder: unknown = rest.length === 1 ? rest[0] : ctxArray[0];
+  const executionArr = rest.length === 1 ? ctxArray : restCtxArr;
+  const indexShift = rest.length === 1 ? 0 : 1;
+
+  for (const [index, item] of executionArr.entries()) {
+    // if accum does not exist we start from second item (first goes as an accum) so start index should be index + 1
+    accumHolder = await Promise.resolve(callBack(accumHolder as any, item, index + indexShift, ctxArray));
+  }
+
+  return accumHolder as any;
+}
+
 async function asyncForEach<T = unknown>(
   ctxArray: T[],
   callBack: (item: T, index: number, arr: T[]) => Promise<void>,
@@ -73,4 +102,4 @@ async function asyncForEach<T = unknown>(
   }
 }
 
-export { asyncRepeat, asyncMap, asyncForEach };
+export { asyncRepeat, asyncMap, asyncForEach, asyncReduce };

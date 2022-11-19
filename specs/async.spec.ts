@@ -1,8 +1,37 @@
 /* eslint-disable unicorn/consistent-function-scoping, unicorn/no-useless-undefined*/
 import { deepStrictEqual } from 'assert';
-import { asyncRepeat, asyncMap, asyncForEach } from '../lib';
+import { asyncRepeat, asyncMap, asyncForEach, asyncReduce } from '../lib';
 
-describe('formatter', () => {
+describe('async', () => {
+  it('[P] asyncReduce', async () => {
+    {
+      const arr = [1, 2, 3];
+      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25));
+      const res = await asyncReduce(arr, cb);
+      deepStrictEqual(res, 6);
+    }
+    {
+      const arr = [1, 2, 3];
+      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25));
+      const res = await asyncReduce(arr, cb, 0);
+      deepStrictEqual(res, 6);
+    }
+    {
+      const arr = [1, 2, 3];
+      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25));
+      const res = await asyncReduce(arr, cb, 1);
+      deepStrictEqual(res, 7);
+    }
+    {
+      const res = await asyncReduce(
+        [1, 2, 3],
+        async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25)),
+        1,
+      );
+      deepStrictEqual(res, 7);
+    }
+  });
+
   it('[P] asyncRepeat', async () => {
     {
       let i = 0;
