@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/cognitive-complexity, unicorn/no-object-as-default-parameter*/
 import { isNumber, getType, isString, isBoolean, isUndefined, isNull, isObject } from './types';
 
-function toArray(anyArugment) {
+function toArray<T>(anyArugment: T | T[]): T[] {
   if (anyArugment === undefined) {
     return [];
   }
@@ -9,7 +9,7 @@ function toArray(anyArugment) {
   return Array.isArray(anyArugment) ? Array.from(anyArugment) : [anyArugment];
 }
 
-function chunkArr(arr: any[], chunksAmount: number, followIndex: boolean = false) {
+function chunkArr<T>(arr: T[], chunksAmount: number, followIndex: boolean = false): Array<T[]> {
   if (!Array.isArray(arr)) {
     throw new TypeError(`chunkArr(): first argument should be an array, current arg is ${getType(arr)}`);
   }
@@ -53,7 +53,7 @@ function chunkArr(arr: any[], chunksAmount: number, followIndex: boolean = false
   }
 }
 
-function shuffleArrMutable(arr) {
+function shuffleArrMutable<T>(arr: T[]): void {
   if (!Array.isArray(arr)) {
     throw new TypeError(`shuffleArrMutable(): first argument should be an array, current arg is ${getType(arr)}`);
   }
@@ -63,7 +63,7 @@ function shuffleArrMutable(arr) {
   }
 }
 
-function shuffleArr(arr) {
+function shuffleArr<T>(arr: T[]): T[] {
   if (!Array.isArray(arr)) {
     throw new TypeError(`shuffleArr(): first argument should be an array, current arg is ${getType(arr)}`);
   }

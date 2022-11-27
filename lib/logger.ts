@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const listOfColors = {
+  '': '',
   Reset: '\u001B[0m',
   Bright: '\u001B[1m',
   Dim: '\u001B[2m',
@@ -85,15 +86,71 @@ function createLogger() {
     setLogLevel(level: 'ERROR' | 'WARN' | 'INFO' | 'VERBOSE' | 'MUTE' | string) {
       this.logLevel = level;
     },
-    addCustomLevel(
-      loggerDescription,
+    /**
+     * @param {string} loggerDescription description of the new log level
+     * @param {string} logLevel log level id
+     * @param {string} description description that will be used for output
+     * @param {string} consoleOutput outputl method/level
+     * @param {string} descriptionColor description section color
+     * @param {string} messageColor message section color
+     * @returns {!object} logger
+     */
+    addCustomLevel<T extends PropertyKey = string>(
+      loggerDescription: T,
       logLevel: string,
       description: string,
-      consoleOutput = 'log',
-      descriptionColor = 'FgWhite',
-      messageColor,
+      consoleOutput: 'log' | 'info' | 'error' | 'warn' = 'log',
+      descriptionColor:
+        | 'Reset'
+        | 'Bright'
+        | 'Dim'
+        | 'Underscore'
+        | 'Blink'
+        | 'Reverse'
+        | 'Hidden'
+        | 'FgBlack'
+        | 'FgRed'
+        | 'FgGreen'
+        | 'FgYellow'
+        | 'FgBlue'
+        | 'FgMagenta'
+        | 'FgCyan'
+        | 'FgWhite'
+        | 'BgBlack'
+        | 'BgRed'
+        | 'BgGreen'
+        | 'BgYellow'
+        | 'BgBlue'
+        | 'BgMagenta'
+        | 'BgCyan'
+        | 'BgWhite' = 'FgWhite',
+      messageColor:
+        | 'Reset'
+        | 'Bright'
+        | 'Dim'
+        | 'Underscore'
+        | 'Blink'
+        | 'Reverse'
+        | 'Hidden'
+        | 'FgBlack'
+        | 'FgRed'
+        | 'FgGreen'
+        | 'FgYellow'
+        | 'FgBlue'
+        | 'FgMagenta'
+        | 'FgCyan'
+        | 'FgWhite'
+        | 'BgBlack'
+        | 'BgRed'
+        | 'BgGreen'
+        | 'BgYellow'
+        | 'BgBlue'
+        | 'BgMagenta'
+        | 'BgCyan'
+        | 'BgWhite'
+        | '' = '',
     ) {
-      logger[loggerDescription] = (message, ...args) => {
+      logger[loggerDescription as string] = (message, ...args) => {
         if (logger.logLevel === logLevel) {
           const descriptionPart = `${listOfColors[descriptionColor]}${description}${listOfColors.Reset}`;
           const messagePart = messageColor ? `${listOfColors[messageColor]}${message}${listOfColors.Reset}` : message;
@@ -101,6 +158,8 @@ function createLogger() {
           console[consoleOutput](`${descriptionPart}`, messagePart, ...args);
         }
       };
+
+      return logger as typeof logger & { [K in T]: (...args: any[]) => void };
     },
   };
 

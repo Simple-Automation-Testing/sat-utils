@@ -1,8 +1,33 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { deepStrictEqual } from 'assert';
-import { getRandomString, execNumberExpression, waitForCondition, prettifyCamelCase, safeHasOwnPropery } from '../lib';
+import {
+  getRandomString,
+  getRandomArrayItem,
+  execNumberExpression,
+  waitForCondition,
+  prettifyCamelCase,
+  safeHasOwnPropery,
+} from '../lib';
 
 describe('SPEC', function () {
+  it('[P] getRandomArrayItem', function () {
+    const arr = [1, 2, 3, 4];
+    {
+      const res = getRandomArrayItem(arr, 2);
+      deepStrictEqual(
+        res.every(i => typeof i === 'number'),
+        true,
+      );
+      deepStrictEqual(res.length, 2);
+      deepStrictEqual(arr, [1, 2, 3, 4]);
+    }
+    {
+      const res = getRandomArrayItem(arr);
+      deepStrictEqual(typeof res === 'number', true);
+      deepStrictEqual(arr, [1, 2, 3, 4]);
+    }
+  });
+
   it('[P] safeHasOwnPropery', function () {
     deepStrictEqual(safeHasOwnPropery({ a: 1 }, 'a'), true);
     deepStrictEqual(safeHasOwnPropery({ a: 1 }, 'b'), false);

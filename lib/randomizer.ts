@@ -1,4 +1,6 @@
-import { isObject, isNumber, isString, getType } from './types';
+/* eslint-disable unicorn/no-object-as-default-parameter, unicorn/consistent-function-scoping*/
+import { isObject, isNumber, isString, getType, isUndefined } from './types';
+import { shuffleArr } from './utils';
 
 function getRandomSubString(str: string, length: number) {
   if (!isString(str)) {
@@ -21,7 +23,6 @@ type IOptions = {
   lettersNumbersAndSymbols?: boolean;
   lowerCase?: boolean;
 };
-
 function getRandomString(length, opts: IOptions = { letters: true }) {
   const allowedOptions = new Set(['numbers', 'letters', 'lettersAndNumbers', 'symbols', 'lettersNumbersAndSymbols']);
 
@@ -78,7 +79,14 @@ function getRandomString(length, opts: IOptions = { letters: true }) {
   return lowerCase ? randomStr.toLowerCase() : randomStr;
 }
 
-function getRandomArrayItem(itemsList: any[], quaintity = 1) {
+function getRandomArrayItem<T>(t: T[]): T;
+
+function getRandomArrayItem<T>(t: T[], quaintity: number): T[];
+
+function getRandomArrayItem<T>(itemsList: T[], quaintity?: number): T | T[] {
+  if (isUndefined(quaintity)) {
+    quaintity = 1;
+  }
   if (!Array.isArray(itemsList)) {
     throw new TypeError(
       `getRandomArrayItem(): first argument should be an array, current arg is ${getType(itemsList)}`,
@@ -88,15 +96,18 @@ function getRandomArrayItem(itemsList: any[], quaintity = 1) {
   if (!itemsList.length) {
     throw new RangeError(`getRandomArrayItem(): given array is empty`);
   }
+
   if (quaintity > itemsList.length) {
     throw new RangeError(
       `getRandomArrayItem(): more elements taken: ${quaintity} than exist within the given array. Array length ${itemsList.length}`,
     );
   }
 
-  return quaintity > 1
-    ? [...itemsList].sort(() => 0.5 - Math.random()).slice(0, quaintity)
-    : itemsList[Math.floor(Math.random() * itemsList.length)];
+  if (quaintity === 1) {
+    return itemsList[Math.floor(Math.random() * itemsList.length)] as T;
+  }
+
+  return shuffleArr(itemsList).slice(0, quaintity) as T[];
 }
 
 export { getRandomString, getRandomSubString, getRandomArrayItem };
