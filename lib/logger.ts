@@ -54,8 +54,72 @@ const colors = {
   blue: (text: string) => wrapInBlue(text),
 };
 
-function createLogger() {
-  const logger = {
+type Tlogger = {
+  logLevel: string;
+  log(...args: any[]): void;
+  info(...args: any[]): void;
+  warn(...args: any[]): void;
+  error(...args: any[]): void;
+  setLogLevel(level: 'ERROR' | 'WARN' | 'INFO' | 'VERBOSE' | 'MUTE' | string): void;
+  addCustomLevel<T extends PropertyKey = string>(
+    loggerDescription: T,
+    logLevel: string,
+    description: string,
+    consoleOutput?: 'log' | 'info' | 'error' | 'warn',
+    descriptionColor?:
+      | 'Reset'
+      | 'Bright'
+      | 'Dim'
+      | 'Underscore'
+      | 'Blink'
+      | 'Reverse'
+      | 'Hidden'
+      | 'FgBlack'
+      | 'FgRed'
+      | 'FgGreen'
+      | 'FgYellow'
+      | 'FgBlue'
+      | 'FgMagenta'
+      | 'FgCyan'
+      | 'FgWhite'
+      | 'BgBlack'
+      | 'BgRed'
+      | 'BgGreen'
+      | 'BgYellow'
+      | 'BgBlue'
+      | 'BgMagenta'
+      | 'BgCyan'
+      | 'BgWhite',
+    messageColor?:
+      | 'Reset'
+      | 'Bright'
+      | 'Dim'
+      | 'Underscore'
+      | 'Blink'
+      | 'Reverse'
+      | 'Hidden'
+      | 'FgBlack'
+      | 'FgRed'
+      | 'FgGreen'
+      | 'FgYellow'
+      | 'FgBlue'
+      | 'FgMagenta'
+      | 'FgCyan'
+      | 'FgWhite'
+      | 'BgBlack'
+      | 'BgRed'
+      | 'BgGreen'
+      | 'BgYellow'
+      | 'BgBlue'
+      | 'BgMagenta'
+      | 'BgCyan'
+      | 'BgWhite'
+      | '',
+  ): Tlogger & { [K in T]: (...args: any[]) => void };
+};
+
+function createLogger(): Tlogger {
+  const logger: Tlogger = {
     // 'ERROR' | 'WARN' | 'INFO' | 'VERBOSE';
     logLevel: 'ERROR',
     log(...args) {
@@ -99,57 +163,10 @@ function createLogger() {
       loggerDescription: T,
       logLevel: string,
       description: string,
-      consoleOutput: 'log' | 'info' | 'error' | 'warn' = 'log',
-      descriptionColor:
-        | 'Reset'
-        | 'Bright'
-        | 'Dim'
-        | 'Underscore'
-        | 'Blink'
-        | 'Reverse'
-        | 'Hidden'
-        | 'FgBlack'
-        | 'FgRed'
-        | 'FgGreen'
-        | 'FgYellow'
-        | 'FgBlue'
-        | 'FgMagenta'
-        | 'FgCyan'
-        | 'FgWhite'
-        | 'BgBlack'
-        | 'BgRed'
-        | 'BgGreen'
-        | 'BgYellow'
-        | 'BgBlue'
-        | 'BgMagenta'
-        | 'BgCyan'
-        | 'BgWhite' = 'FgWhite',
-      messageColor:
-        | 'Reset'
-        | 'Bright'
-        | 'Dim'
-        | 'Underscore'
-        | 'Blink'
-        | 'Reverse'
-        | 'Hidden'
-        | 'FgBlack'
-        | 'FgRed'
-        | 'FgGreen'
-        | 'FgYellow'
-        | 'FgBlue'
-        | 'FgMagenta'
-        | 'FgCyan'
-        | 'FgWhite'
-        | 'BgBlack'
-        | 'BgRed'
-        | 'BgGreen'
-        | 'BgYellow'
-        | 'BgBlue'
-        | 'BgMagenta'
-        | 'BgCyan'
-        | 'BgWhite'
-        | '' = '',
-    ) {
+      consoleOutput = 'log',
+      descriptionColor = 'FgWhite',
+      messageColor = '',
+    ): Tlogger & { [K in T]: (...args: any[]) => void } {
       logger[loggerDescription as string] = (message, ...args) => {
         if (logger.logLevel === logLevel) {
           const descriptionPart = `${listOfColors[descriptionColor]}${description}${listOfColors.Reset}`;
@@ -159,7 +176,7 @@ function createLogger() {
         }
       };
 
-      return logger as typeof logger & { [K in T]: (...args: any[]) => void };
+      return logger as Tlogger & { [K in T]: (...args: any[]) => void };
     },
   };
 
