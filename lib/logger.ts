@@ -54,7 +54,7 @@ const colors = {
   blue: (text: string) => wrapInBlue(text),
 };
 
-type Tlogger = {
+export type Tlogger = {
   logLevel: string;
   log(...args: any[]): void;
   info(...args: any[]): void;

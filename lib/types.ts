@@ -157,7 +157,7 @@ function canBeProxed(arg) {
 }
 
 function isEmptyArray(arg: any) {
-  return isArray(arg) && Boolean(arg.length);
+  return isArray(arg) && !arg.length;
 }
 
 function isNotEmptyArray(arg: any) {

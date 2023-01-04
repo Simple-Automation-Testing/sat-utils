@@ -1,6 +1,6 @@
 {
   "name": "sat-utils",
-  "version": "1.5.2",
+  "version": "1.5.4",
   "description": "Utils library",
   "main": "built/index.js",
   "scripts": {
