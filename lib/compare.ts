@@ -12,7 +12,7 @@ import {
   comparePrimitives,
 } from './compare/result.handlers';
 
-function checkLenghtIfRequired(expectedLength, actualLength) {
+function checkLengthIfRequired(expectedLength, actualLength) {
   if (isUndefined(expectedLength)) {
     return true;
   }
@@ -69,7 +69,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
       if (
         !dataIncludesMembers &&
         !patternIncludesMembers &&
-        !checkLenghtIfRequired(patternArray.length, dataArray.length)
+        !checkLengthIfRequired(patternArray.length, dataArray.length)
       ) {
         message += `Message: expected length: ${patternArray.length}, actual lenght: ${dataArray.length}`;
         return false;
@@ -152,18 +152,18 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     }
 
     if (isArray(data) && isObject(piece)) {
-      const { length, ignoreIndexes, toCompare, ...checkDataPiece } = piece;
+      const { length, toCount, ignoreIndexes, toCompare, ...checkDataPiece } = piece;
       const lengthToCheck = safeHasOwnPropery(piece, 'length') ? length : !allowEmptyArray ? '>0' : undefined;
 
       if (
         isEmptyObject(checkDataPiece) &&
-        checkLenghtIfRequired(lengthToCheck, data.length) &&
+        checkLengthIfRequired(lengthToCheck, data.length) &&
         !safeHasOwnPropery(piece, 'toCompare')
       ) {
         return true;
       }
 
-      if (checkLenghtIfRequired(lengthToCheck, data.length)) {
+      if (checkLengthIfRequired(lengthToCheck, data.length)) {
         const dataWithoutIndexesThatShouldBeIgnored = data.filter((_item, index) => {
           if (isNumber(ignoreIndexes) || isArray(ignoreIndexes)) {
             const ignore = toArray(ignoreIndexes);
@@ -176,12 +176,18 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
           return compareArrays(dataWithoutIndexesThatShouldBeIgnored, toCompare);
         }
 
-        return dataWithoutIndexesThatShouldBeIgnored[everyArrayItem ? 'every' : 'some']((dataItem, index) => {
+        const result = dataWithoutIndexesThatShouldBeIgnored.filter((dataItem, index) => {
           if (isPrimitive(toCompare) && safeHasOwnPropery(piece, 'toCompare')) {
             return compare(dataItem, toCompare, index);
           }
           return compare(dataItem, checkDataPiece, index);
         });
+
+        if (isNumber(toCount)) {
+          return toCount === result.length;
+        }
+
+        return everyArrayItem ? result.length === dataWithoutIndexesThatShouldBeIgnored.length : result.length;
       } else {
         message += `Message: expected length: ${lengthToCheck}, actual lenght: ${data.length}`;
         return false;

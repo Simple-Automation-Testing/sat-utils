@@ -2,6 +2,34 @@ import { deepStrictEqual } from 'assert';
 import { compareToPattern } from '../lib';
 
 describe('SPEC', function () {
+  it('[P] compareToPattern toCount', function () {
+    {
+      const pattern = {
+        field: { a: { toCount: 3, a: 'a' } },
+      };
+      const data = {
+        field: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: '2' }] },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern toCount', function () {
+    {
+      const pattern = {
+        field: { a: { toCount: 2, a: 'a' } },
+      };
+      const data = {
+        field: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: '2' }] },
+      };
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(message, 'field->a[3]->a->Message: expected: a, actual: 2', 'Message should be empty');
+    }
+  });
+
   it('[P] compareToPattern compare arrays', function () {
     {
       const pattern = {
@@ -985,9 +1013,7 @@ describe('SPEC', function () {
     {
       const pattern = {
         a: { text: 'first' },
-        b: {
-          c: { d: { text: 'c' } },
-        },
+        b: { c: { d: { text: 'c' } } },
       };
 
       const data = {
@@ -996,6 +1022,7 @@ describe('SPEC', function () {
       };
 
       const { result, message } = compareToPattern(data, pattern);
+
       deepStrictEqual(result, false, 'Should not be same');
       deepStrictEqual(
         message,

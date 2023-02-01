@@ -1,7 +1,11 @@
 import { isFunction, isAsyncFunction, isBoolean, isArray, isNumber, getType, isUndefined } from './types';
 import { lengthToIndexesArray } from './utils';
 
-async function asyncRepeat(howMany: number, callBack, repeatEvenIfCallbackFails?: boolean) {
+async function asyncRepeat(
+  howMany: number,
+  callBack: (index: number) => Promise<any> | any,
+  repeatEvenIfCallbackFails?: boolean,
+) {
   if (!isNumber(howMany)) {
     throw new TypeError(`asyncRepeat(): first argument should be a number, current arg is ${getType(howMany)}`);
   }
@@ -18,15 +22,15 @@ async function asyncRepeat(howMany: number, callBack, repeatEvenIfCallbackFails?
     );
   }
 
-  for (const _noop of lengthToIndexesArray(howMany)) {
+  for (const iterationNumber of lengthToIndexesArray(howMany)) {
     if (repeatEvenIfCallbackFails) {
       try {
-        await callBack();
+        await callBack(iterationNumber);
       } catch {
         /** ignore error */
       }
     } else {
-      await callBack();
+      await callBack(iterationNumber);
     }
   }
 }
