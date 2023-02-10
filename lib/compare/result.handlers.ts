@@ -82,12 +82,14 @@ function comparePrimitives(
     stringUppercase,
     allowNumberTypecast,
     checkEmptyStrings,
+    ignoreNonStringsTypes,
   }: {
     stringIncludes?: boolean;
     stringLowercase?: boolean;
     stringUppercase?: boolean;
     allowNumberTypecast?: boolean;
     checkEmptyStrings?: boolean;
+    ignoreNonStringsTypes?: boolean;
   } = {},
 ): { comparisonMessage: string; comparisonResult: boolean } {
   let comparisonResult;
@@ -103,6 +105,10 @@ function comparePrimitives(
 
   const isDataToUpper = isString(pattern) && checkThatDataUppercase(pattern);
   const isDataToLower = isString(pattern) && checkThatDataLowercase(pattern);
+
+  if (ignoreNonStringsTypes && !isString(!data)) {
+    return { comparisonResult: true, comparisonMessage: '' };
+  }
 
   if (isPatternToUpper) {
     pattern = (removePatternUppercase(pattern) as string).toUpperCase();

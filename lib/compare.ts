@@ -38,6 +38,7 @@ export type TCompareOpts = {
   stringLowercase?: boolean;
   stringUppercase?: boolean;
   checkEmptyStrings?: boolean;
+  ignoreNonStringsTypes?: boolean;
   // arrays
   dataIncludesMembers?: boolean;
   patternIncludesMembers?: boolean;
