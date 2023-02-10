@@ -1,4 +1,4 @@
-import { isDate, isNumber, isString, isRegExp } from '../types';
+import { isNull, isDate, isNumber, isString, isRegExp, isUndefined } from '../types';
 import { execNumberExpression } from '../utils';
 import { getRandomString } from '../randomizer';
 
@@ -81,11 +81,13 @@ function comparePrimitives(
     stringLowercase,
     stringUppercase,
     allowNumberTypecast,
+    checkEmptyStrings,
   }: {
     stringIncludes?: boolean;
     stringLowercase?: boolean;
     stringUppercase?: boolean;
     allowNumberTypecast?: boolean;
+    checkEmptyStrings?: boolean;
   } = {},
 ): { comparisonMessage: string; comparisonResult: boolean } {
   let comparisonResult;
@@ -150,7 +152,11 @@ function comparePrimitives(
     messagePostfix += 'data and pattern are uppercased';
   }
 
-  if (isDate(data) && isDate(pattern)) {
+  if (checkEmptyStrings && isString(data) && (isUndefined(pattern) || isNull(pattern))) {
+    comparisonResult = Boolean(data.length);
+
+    comparisonMessage = `expected: ${data} should not be empty string `;
+  } else if (isDate(data) && isDate(pattern)) {
     comparisonResult = +data === +pattern;
 
     comparisonMessage = `expected: ${pattern}, actual: ${data} `;

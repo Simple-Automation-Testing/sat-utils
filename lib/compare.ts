@@ -1,5 +1,16 @@
 /* eslint-disable sonarjs/cognitive-complexity */
-import { isArray, isObject, isPrimitive, isUndefined, isNumber, getType, isEmptyObject, isRegExp } from './types';
+import {
+  isNull,
+  isArray,
+  isObject,
+  isPrimitive,
+  isUndefined,
+  isNumber,
+  getType,
+  isEmptyObject,
+  isNotEmptyObject,
+  isRegExp,
+} from './types';
 import { execNumberExpression, toArray, safeHasOwnPropery } from './utils';
 import {
   toCheckNumber,
@@ -26,6 +37,7 @@ export type TCompareOpts = {
   stringIncludes?: boolean;
   stringLowercase?: boolean;
   stringUppercase?: boolean;
+  checkEmptyStrings?: boolean;
   // arrays
   dataIncludesMembers?: boolean;
   patternIncludesMembers?: boolean;
@@ -58,13 +70,14 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     allowEmptyArray = true,
     patternIncludesMembers,
     dataIncludesMembers,
+    checkEmptyStrings,
 
     ...primitivesOpts
   } = options || {};
   const propertiesWhichWillBeIgnored = toArray(ignoreProperties);
   let message = '';
 
-  function compare(data, piece, arrayIndex?) {
+  function compare(data, piece?, arrayIndex?) {
     function compareArrays(dataArray, patternArray) {
       if (
         !dataIncludesMembers &&
@@ -113,7 +126,10 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     }
 
     if (isPrimitive(data) && (isPrimitive(piece) || isRegExp(piece))) {
-      const { comparisonMessage, comparisonResult } = comparePrimitives(data, piece, primitivesOpts);
+      const { comparisonMessage, comparisonResult } = comparePrimitives(data, piece, {
+        checkEmptyStrings,
+        ...primitivesOpts,
+      });
 
       if (!comparisonResult) {
         const indexMessage = isNumber(arrayIndex) ? `[${arrayIndex}]` : '';
@@ -132,6 +148,25 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
 
           return requiredKeys;
         }, {});
+    }
+
+    if ((isEmptyObject(piece) || isUndefined(piece) || isNull(piece)) && checkEmptyStrings && isNotEmptyObject(data)) {
+      return Object.keys(data).every(key => {
+        const compareResult = compare(data[key]);
+        if (!compareResult) {
+          const indexMessage = isNumber(arrayIndex) ? `${key}[${arrayIndex}]` : `${key}`;
+
+          message += ` message key: ${indexMessage}`;
+        }
+
+        return compareResult;
+      });
+    }
+
+    if ((isEmptyObject(piece) || isUndefined(piece) || isNull(piece)) && checkEmptyStrings && isArray(data)) {
+      return data.every((dataItem, index) => {
+        return compare(dataItem, undefined, index);
+      });
     }
 
     if (isObject(piece) && isObject(data)) {
@@ -164,7 +199,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
       }
 
       if (checkLengthIfRequired(lengthToCheck, data.length)) {
-        const dataWithoutIndexesThatShouldBeIgnored = data.filter((_item, index) => {
+        const dataWithoutIndexesThatShouldBeIgnored = data.filter((_dataItem, index) => {
           if (isNumber(ignoreIndexes) || isArray(ignoreIndexes)) {
             const ignore = toArray(ignoreIndexes);
             return !ignore.includes(index);

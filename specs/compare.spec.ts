@@ -2,6 +2,104 @@ import { deepStrictEqual } from 'assert';
 import { compareToPattern } from '../lib';
 
 describe('SPEC', function () {
+  it('[P] compareToPattern checkEmptyStrings', function () {
+    {
+      const pattern = {};
+
+      const data = {
+        field: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: '2' }] },
+      };
+
+      const { result, message } = compareToPattern(data, pattern, { checkEmptyStrings: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const data = {
+        field: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: '2' }] },
+        field1: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: { a: { b: { c: ['test'] } } } }] },
+      };
+
+      const { result, message } = compareToPattern(data, undefined, { checkEmptyStrings: true });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {
+        field1: { a: { action: 1 } },
+      };
+      const data = {
+        field: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: '2' }] },
+        field1: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: { a: { b: { c: ['test'] } } } }] },
+      };
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkEmptyStrings: true,
+        ignoreProperties: ['action'],
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern checkEmptyStrings', function () {
+    {
+      const pattern = {};
+
+      const data = {
+        field: '',
+      };
+
+      const { result, message } = compareToPattern(data, pattern, { checkEmptyStrings: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(message, 'field->Message: expected:  should not be empty string', 'Message should not be empty');
+    }
+    {
+      const pattern = {};
+
+      const data = {
+        field: { a: { b: { c: '' } } },
+      };
+
+      const { result, message } = compareToPattern(data, pattern, { checkEmptyStrings: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a->b->c->Message: expected:  should not be empty string',
+        'Message should not be empty',
+      );
+    }
+    {
+      const pattern = {};
+
+      const data = {
+        field: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: '' }] },
+      };
+
+      const { result, message } = compareToPattern(data, pattern, { checkEmptyStrings: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field->a[3]->a->Message: expected:  should not be empty string',
+        'Message should not be empty',
+      );
+    }
+    {
+      const data = {
+        field: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: '2' }] },
+        field1: { a: [{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: { a: { b: { c: ['test', 'test', ''] } } } }] },
+      };
+
+      const { result, message } = compareToPattern(data, undefined, { checkEmptyStrings: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'field1->a[3]->a->a->b->c[2]->Message: expected:  should not be empty string',
+        'Message should be empty',
+      );
+    }
+  });
+
   it('[P] compareToPattern toCount', function () {
     {
       const pattern = {
