@@ -151,7 +151,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
         }, {});
     }
 
-    if ((isEmptyObject(piece) || isUndefined(piece) || isNull(piece)) && checkEmptyStrings && isNotEmptyObject(data)) {
+    if ((isEmptyObject(piece) || isUndefined(piece) || isNull(piece)) && checkEmptyStrings && isObject(data)) {
       return Object.keys(data).every(key => {
         const compareResult = compare(data[key]);
         if (!compareResult) {

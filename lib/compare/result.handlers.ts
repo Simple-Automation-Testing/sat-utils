@@ -106,7 +106,7 @@ function comparePrimitives(
   const isDataToUpper = isString(pattern) && checkThatDataUppercase(pattern);
   const isDataToLower = isString(pattern) && checkThatDataLowercase(pattern);
 
-  if (ignoreNonStringsTypes && !isString(!data)) {
+  if (ignoreNonStringsTypes && !isString(data)) {
     return { comparisonResult: true, comparisonMessage: '' };
   }
 

@@ -7,6 +7,48 @@ describe('SPEC', function () {
       const pattern = {};
 
       const data = {
+        field: { b: '1', x: {} },
+      };
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkEmptyStrings: true,
+        ignoreNonStringsTypes: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {};
+
+      const data = {
+        field: { b: '1', x: {}, y: [] },
+      };
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkEmptyStrings: true,
+        ignoreNonStringsTypes: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {};
+
+      const data = {
+        field: { b: '1', x: {}, y: [{ x: {}, y: { x: [] } }] },
+      };
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkEmptyStrings: true,
+        ignoreNonStringsTypes: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = {};
+
+      const data = {
         field: { a: [{ b: true, a: 'a' }, { a: 'a' }, { a: 'a' }, { a: '2' }] },
       };
 
