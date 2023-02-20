@@ -2,6 +2,80 @@ import { deepStrictEqual } from 'assert';
 import { compareToPattern } from '../lib';
 
 describe('SPEC', function () {
+  it('[P] compareToPattern check string length', function () {
+    {
+      const pattern = { length: '>1' };
+      const data = '       ';
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkStringLength: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = { length: '>=1' };
+      const data = '       ';
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkStringLength: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = { length: 0 };
+      const data = '';
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkStringLength: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = { length: '<=25' };
+      const data = '1';
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkStringLength: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern check string length', function () {
+    {
+      const pattern = { length: '>1' };
+      const data = '';
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkStringLength: true,
+      });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'Message: expected: string has >1 length, actual: string has 0 length',
+        'Message should not be empty',
+      );
+    }
+    {
+      const pattern = { a: { length: '<1' } };
+      const data = { a: '1' };
+
+      const { result, message } = compareToPattern(data, pattern, {
+        checkStringLength: true,
+      });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'a->Message: expected: string has <1 length, actual: string has 1 length',
+        'Message should not be empty',
+      );
+    }
+  });
+
   it('[P] compareToPattern checkEmptyStrings', function () {
     {
       const pattern = {};

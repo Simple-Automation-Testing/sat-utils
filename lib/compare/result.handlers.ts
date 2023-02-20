@@ -1,5 +1,5 @@
 import { isNull, isDate, isNumber, isString, isRegExp, isUndefined } from '../types';
-import { execNumberExpression } from '../utils';
+import { execNumberExpression, safeHasOwnPropery } from '../utils';
 import { getRandomString } from '../randomizer';
 
 const { toDataIncludes, checkThatDataIncludes, removeDataIncludesId } = (function () {
@@ -83,6 +83,7 @@ function comparePrimitives(
     allowNumberTypecast,
     checkEmptyStrings,
     ignoreNonStringsTypes,
+    checkStringLength,
   }: {
     stringIncludes?: boolean;
     stringLowercase?: boolean;
@@ -90,6 +91,7 @@ function comparePrimitives(
     allowNumberTypecast?: boolean;
     checkEmptyStrings?: boolean;
     ignoreNonStringsTypes?: boolean;
+    checkStringLength?: boolean;
   } = {},
 ): { comparisonMessage: string; comparisonResult: boolean } {
   let comparisonResult;
@@ -158,7 +160,14 @@ function comparePrimitives(
     messagePostfix += 'data and pattern are uppercased';
   }
 
-  if (checkEmptyStrings && isString(data) && (isUndefined(pattern) || isNull(pattern))) {
+  if (checkStringLength && safeHasOwnPropery(pattern, 'length') && Object.keys(pattern).length === 1) {
+    comparisonResult = execNumberExpression(
+      isString(pattern.length) ? pattern.length : `===${pattern.length}`,
+      data.length,
+    );
+
+    comparisonMessage = `expected: string has ${pattern.length} length, actual: string has ${data.length} length`;
+  } else if (checkEmptyStrings && isString(data) && (isUndefined(pattern) || isNull(pattern))) {
     comparisonResult = Boolean(data.length);
 
     comparisonMessage = `expected: ${data} should not be empty string `;

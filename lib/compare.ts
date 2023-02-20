@@ -8,7 +8,6 @@ import {
   isNumber,
   getType,
   isEmptyObject,
-  isNotEmptyObject,
   isRegExp,
 } from './types';
 import { execNumberExpression, toArray, safeHasOwnPropery } from './utils';
@@ -38,6 +37,8 @@ export type TCompareOpts = {
   stringLowercase?: boolean;
   stringUppercase?: boolean;
   checkEmptyStrings?: boolean;
+  checkStringLength?: boolean;
+
   ignoreNonStringsTypes?: boolean;
   // arrays
   dataIncludesMembers?: boolean;
@@ -72,6 +73,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     patternIncludesMembers,
     dataIncludesMembers,
     checkEmptyStrings,
+    checkStringLength,
 
     ...primitivesOpts
   } = options || {};
@@ -126,9 +128,15 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
       return dataArray.every((dataArrayItem, index) => compare(dataArrayItem, patternArray[index], index));
     }
 
-    if (isPrimitive(data) && (isPrimitive(piece) || isRegExp(piece))) {
+    if (
+      isPrimitive(data) &&
+      (isPrimitive(piece) ||
+        isRegExp(piece) ||
+        (checkStringLength && safeHasOwnPropery(piece, 'length') && Object.keys(piece).length === 1))
+    ) {
       const { comparisonMessage, comparisonResult } = comparePrimitives(data, piece, {
         checkEmptyStrings,
+        checkStringLength,
         ...primitivesOpts,
       });
 
@@ -244,11 +252,12 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     // clean up message
   } else {
     const indexPattern = /(\[\d])/;
+
     message = message
       .split(' message key: ')
       .reverse()
       .reduce((acc, item, index, arr) => {
-        if (index === 0) {
+        if (index === 0 && arr.length - 1 !== index) {
           acc += `${item}${separator}`;
         } else if (indexPattern.test(item)) {
           const prevIndex = item.match(indexPattern)[0];
