@@ -2,6 +2,76 @@ import { deepStrictEqual } from 'assert';
 import { compareToPattern } from '../lib';
 
 describe('SPEC', function () {
+  it('[P] compareToPattern custom check', function () {
+    {
+      const pattern = (item: string) => item.includes(' ');
+      const data = '       ';
+
+      const { result, message } = compareToPattern(data, pattern, {
+        customCheck: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = (item: string) => item.includes('');
+      const data = ['', ''];
+
+      const { result, message } = compareToPattern(data, pattern, {
+        customCheck: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+    {
+      const pattern = { a: { b: (item: string) => item.includes('') } };
+      const data = { a: { b: ['', ''] } };
+
+      const { result, message } = compareToPattern(data, pattern, {
+        customCheck: true,
+      });
+      deepStrictEqual(result, true, 'Should be same');
+      deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern custom check', function () {
+    {
+      const pattern = (item: string) => item.includes(' ');
+      const data = '       ';
+
+      const { result, message } = compareToPattern(data, pattern);
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'Message: seems like types are not comparable, expected: function, actual: string',
+        'Message should be empty',
+      );
+    }
+    {
+      const pattern = (item: string) => item.includes('x');
+      const data = '       ';
+
+      const { result, message } = compareToPattern(data, pattern, { customCheck: true });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(message, 'Message: expected that custom check result should be true', 'Message should be empty');
+    }
+    {
+      const pattern = { a: { b: (item: string) => item.includes('x') } };
+      const data = { a: { b: ['', ''] } };
+
+      const { result, message } = compareToPattern(data, pattern, {
+        customCheck: true,
+      });
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        'a->b->Message: expected that custom check result should be true',
+        'Message should be empty',
+      );
+    }
+  });
+
   it('[P] compareToPattern check string length', function () {
     {
       const pattern = { length: '>1' };

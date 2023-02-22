@@ -8,6 +8,7 @@ import {
   isNumber,
   getType,
   isEmptyObject,
+  isFunction,
   isRegExp,
 } from './types';
 import { execNumberExpression, toArray, safeHasOwnPropery } from './utils';
@@ -32,6 +33,8 @@ function checkLengthIfRequired(expectedLength, actualLength) {
 }
 
 export type TCompareOpts = {
+  // own check function
+  customCheck?: boolean;
   // strings
   stringIncludes?: boolean;
   stringLowercase?: boolean;
@@ -71,6 +74,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     everyArrayItem = true,
     allowEmptyArray = true,
     patternIncludesMembers,
+    customCheck,
     dataIncludesMembers,
     checkEmptyStrings,
     checkStringLength,
@@ -126,6 +130,16 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
       }
 
       return dataArray.every((dataArrayItem, index) => compare(dataArrayItem, patternArray[index], index));
+    }
+
+    if (isFunction(piece) && customCheck) {
+      const customCheckResult = piece(data);
+
+      if (!customCheckResult) {
+        message += `Message: expected that custom check result should be true`;
+      }
+
+      return customCheckResult;
     }
 
     if (
