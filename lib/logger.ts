@@ -183,4 +183,4 @@ function createLogger(): Tlogger {
   return logger;
 }
 
-export { createLogger, colors };
+export { createLogger, colors, wrapInRed, wrapInMagenta, wrapInGreen, wrapInYellow, wrapInBlue };

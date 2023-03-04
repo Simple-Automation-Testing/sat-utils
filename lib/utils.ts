@@ -165,7 +165,7 @@ function execNumberExpression(expression: string, numberArg: number) {
   }
 }
 
-function camelize(str): string {
+function camelize(str: string): string {
   if (!isString(str)) {
     throw new TypeError(`camelize(): first argument should be a string, current arg is ${getType(str)}`);
   }
@@ -177,7 +177,7 @@ function camelize(str): string {
     .replace(/\s+/g, '');
 }
 
-function safeJSONstringify(data, inline = false, returnIfError = '') {
+function safeJSONstringify(data: any, inline = false, returnIfError = '') {
   try {
     const shouldBeStringified = inline ? [data] : [data, null, '\t'];
     return JSON.stringify.apply(global, shouldBeStringified);
