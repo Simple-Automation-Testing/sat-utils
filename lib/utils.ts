@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/cognitive-complexity, unicorn/no-object-as-default-parameter*/
-import { isNumber, getType, isString, isBoolean, isUndefined, isNull, isObject } from './types';
+import { isPrimitive, isArray, isNumber, getType, isString, isBoolean, isUndefined, isNull, isObject } from './types';
 
 function toArray<T>(anyArugment: T | T[]): T[] {
   if (anyArugment === undefined) {
@@ -221,6 +221,80 @@ function getRandomNumberFromRange(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function canBeStringified(item?: any): boolean {
+  try {
+    JSON.stringify(item);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getStringifyReadyData(data) {
+  if (isObject(data)) {
+    const copied = {};
+
+    for (const key of Object.keys(data)) {
+      if (canBeStringified(data[key])) {
+        copied[key] = data[key];
+      }
+    }
+
+    return copied;
+  }
+
+  if (isArray(data)) {
+    return data.map(data_item => getStringifyReadyData(data_item));
+  }
+
+  if (isPrimitive(data) && canBeStringified(data)) {
+    return data;
+  }
+
+  return '';
+}
+
+function getStringifiedData(data) {
+  const indent = '\t';
+
+  if (isPrimitive(data)) {
+    return String(data);
+  }
+
+  if (isArray(data)) {
+    return (
+      '[ ' +
+      data
+        .map((item, index, dataArr) => {
+          const lineEnd = dataArr.length - 1 === index ? '\n' : ',\n';
+          const value = getStringifiedData(item);
+
+          return indent + value + lineEnd;
+        })
+        .join('') +
+      ' ]'
+    );
+  }
+
+  if (isObject(data)) {
+    const keys = Object.getOwnPropertyNames(data);
+
+    return (
+      '{\n' +
+      keys
+        .map((key, index, objectKeys) => {
+          const lineEnd = objectKeys.length - 1 === index ? '\n' : ',\n';
+
+          const value = getStringifiedData(data[key]);
+
+          return indent + key + ': ' + value + lineEnd;
+        })
+        .join('') +
+      '\n}'
+    );
+  }
+}
+
 export {
   toArray,
   prettifyCamelCase,
@@ -233,4 +307,6 @@ export {
   chunkArr,
   lengthToIndexesArray,
   getRandomNumberFromRange,
+  getStringifyReadyData,
+  canBeStringified,
 };
