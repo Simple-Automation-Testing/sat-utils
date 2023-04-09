@@ -38,6 +38,7 @@
 - [compareToPattern](#comparetopattern)
 - [getDirFilesList](#getdirfileslist)
 - [safeJSONstringify](#safejsonstringify)
+- [safeJSONparse](#safejsonparse)
 - [camelize](#camelize)
 - [safeHasOwnPropery](#safehasownpropery)
 - [chunkArr](#chunkarr)
@@ -537,6 +538,14 @@ const { safeJSONstringify } = require('sat-utils');
 console.log(safeJSONstringify({}));
 console.log(safeJSONstringify(Object));
 console.log(safeJSONstringify(new Proxy()));
+```
+
+## safeJSONparse
+
+```js
+const { safeJSONparse } = require('sat-utils');
+console.log(safeJSONparse('{}'));
+console.log(safeJSONstringify('dsadas dasda', {}));
 ```
 
 ## camelize

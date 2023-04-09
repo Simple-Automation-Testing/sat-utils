@@ -186,6 +186,14 @@ function safeJSONstringify(data: any, inline = false, returnIfError = '') {
   }
 }
 
+function safeJSONparse(data: any, returnIfError = {}) {
+  try {
+    return JSON.parse(data);
+  } catch {
+    return returnIfError;
+  }
+}
+
 function safeHasOwnPropery(item: any, key: string): boolean {
   if (!isString(key)) {
     throw new TypeError(`safeHasOwnPropery(): second argument should be a string, current arg is ${getType(key)}`);
@@ -309,4 +317,5 @@ export {
   getRandomNumberFromRange,
   getStringifyReadyData,
   canBeStringified,
+  safeJSONparse,
 };
