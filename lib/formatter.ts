@@ -1,4 +1,4 @@
-function millisecondsToMinutes(milliseconds): string {
+function millisecondsToMinutes(milliseconds: number): string {
   const minutes = Math.floor(milliseconds / 60_000) as number;
   const seconds = ((milliseconds % 60_000) / 1000).toFixed(0);
 

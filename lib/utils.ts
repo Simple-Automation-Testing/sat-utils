@@ -303,6 +303,14 @@ function getStringifiedData(data) {
   }
 }
 
+function requireModuleFromContent(src, filename = '') {
+  const Module = module.constructor;
+  // @ts-ignore
+  const mod = new Module();
+  mod._compile(src, filename);
+  return mod.exports;
+}
+
 export {
   toArray,
   prettifyCamelCase,

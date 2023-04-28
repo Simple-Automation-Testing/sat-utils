@@ -7,3 +7,4 @@ export * from './read.dir';
 export * from './randomizer';
 export * from './formatter';
 export * from './async';
+export * from './pattern';
