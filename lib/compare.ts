@@ -43,6 +43,8 @@ export type TCompareOpts = {
   checkStringLength?: boolean;
 
   ignoreNonStringsTypes?: boolean;
+  // objects
+  dataIncldesPatternPart?: boolean;
   // arrays
   dataIncludesMembers?: boolean;
   patternIncludesMembers?: boolean;
@@ -78,6 +80,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     dataIncludesMembers,
     checkEmptyStrings,
     checkStringLength,
+    dataIncldesPatternPart = false,
 
     ...primitivesOpts
   } = options || {};
@@ -193,7 +196,9 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     }
 
     if (isObject(piece) && isObject(data)) {
-      return Object.keys(piece).every(key => {
+      const call = dataIncldesPatternPart ? 'some' : 'every';
+
+      return Object.keys(piece)[call](key => {
         const compareResult = compare(data[key], piece[key]);
         if (!compareResult) {
           const indexMessage = isNumber(arrayIndex) ? `${key}[${arrayIndex}]` : `${key}`;
