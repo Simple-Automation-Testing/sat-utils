@@ -12,6 +12,7 @@
     "node_modules",
     "built",
     "specs",
-    "example"
+    "example",
+    "playground.*"
   ]
 }

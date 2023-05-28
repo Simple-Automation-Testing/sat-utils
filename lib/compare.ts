@@ -88,6 +88,10 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
   let message = '';
 
   function compare(data, piece?, arrayIndex?) {
+    if (message.length > 0 && !message.endsWith(' ')) {
+      message += ' ';
+    }
+
     function compareArrays(dataArray, patternArray) {
       if (
         !dataIncludesMembers &&
@@ -270,28 +274,47 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     message = '';
     // clean up message
   } else {
+    // TODO message formatting should be improved
     const indexPattern = /(\[\d])/;
 
-    message = message
-      .split(' message key: ')
-      .reverse()
-      .reduce((acc, item, index, arr) => {
-        if (index === 0 && arr.length - 1 !== index) {
-          acc += `${item}${separator}`;
-        } else if (indexPattern.test(item)) {
-          const prevIndex = item.match(indexPattern)[0];
-          const key = item.replace(indexPattern, '');
-          const isSeparator = arr.length - 1 === index ? '' : separator;
-          acc = acc.replace(new RegExp(`(${separator})$`), `${prevIndex}${separator}${key}${isSeparator}`);
-        } else if (arr.length - 1 === index) {
-          acc += `${item}`;
-        } else {
-          acc += `${item}${separator}`;
-        }
+    function createMessage(notFormattedMessage) {
+      return notFormattedMessage
+        .replace(/  /gi, ' ')
+        .split(' message key: ')
+        .reverse()
+        .reduce((acc, item, index, arr) => {
+          if (index === 0 && arr.length - 1 !== index) {
+            acc += `${item}${separator}`;
+          } else if (indexPattern.test(item)) {
+            const prevIndex = item.match(indexPattern)[0];
+            const key = item.replace(indexPattern, '');
+            const isSeparator = arr.length - 1 === index ? '' : separator;
+            acc = acc.replace(new RegExp(`(${separator})$`), `${prevIndex}${separator}${key}${isSeparator}`);
+          } else if (arr.length - 1 === index) {
+            acc += `${item}`;
+          } else {
+            acc += `${item}${separator}`;
+          }
 
-        return acc;
-      }, '')
-      .trim();
+          return acc;
+        }, '')
+        .trim();
+    }
+
+    message =
+      message.split(' message key: ').length > 2 &&
+      message
+        .split('Message:')
+        .map(m => m.trim())
+        .filter(m => !indexPattern.test(m))
+        .filter(Boolean).length > 1
+        ? message
+            .split('Message:')
+            .map(m => m.trim())
+            .filter(Boolean)
+            .map(m => createMessage(`Message: ${m}`))
+            .join('\n')
+        : createMessage(message);
   }
 
   return { result, message };
