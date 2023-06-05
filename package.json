@@ -1,8 +1,8 @@
 {
   "name": "sat-utils",
-  "version": "1.8.3",
+  "version": "1.9.0",
   "description": "Utils library",
-  "main": "built/index.jsbuilt/index.js",
+  "main": "built/index.js",
   "scripts": {
     "test": "mocha ./specs/**/*.spec.ts --require ts-node/register --timeout 30000",
     "test:debug": "mocha ./specs/async.child.methods.spec.ts --require ts-node/register --timeout 30000",

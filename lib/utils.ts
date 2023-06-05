@@ -262,53 +262,21 @@ function getStringifyReadyData(data) {
   return '';
 }
 
-function getStringifiedData(data) {
-  const indent = '\t';
-
-  if (isPrimitive(data)) {
-    return String(data);
+function stringifyData(obj: unknown): string {
+  if (isPrimitive(obj)) {
+    return String(obj);
   }
 
-  if (isArray(data)) {
-    return (
-      '[ ' +
-      data
-        .map((item, index, dataArr) => {
-          const lineEnd = dataArr.length - 1 === index ? '\n' : ',\n';
-          const value = getStringifiedData(item);
-
-          return indent + value + lineEnd;
-        })
-        .join('') +
-      ' ]'
-    );
+  if (isArray(obj)) {
+    const arrString = (obj as unknown[]).map(item => stringifyData(item)).join(', ');
+    return `[${arrString}]`;
   }
 
-  if (isObject(data)) {
-    const keys = Object.getOwnPropertyNames(data);
+  const objString = Object.keys(obj)
+    .map(key => `${key}: ${stringifyData(obj[key])}`)
+    .join(', ');
 
-    return (
-      '{\n' +
-      keys
-        .map((key, index, objectKeys) => {
-          const lineEnd = objectKeys.length - 1 === index ? '\n' : ',\n';
-
-          const value = getStringifiedData(data[key]);
-
-          return indent + key + ': ' + value + lineEnd;
-        })
-        .join('') +
-      '\n}'
-    );
-  }
-}
-
-function requireModuleFromContent(src, filename = '') {
-  const Module = module.constructor;
-  // @ts-ignore
-  const mod = new Module();
-  mod._compile(src, filename);
-  return mod.exports;
+  return `{${objString}}`;
 }
 
 export {
@@ -326,4 +294,5 @@ export {
   getStringifyReadyData,
   canBeStringified,
   safeJSONparse,
+  stringifyData,
 };
