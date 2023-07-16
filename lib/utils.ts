@@ -24,7 +24,18 @@ function chunkArr<T>(arr: T[], chunksAmount: number, followIndex: boolean = fals
 
   const copied = toArray(arr);
 
-  if (!followIndex) {
+  if (followIndex) {
+    const chunkMax = Math.ceil(copied.length / chunksAmount);
+    const chunkReg = Math.floor(copied.length / chunksAmount);
+
+    const chunked = [];
+
+    for (let i = 0; i < chunksAmount; i++) {
+      chunked.push(copied.splice(0, i ? chunkReg : chunkMax));
+    }
+
+    return chunked.filter(chunk => chunk.length);
+  } else {
     const chunked = Array.from({ length: chunksAmount }).map(() => []);
 
     let index = 0;
@@ -36,17 +47,6 @@ function chunkArr<T>(arr: T[], chunksAmount: number, followIndex: boolean = fals
       if (index === chunked.length) {
         index = 0;
       }
-    }
-
-    return chunked.filter(chunk => chunk.length);
-  } else {
-    const chunkMax = Math.ceil(copied.length / chunksAmount);
-    const chunkReg = Math.floor(copied.length / chunksAmount);
-
-    const chunked = [];
-
-    for (let i = 0; i < chunksAmount; i++) {
-      chunked.push(copied.splice(0, i ? chunkReg : chunkMax));
     }
 
     return chunked.filter(chunk => chunk.length);
@@ -171,10 +171,10 @@ function camelize(str: string): string {
   }
 
   return str
-    .replace(/^\w|[A-Z]|\b\w/g, function (word, index) {
+    .replaceAll(/^\w|[A-Z]|\b\w/g, function (word, index) {
       return index === 0 ? word.toLowerCase() : word.toUpperCase();
     })
-    .replace(/\s+/g, '');
+    .replaceAll(/\s+/g, '');
 }
 
 function safeJSONstringify(data: any, inline = false, returnIfError = '') {

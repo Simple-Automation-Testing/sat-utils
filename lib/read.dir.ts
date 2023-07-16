@@ -1,6 +1,13 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
+/**
+ * @param {string} dir path to directory
+ * @param {Array} fileList file list
+ * @param {Array|string} directoryToSkip
+ * @param {boolean} [ignoreSubDirs] ignore sub directories
+ * @returns {Array<string>} file list
+ */
 function getDirFilesList(
   dir: string,
   fileList: string[] = [],
