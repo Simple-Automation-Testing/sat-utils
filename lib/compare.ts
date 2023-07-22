@@ -13,13 +13,27 @@ import {
 } from './types';
 import { execNumberExpression, toArray, safeHasOwnPropery } from './utils';
 import {
-  toCheckNumber,
   toDataIncludes,
+  checkThatDataIncludes,
+  removeDataIncludesId,
   toPatternIncludes,
-  dataToUppercase,
+  checkThatPatternIncludes,
+  removePatternIncludesId,
+  toCheckNumber,
+  checkThatCheckNumber,
+  removeCheckNumberId,
   dataToLowercase,
+  checkThatDataLowercase,
+  removeDataLowercase,
   patternToLowercase,
+  checkThatPatternLowercase,
+  removePatternLowercase,
+  dataToUppercase,
+  checkThatDataUppercase,
+  removeDataUppercase,
   patternToUppercase,
+  checkThatPatternUppercase,
+  removePatternUppercase,
   comparePrimitives,
 } from './compare/result.handlers';
 
@@ -60,12 +74,26 @@ export type TCompareOpts = {
 
 type TCompareToPattern = ((data: any, patter: any, options?: TCompareOpts) => { result: boolean; message: string }) & {
   toDataIncludes: (arg: string) => string;
+  checkThatDataIncludes: (arg: string | any) => boolean;
+  removeDataIncludesId: (arg: string) => string;
   toPatternIncludes: (arg: string) => string;
+  checkThatPatternIncludes: (arg: string | any) => boolean;
+  removePatternIncludesId: (arg: string) => string;
   toCheckNumber: (arg: string) => string;
-  dataToUppercase: (arg: string) => string;
+  checkThatCheckNumber: (arg: string | any) => boolean;
+  removeCheckNumberId: (arg: string) => string;
   dataToLowercase: (arg: string) => string;
+  checkThatDataLowercase: (arg: string | any) => boolean;
+  removeDataLowercase: (arg: string) => string;
   patternToLowercase: (arg: string) => string;
+  checkThatPatternLowercase: (arg: string | any) => boolean;
+  removePatternLowercase: (arg: string) => string;
+  dataToUppercase: (arg: string) => string;
+  checkThatDataUppercase: (arg: string | any) => boolean;
+  removeDataUppercase: (arg: string) => string;
   patternToUppercase: (arg: string) => string;
+  checkThatPatternUppercase: (arg: string | any) => boolean;
+  removePatternUppercase: (arg: string) => string;
 };
 
 const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, options?: TCompareOpts) {
@@ -220,7 +248,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
 
     if (isArray(data) && isObject(piece)) {
       const { length, toCount, ignoreIndexes, toCompare, ...checkDataPiece } = piece;
-      const lengthToCheck = safeHasOwnPropery(piece, 'length') ? length : !allowEmptyArray ? '>0' : undefined;
+      const lengthToCheck = safeHasOwnPropery(piece, 'length') ? length : allowEmptyArray ? undefined : '>0';
 
       if (
         isEmptyObject(checkDataPiece) &&
@@ -279,7 +307,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
 
     function createMessage(notFormattedMessage) {
       return notFormattedMessage
-        .replace(/  /gi, ' ')
+        .replaceAll(/  /gi, ' ')
         .split(' message key: ')
         .reverse()
         .reduce((acc, item, index, arr) => {
@@ -320,12 +348,26 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
   return { result, message };
 } as TCompareToPattern;
 
-compareToPattern.toCheckNumber = toCheckNumber;
 compareToPattern.toDataIncludes = toDataIncludes;
+compareToPattern.checkThatDataIncludes = checkThatDataIncludes;
+compareToPattern.removeDataIncludesId = removeDataIncludesId;
 compareToPattern.toPatternIncludes = toPatternIncludes;
-compareToPattern.dataToUppercase = dataToUppercase;
+compareToPattern.checkThatPatternIncludes = checkThatPatternIncludes;
+compareToPattern.removePatternIncludesId = removePatternIncludesId;
+compareToPattern.toCheckNumber = toCheckNumber;
+compareToPattern.checkThatCheckNumber = checkThatCheckNumber;
+compareToPattern.removeCheckNumberId = removeCheckNumberId;
 compareToPattern.dataToLowercase = dataToLowercase;
+compareToPattern.checkThatDataLowercase = checkThatDataLowercase;
+compareToPattern.removeDataLowercase = removeDataLowercase;
 compareToPattern.patternToLowercase = patternToLowercase;
+compareToPattern.checkThatPatternLowercase = checkThatPatternLowercase;
+compareToPattern.removePatternLowercase = removePatternLowercase;
+compareToPattern.dataToUppercase = dataToUppercase;
+compareToPattern.checkThatDataUppercase = checkThatDataUppercase;
+compareToPattern.removeDataUppercase = removeDataUppercase;
 compareToPattern.patternToUppercase = patternToUppercase;
+compareToPattern.checkThatPatternUppercase = checkThatPatternUppercase;
+compareToPattern.removePatternUppercase = removePatternUppercase;
 
 export { compareToPattern };
