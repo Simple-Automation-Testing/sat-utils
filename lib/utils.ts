@@ -1,14 +1,38 @@
 /* eslint-disable sonarjs/cognitive-complexity, unicorn/no-object-as-default-parameter*/
+
 import { isPrimitive, isArray, isNumber, getType, isString, isBoolean, isUndefined, isNull, isObject } from './types';
 
-function toArray<T>(anyArugment: T | T[]): T[] {
-  if (anyArugment === undefined) {
+type TcamelCase = {
+  firstWordUpperCase?: boolean;
+  allUpperCase?: boolean;
+  joinWords?: string;
+};
+
+/**
+ * Converts a value or an array of values to an array.
+ *
+ * @template T
+ * @param {T | T[]} anyArgument - The value or array to convert.
+ * @returns {T[]} An array containing the input value(s).
+ */
+function toArray<T>(anyArgument: T | T[]): T[] {
+  if (anyArgument === undefined) {
     return [];
   }
 
-  return Array.isArray(anyArugment) ? Array.from(anyArugment) : [anyArugment];
+  return Array.isArray(anyArgument) ? Array.from(anyArgument) : [anyArgument];
 }
 
+/**
+ * Splits an array into multiple smaller arrays.
+ *
+ * @template T
+ * @param {T[]} arr - The input array.
+ * @param {number} chunksAmount - The number of smaller arrays to create.
+ * @param {boolean} [followIndex=false] - If true, chunks will have approximately equal lengths; otherwise, they will be balanced.
+ * @returns {Array<T[]>} An array of smaller arrays.
+ * @throws {TypeError} If the input is not an array or the chunk size is not a number.
+ */
 function chunkArr<T>(arr: T[], chunksAmount: number, followIndex: boolean = false): Array<T[]> {
   if (!Array.isArray(arr)) {
     throw new TypeError(`chunkArr(): first argument should be an array, current arg is ${getType(arr)}`);
@@ -53,6 +77,13 @@ function chunkArr<T>(arr: T[], chunksAmount: number, followIndex: boolean = fals
   }
 }
 
+/**
+ * Shuffles an array in place.
+ *
+ * @template T
+ * @param {T[]} arr - The array to shuffle.
+ * @throws {TypeError} If the input is not an array.
+ */
 function shuffleArrMutable<T>(arr: T[]): void {
   if (!Array.isArray(arr)) {
     throw new TypeError(`shuffleArrMutable(): first argument should be an array, current arg is ${getType(arr)}`);
@@ -63,6 +94,14 @@ function shuffleArrMutable<T>(arr: T[]): void {
   }
 }
 
+/**
+ * Shuffles a copy of an array.
+ *
+ * @template T
+ * @param {T[]} arr - The input array.
+ * @returns {T[]} A shuffled copy of the input array.
+ * @throws {TypeError} If the input is not an array.
+ */
 function shuffleArr<T>(arr: T[]): T[] {
   if (!Array.isArray(arr)) {
     throw new TypeError(`shuffleArr(): first argument should be an array, current arg is ${getType(arr)}`);
@@ -72,11 +111,23 @@ function shuffleArr<T>(arr: T[]): T[] {
   return newArr;
 }
 
-type TcamelCase = {
-  firstWordUpperCase?: boolean;
-  allUpperCase?: boolean;
-  joinWords?: string;
-};
+/**
+ * Options for the prettifyCamelCase function.
+ *
+ * @typedef {Object} TcamelCase
+ * @property {boolean} [firstWordUpperCase=false] - If true, the first word will start with an uppercase letter.
+ * @property {boolean} [allUpperCase=false] - If true, the entire string will be in uppercase.
+ * @property {string} [joinWords=' '] - The string to use for joining words.
+ */
+
+/**
+ * Prettifies a camelCase string.
+ *
+ * @param {string} camelCaseString - The camelCase string to prettify.
+ * @param {TcamelCase} [_opts] - Options for prettifying the string.
+ * @returns {string} The prettified string.
+ * @throws {TypeError} If the input is not a string or the options are not valid.
+ */
 function prettifyCamelCase(
   camelCaseString: string,
   _opts: TcamelCase = { firstWordUpperCase: false, joinWords: ' ' },
@@ -144,7 +195,15 @@ function prettifyCamelCase(
   return allUpperCase ? firstWordUp.toUpperCase() : firstWordUp;
 }
 
-function execNumberExpression(expression: string, numberArg: number) {
+/**
+ * Checks if a mathematical expression is true for a given number.
+ *
+ * @param {string} expression - The mathematical expression to evaluate.
+ * @param {number} numberArg - The number to use in the expression.
+ * @returns {boolean} True if the expression is true for the given number; otherwise, false.
+ * @throws {TypeError} If the expression is not a string or the number is not a number.
+ */
+function execNumberExpression(expression: string, numberArg: number): boolean {
   if (!isString(expression)) {
     throw new TypeError(
       `checkNumberExpression(): first argument should be a string, current arg is ${getType(numberArg)}`,
@@ -165,6 +224,13 @@ function execNumberExpression(expression: string, numberArg: number) {
   }
 }
 
+/**
+ * Converts a string to camelCase.
+ *
+ * @param {string} str - The input string.
+ * @returns {string} The string in camelCase.
+ * @throws {TypeError} If the input is not a string.
+ */
 function camelize(str: string): string {
   if (!isString(str)) {
     throw new TypeError(`camelize(): first argument should be a string, current arg is ${getType(str)}`);
@@ -177,7 +243,15 @@ function camelize(str: string): string {
     .replaceAll(/\s+/g, '');
 }
 
-function safeJSONstringify(data: any, inline = false, returnIfError = '') {
+/**
+ * Safely converts an object to a JSON string.
+ *
+ * @param {*} data - The data to stringify.
+ * @param {boolean} [inline=false] - If true, the resulting JSON will be on a single line.
+ * @param {*} [returnIfError=''] - The value to return if an error occurs during stringification.
+ * @returns {string} The JSON string or the specified return value if an error occurs.
+ */
+function safeJSONstringify(data: any, inline = false, returnIfError = ''): string {
   try {
     const shouldBeStringified = inline ? [data] : [data, null, '\t'];
     return JSON.stringify.apply(global, shouldBeStringified);
@@ -186,7 +260,14 @@ function safeJSONstringify(data: any, inline = false, returnIfError = '') {
   }
 }
 
-function safeJSONparse(data: any, returnIfError = {}) {
+/**
+ * Safely parses a JSON string.
+ *
+ * @param {*} data - The JSON string to parse.
+ * @param {*} [returnIfError={}] - The value to return if an error occurs during parsing.
+ * @returns {*} The parsed JSON object or the specified return value if an error occurs.
+ */
+function safeJSONparse(data: any, returnIfError = {}): any {
   try {
     return JSON.parse(data);
   } catch {
@@ -194,6 +275,14 @@ function safeJSONparse(data: any, returnIfError = {}) {
   }
 }
 
+/**
+ * Checks if an object has a specified property.
+ *
+ * @param {*} item - The object to check.
+ * @param {string} key - The property key to check for.
+ * @returns {boolean} True if the object has the property; otherwise, false.
+ * @throws {TypeError} If the key is not a string.
+ */
 function safeHasOwnPropery(item: any, key: string): boolean {
   if (!isString(key)) {
     throw new TypeError(`safeHasOwnPropery(): second argument should be a string, current arg is ${getType(key)}`);
@@ -206,6 +295,13 @@ function safeHasOwnPropery(item: any, key: string): boolean {
   return Object.prototype.hasOwnProperty.call(item, key);
 }
 
+/**
+ * Generates an array of indexes from 0 to a specified length.
+ *
+ * @param {number} length - The length of the resulting array.
+ * @returns {number[]} An array of indexes.
+ * @throws {TypeError} If the length is not a number.
+ */
 function lengthToIndexesArray(length: number): number[] {
   if (!isNumber(length)) {
     throw new TypeError(`lengthToIndexes(): first argument should be a number, current arg is ${getType(length)}`);
@@ -213,6 +309,14 @@ function lengthToIndexesArray(length: number): number[] {
   return Array.from({ length }, (_item, index) => index);
 }
 
+/**
+ * Generates a random number within a specified range.
+ *
+ * @param {number} min - The minimum value of the range (inclusive).
+ * @param {number} max - The maximum value of the range (exclusive).
+ * @returns {number} A random number within the specified range.
+ * @throws {TypeError} If the min or max values are not numbers.
+ */
 function getRandomNumberFromRange(min: number, max: number): number {
   if (!isNumber(min)) {
     throw new TypeError(
@@ -229,6 +333,12 @@ function getRandomNumberFromRange(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+/**
+ * Checks if an object can be safely converted to a JSON string.
+ *
+ * @param {*} item - The object to check.
+ * @returns {boolean} True if the object can be converted to JSON; otherwise, false.
+ */
 function canBeStringified(item?: any): boolean {
   try {
     JSON.stringify(item);
@@ -238,7 +348,13 @@ function canBeStringified(item?: any): boolean {
   }
 }
 
-function getStringifyReadyData(data) {
+/**
+ * Filters and returns an object with only stringifiable values.
+ *
+ * @param {*} data - The input data.
+ * @returns {*} An object with only stringifiable values or an empty string if none are found.
+ */
+function getStringifyReadyData(data): any {
   if (isObject(data)) {
     const copied = {};
 
@@ -262,6 +378,12 @@ function getStringifyReadyData(data) {
   return '';
 }
 
+/**
+ * Converts an object to a string.
+ *
+ * @param {*} obj - The object to convert.
+ * @returns {string} The string representation of the object.
+ */
 function stringifyData(obj: unknown): string {
   if (isPrimitive(obj)) {
     return String(obj);

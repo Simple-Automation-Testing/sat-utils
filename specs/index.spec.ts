@@ -7,9 +7,26 @@ import {
   waitForCondition,
   prettifyCamelCase,
   safeHasOwnPropery,
+  lengthToIndexesArray,
 } from '../lib';
 
 describe('SPEC', function () {
+  it('[P] lengthToIndexesArray', function () {
+    deepStrictEqual(lengthToIndexesArray(2), [0, 1]);
+  });
+
+  it('[N] lengthToIndexesArray', function () {
+    try {
+      // @ts-ignore
+      lengthToIndexesArray('');
+    } catch (error) {
+      deepStrictEqual(
+        error.toString(),
+        'TypeError: lengthToIndexes(): first argument should be a number, current arg is string',
+      );
+    }
+  });
+
   it('[P] getRandomArrayItem', function () {
     const arr = [1, 2, 3, 4];
     {
