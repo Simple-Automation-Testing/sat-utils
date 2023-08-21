@@ -157,7 +157,11 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
       return result;
     }
 
-    await callEveryCycle();
+    try {
+      await callEveryCycle();
+    } catch (error) {
+      callbackError = error;
+    }
 
     await sleep(interval);
   }
@@ -169,7 +173,7 @@ async function waitForCondition(callback, options: IWaiterOpts = {}) {
   }
 
   if (!result) {
-    const callbackErrorMessagePart = callbackError ? callbackError : '';
+    const callbackErrorMessagePart = callbackError || '';
     let errorMessage = `Required condition was not achieved during ${timeout} ms. ${callbackErrorMessagePart}`;
 
     if (isString(message)) {
