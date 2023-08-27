@@ -1,12 +1,20 @@
 /* eslint-disable unicorn/consistent-function-scoping, unicorn/no-useless-undefined*/
 import { deepStrictEqual } from 'assert';
-import { asyncRepeat, asyncMap, asyncForEach, asyncReduce, asyncEvery, asyncSome } from '../lib';
+import { asyncRepeat, asyncMap, asyncForEach, asyncReduce, asyncEvery, asyncSome, asyncFilter } from '../lib';
 
 describe('async', () => {
+  it('[P] asyncFilter', async () => {
+    {
+      const arr = [1, 2, 3];
+      const res = await asyncFilter(arr, async item => new Promise(res => setTimeout(() => res(item === 3), 5)));
+      deepStrictEqual(res, [3]);
+    }
+  });
+
   it('[P] asyncSome', async () => {
     {
       const arr = [1, 2, 3];
-      const res = await asyncSome(arr, async item => new Promise(res => setTimeout(() => res(item === 3), 25)));
+      const res = await asyncSome(arr, async item => new Promise(res => setTimeout(() => res(item === 3), 5)));
       deepStrictEqual(res, true);
     }
   });
@@ -14,7 +22,7 @@ describe('async', () => {
   it('[P] asyncEvery', async () => {
     {
       const arr = [1, 2, 3];
-      const res = await asyncEvery(arr, async item => new Promise(res => setTimeout(() => res(item > 0), 25)));
+      const res = await asyncEvery(arr, async item => new Promise(res => setTimeout(() => res(item > 0), 5)));
       deepStrictEqual(res, true);
     }
   });
@@ -22,26 +30,26 @@ describe('async', () => {
   it('[P] asyncReduce', async () => {
     {
       const arr = [1, 2, 3];
-      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25));
+      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 5));
       const res = await asyncReduce(arr, cb);
       deepStrictEqual(res, 6);
     }
     {
       const arr = [1, 2, 3];
-      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25));
+      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 5));
       const res = await asyncReduce(arr, cb, 0);
       deepStrictEqual(res, 6);
     }
     {
       const arr = [1, 2, 3];
-      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25));
+      const cb = async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 5));
       const res = await asyncReduce(arr, cb, 1);
       deepStrictEqual(res, 7);
     }
     {
       const res = await asyncReduce(
         [1, 2, 3],
-        async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25)),
+        async (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 5)),
         1,
       );
       deepStrictEqual(res, 7);

@@ -58,6 +58,30 @@ async function asyncMap<T = unknown, R = unknown>(
   return result;
 }
 
+async function asyncFilter<T = unknown, R = unknown>(
+  ctxArray: T[],
+  callBack: (item: T, index: number, arr: T[]) => Promise<boolean>,
+): Promise<R[]> {
+  if (!isArray(ctxArray)) {
+    throw new TypeError(`asyncFilter(): first argument should be an array, current arg is ${getType(ctxArray)}`);
+  }
+
+  if (!isAsyncFunction(callBack) && !isFunction(callBack)) {
+    throw new TypeError(
+      `asyncFilter(): second argument should be a function or async function, current arg is ${getType(callBack)}`,
+    );
+  }
+
+  const result = [];
+
+  for (const [index, item] of ctxArray.entries()) {
+    const res = await Promise.resolve(callBack(item, index, ctxArray)).catch(() => false);
+    if (res) result.push(item);
+  }
+
+  return result;
+}
+
 async function asyncEvery<T = unknown>(
   ctxArray: T[],
   callBack: (item: T, index: number, arr: T[]) => Promise<boolean>,
@@ -150,4 +174,4 @@ async function asyncForEach<T = unknown>(
   }
 }
 
-export { asyncRepeat, asyncMap, asyncForEach, asyncReduce, asyncEvery, asyncSome };
+export { asyncRepeat, asyncMap, asyncForEach, asyncReduce, asyncEvery, asyncSome, asyncFilter };
