@@ -61,7 +61,7 @@ async function asyncMap<T = unknown, R = unknown>(
 async function asyncFilter<T = unknown, R = unknown>(
   ctxArray: T[],
   callBack: (item: T, index: number, arr: T[]) => Promise<boolean>,
-): Promise<R[]> {
+): Promise<T[]> {
   if (!isArray(ctxArray)) {
     throw new TypeError(`asyncFilter(): first argument should be an array, current arg is ${getType(ctxArray)}`);
   }

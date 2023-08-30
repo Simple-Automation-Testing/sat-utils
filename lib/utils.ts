@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/cognitive-complexity, unicorn/no-object-as-default-parameter*/
+/* eslint-disable sonarjs/cognitive-complexity, unicorn/no-object-as-default-parameter, unicorn/prefer-string-replace-all*/
 
 import { isPrimitive, isArray, isNumber, getType, isString, isBoolean, isUndefined, isNull, isObject } from './types';
 
@@ -237,10 +237,10 @@ function camelize(str: string): string {
   }
 
   return str
-    .replaceAll(/^\w|[A-Z]|\b\w/g, function (word, index) {
+    .replace(/^\w|[A-Z]|\b\w/g, function (word, index) {
       return index === 0 ? word.toLowerCase() : word.toUpperCase();
     })
-    .replaceAll(/\s+/g, '');
+    .replace(/\s+/g, '');
 }
 
 /**
