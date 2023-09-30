@@ -174,4 +174,24 @@ async function asyncForEach<T = unknown>(
   }
 }
 
-export { asyncRepeat, asyncMap, asyncForEach, asyncReduce, asyncEvery, asyncSome, asyncFilter };
+async function asyncFind<T = unknown>(
+  ctxArray: T[],
+  callBack: (item: T, index: number, arr: T[]) => Promise<any>,
+): Promise<T> {
+  if (!isArray(ctxArray)) {
+    throw new TypeError(`asyncFind(): first argument should be an array, current arg is ${getType(ctxArray)}`);
+  }
+
+  if (!isAsyncFunction(callBack) && !isFunction(callBack)) {
+    throw new TypeError(
+      `asyncFind(): second argument should be a function or async function, current arg is ${getType(callBack)}`,
+    );
+  }
+
+  for (const [index, item] of ctxArray.entries()) {
+    const res = await callBack(item, index, ctxArray);
+    if (res) return item;
+  }
+}
+
+export { asyncRepeat, asyncMap, asyncForEach, asyncReduce, asyncEvery, asyncSome, asyncFilter, asyncFind };
