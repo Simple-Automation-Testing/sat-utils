@@ -2,7 +2,24 @@
 import { isObject, isNumber, isString, getType, isUndefined } from './types';
 import { shuffleArr } from './utils';
 
-function getRandomSubString(str: string, length: number) {
+type IOptions = {
+  numbers?: boolean;
+  letters?: boolean;
+  lettersAndNumbers?: boolean;
+  symbols?: boolean;
+  lettersNumbersAndSymbols?: boolean;
+  lowerCase?: boolean;
+};
+
+/**
+ * Get a random substring of a given string.
+ *
+ * @param {string} str - The input string.
+ * @param {number} length - The length of the random substring.
+ * @returns {string} The random substring.
+ * @throws {TypeError} If the input arguments are not of the expected types.
+ */
+function getRandomSubString(str, length) {
   if (!isString(str)) {
     throw new TypeError(`getRandomSubString(): first argument should be a string, current arg is ${getType(str)}`);
   }
@@ -15,14 +32,26 @@ function getRandomSubString(str: string, length: number) {
     .join('');
 }
 
-type IOptions = {
-  numbers?: boolean;
-  letters?: boolean;
-  lettersAndNumbers?: boolean;
-  symbols?: boolean;
-  lettersNumbersAndSymbols?: boolean;
-  lowerCase?: boolean;
-};
+/**
+ * Options for generating a random string.
+ *
+ * @typedef {Object} IOptions
+ * @property {boolean} [numbers] - Include numbers.
+ * @property {boolean} [letters] - Include letters.
+ * @property {boolean} [lettersAndNumbers] - Include letters and numbers.
+ * @property {boolean} [symbols] - Include symbols.
+ * @property {boolean} [lettersNumbersAndSymbols] - Include letters, numbers, and symbols.
+ * @property {boolean} [lowerCase] - Convert the result to lowercase.
+ */
+
+/**
+ * Get a random string of a specified length and options.
+ *
+ * @param {number} length - The length of the random string.
+ * @param {IOptions} [opts] - Options for generating the random string.
+ * @returns {string} The random string.
+ * @throws {TypeError} If the input arguments are not of the expected types.
+ */
 function getRandomString(length, opts: IOptions = { letters: true }) {
   const allowedOptions = new Set(['numbers', 'letters', 'lettersAndNumbers', 'symbols', 'lettersNumbersAndSymbols']);
 
@@ -79,6 +108,15 @@ function getRandomString(length, opts: IOptions = { letters: true }) {
   return lowerCase ? randomStr.toLowerCase() : randomStr;
 }
 
+/**
+ * Get a random item from an array or an array of random items.
+ *
+ * @param {T[]} itemsList - The array of items.
+ * @param {number} [quaintity] - The quantity of random items to get.
+ * @returns {T|T[]} A random item or an array of random items.
+ * @throws {TypeError} If the input arguments are not of the expected types.
+ * @throws {RangeError} If the input arguments are out of range or invalid.
+ */
 function getRandomArrayItem<T>(t: T[]): T;
 
 function getRandomArrayItem<T>(t: T[], quaintity: number): T[];

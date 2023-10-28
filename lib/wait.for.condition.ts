@@ -1,7 +1,13 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 import { isObject, getType, isNumber, isString, isFunction, isAsyncFunction } from './types';
 
-async function sleep(millisecond: number = 5 * 1000): Promise<void> {
+/**
+ * Asynchronously sleeps for the specified number of milliseconds.
+ *
+ * @param {number} [millisecond=5000] - The number of milliseconds to sleep. Defaults to 5 seconds (5000 milliseconds).
+ * @returns {Promise<void>} A Promise that resolves after the specified sleep duration.
+ */
+async function sleep(millisecond = 5 * 1000) {
   return new Promise(resolve => setTimeout(resolve, millisecond));
 }
 

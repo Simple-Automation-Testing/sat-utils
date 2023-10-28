@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { isNull, isDate, isNumber, isString, isRegExp, isUndefined } from '../types';
 import { execNumberExpression, safeHasOwnPropery } from '../utils';
 import { getRandomString } from '../randomizer';
@@ -72,7 +73,23 @@ const { patternToUppercase, checkThatPatternUppercase, removePatternUppercase } 
   };
 })();
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+/**
+ * Compares two data values, data and pattern, with optional comparison options.
+ *
+ * @param {any} data - The data value to be compared.
+ * @param {any} pattern - The pattern value to compare against.
+ * @param {Object} options - Optional comparison options.
+ * @param {boolean} [options.stringIncludes] - Indicates whether to check if one string includes another.
+ * @param {boolean} [options.stringLowercase] - Indicates whether to convert data and pattern to lowercase before comparing.
+ * @param {boolean} [options.stringUppercase] - Indicates whether to convert data and pattern to uppercase before comparing.
+ * @param {boolean} [options.allowNumberTypecast] - Indicates whether to allow typecasting for number comparison.
+ * @param {boolean} [options.checkEmptyStrings] - Indicates whether to check if a string is empty.
+ * @param {boolean} [options.ignoreNonStringsTypes] - Indicates whether to ignore non-string data types.
+ * @param {boolean} [options.checkStringLength] - Indicates whether to check the length of a string.
+ * @returns {Object} An object with `comparisonMessage` and `comparisonResult` properties.
+ * @property {string} comparisonMessage - A message describing the result of the comparison.
+ * @property {boolean} comparisonResult - `true` if the data and pattern match according to the options, `false` otherwise.
+ */
 function comparePrimitives(
   data,
   pattern,
