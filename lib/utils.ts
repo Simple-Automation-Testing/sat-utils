@@ -13,11 +13,12 @@ type TcamelCase = {
  *
  * @template T
  * @param {T | T[]} anyArgument - The value or array to convert.
+ * @param {T | T[]} undefinedIsFine - Return arr with undefined member is argument is undefined
  * @returns {T[]} An array containing the input value(s).
  */
-function toArray<T>(anyArgument: T | T[]): T[] {
+function toArray<T>(anyArgument: T | T[], undefinedIsFine: boolean = false): T[] {
   if (anyArgument === undefined) {
-    return [];
+    return (undefinedIsFine ? [anyArgument] : []) as T[];
   }
 
   return Array.isArray(anyArgument) ? Array.from(anyArgument) : [anyArgument];
