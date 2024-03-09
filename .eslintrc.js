@@ -2,6 +2,7 @@ module.exports = {
   plugins: ['sonarjs', 'promise', 'unicorn', 'prettier', 'no-only-tests'],
   parser: '@typescript-eslint/parser',
   rules: {
+    'unicorn/prefer-set-has': 'off',
     'jsdoc/valid-types': 'off',
     'jsdoc/check-property-names': 'off',
     'no-await-in-loop': 'off',
