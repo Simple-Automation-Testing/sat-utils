@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 /* eslint-disable unicorn/no-object-as-default-parameter, unicorn/consistent-function-scoping*/
-import { isObject, isNumber, isString, getType, isUndefined } from './types';
-import { shuffleArr } from './utils';
+import { isObject, isNumber, isString, getType, isUndefined, isPrimitive } from './types';
+import { shuffleArr, toArray } from './utils';
 
 type IOptions = {
   numbers?: boolean;
@@ -148,4 +149,54 @@ function getRandomArrayItem<T>(itemsList: T[], quaintity?: number): T | T[] {
   return shuffleArr(itemsList).slice(0, quaintity) as T[];
 }
 
-export { getRandomString, getRandomSubString, getRandomArrayItem };
+/**
+ * Retrieves unique items from the given array based on specified fields.
+ *
+ * @template T - The type of items in the array.
+ * @param {T[]} itemsList - The array of items to be processed.
+ * @param {symbol | string | string[]} [uniqByFields] - Optional. The field(s) based on which uniqueness is determined.
+ * @returns {T[]} The array containing unique items based on the specified fields.
+ * @throws {TypeError} If the first argument is not an array.
+ */
+function getUniqItems<T>(itemsList: T[], uniqByFields?: symbol | string | string[]): T[] {
+  if (!Array.isArray(itemsList)) {
+    throw new TypeError(`getUniqItems(): first argument should be an array`);
+  }
+
+  if (itemsList.length === 0) {
+    console.info('getUniqItems(): given array is empty');
+
+    return [];
+  }
+
+  if (itemsList.every(el => isPrimitive(el))) {
+    return Array.from(new Set(itemsList));
+  }
+
+  if (uniqByFields) {
+    const fields = toArray(uniqByFields);
+    const uniqItems = [];
+
+    for (const item of itemsList) {
+      if (uniqItems.length === 0) {
+        uniqItems.push(item);
+      } else {
+        const isUniq = uniqItems.every(uniqItem => {
+          return fields.some(field => {
+            return uniqItem[field] !== item[field];
+          });
+        });
+
+        if (isUniq) {
+          uniqItems.push(item);
+        }
+      }
+    }
+
+    return uniqItems;
+  }
+
+  return toArray(itemsList);
+}
+
+export { getRandomString, getRandomSubString, getRandomArrayItem, getUniqItems };
