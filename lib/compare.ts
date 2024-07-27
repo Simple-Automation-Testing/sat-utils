@@ -282,7 +282,7 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
           return toCount === result.length;
         }
 
-        return everyArrayItem ? result.length === dataWithoutIndexesThatShouldBeIgnored.length : result.length;
+        return everyArrayItem ? result.length === dataWithoutIndexesThatShouldBeIgnored.length : Boolean(result.length);
       } else {
         message += `Message: expected length: ${lengthToCheck}, actual lenght: ${data.length}`;
         return false;
