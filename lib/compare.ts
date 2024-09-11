@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/cognitive-complexity */
+/* eslint-disable sonarjs/cognitive-complexity, unicorn/prefer-string-replace-all */
 import {
   isNull,
   isArray,
@@ -289,6 +289,12 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
       }
     }
 
+    if (isArray(data) && data.every(i => isPrimitive(i)) && isPrimitive(piece)) {
+      const result = data.filter((dataItem, index) => compare(dataItem, piece, index));
+
+      return everyArrayItem ? result.length === data.length : Boolean(result.length);
+    }
+
     if (getType(data) !== getType(piece)) {
       message += `Message: seems like types are not comparable, expected: ${getType(piece)}, actual: ${getType(data)}`;
     }
@@ -303,21 +309,47 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     // clean up message
   } else {
     // TODO message formatting should be improved
-    const indexPattern = /(\[\d])/;
+    const indexPattern = /(\[\d])/gim;
 
     function createMessage(notFormattedMessage) {
-      return notFormattedMessage
-        .replaceAll(/  /gi, ' ')
+      const arr = notFormattedMessage
+        .replace(/  /gi, ' ')
         .split(' message key: ')
         .reverse()
-        .reduce((acc, item, index, arr) => {
+        .reduce((arr, item, index) => {
+          if (arr.length === 0) {
+            arr.push(item);
+          } else if (/(\[\d])$/.test(item)) {
+            const [indexCast] = item.match(indexPattern);
+            const reassigned = item.replace(indexCast, '');
+            arr[index - 1] = `${arr[index - 1]}${indexCast}`;
+            arr.push(reassigned);
+          } else {
+            arr.push(item);
+          }
+          return arr;
+        }, []);
+
+      return arr
+        .reduce((acc, item, index) => {
           if (index === 0 && arr.length - 1 !== index) {
             acc += `${item}${separator}`;
           } else if (indexPattern.test(item)) {
-            const prevIndex = item.match(indexPattern)[0];
-            const key = item.replace(indexPattern, '');
-            const isSeparator = arr.length - 1 === index ? '' : separator;
-            acc = acc.replace(new RegExp(`(${separator})$`), `${prevIndex}${separator}${key}${isSeparator}`);
+            const matchedIndexes: string[] = item
+              .split(indexPattern)
+              .map(i => i.trim())
+              .filter(Boolean);
+
+            if (matchedIndexes.length % 2 !== 0) {
+              throw new Error(`It seems like there's an issue with the message formatting`);
+            }
+
+            while (matchedIndexes.length > 0) {
+              const [matchedIndex, indexMessage] = matchedIndexes.splice(0, 2);
+
+              const isSeparator = arr.length - 1 === index ? '' : separator;
+              acc += `${matchedIndex}${indexMessage}${isSeparator}`;
+            }
           } else if (arr.length - 1 === index) {
             acc += `${item}`;
           } else {
@@ -328,7 +360,6 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
         }, '')
         .trim();
     }
-
     message =
       message.split(' message key: ').length > 2 &&
       message
