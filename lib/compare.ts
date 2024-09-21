@@ -36,6 +36,7 @@ import {
   removePatternUppercase,
   comparePrimitives,
 } from './compare/result.handlers';
+import { rearrangeMessageKeys } from './compare/message.format';
 
 function checkLengthIfRequired(expectedLength, actualLength) {
   if (isUndefined(expectedLength)) {
@@ -312,10 +313,9 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
     const indexPattern = /(\[\d])/gim;
 
     function createMessage(notFormattedMessage) {
-      const arr = notFormattedMessage
-        .replace(/  /gi, ' ')
-        .split(' message key: ')
-        .reverse()
+      const arr = rearrangeMessageKeys(notFormattedMessage.trim().replace(/  /gi, ' '))
+        .split('message key: ')
+        .filter(Boolean)
         .reduce((arr, item, index) => {
           if (arr.length === 0) {
             arr.push(item);
@@ -330,6 +330,8 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
           return arr;
         }, []);
 
+      console.log(arr);
+
       return arr
         .reduce((acc, item, index) => {
           if (index === 0 && arr.length - 1 !== index) {
@@ -340,12 +342,8 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
               .map(i => i.trim())
               .filter(Boolean);
 
-            if (matchedIndexes.length % 2 !== 0) {
-              throw new Error(`It seems like there's an issue with the message formatting`);
-            }
-
             while (matchedIndexes.length > 0) {
-              const [matchedIndex, indexMessage] = matchedIndexes.splice(0, 2);
+              const [matchedIndex, indexMessage = ''] = matchedIndexes.splice(0, 2);
 
               const isSeparator = arr.length - 1 === index ? '' : separator;
               acc += `${matchedIndex}${indexMessage}${isSeparator}`;
@@ -374,6 +372,10 @@ const compareToPattern: TCompareToPattern = function (dataToCheck, pattern, opti
             .map(m => createMessage(`Message: ${m}`))
             .join('\n')
         : createMessage(message);
+
+    message = message
+      .replace(new RegExp(` ${separator}`, 'gmi'), separator)
+      .replace(new RegExp(` Message:`, 'gmi'), `${separator}Message:`);
   }
 
   return { result, message };

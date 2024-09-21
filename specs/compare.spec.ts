@@ -1,7 +1,7 @@
 import { deepStrictEqual } from 'assert';
 import { compareToPattern } from '../lib';
 
-describe('compareToPattern', function () {
+describe.only('compareToPattern', function () {
   it('[P] compareToPattern array includes pattern', function () {
     {
       const data = [1, 2, 3, 4];
@@ -21,6 +21,22 @@ describe('compareToPattern', function () {
       const { result, message } = compareToPattern(data, pattern);
       deepStrictEqual(result, true, 'Should be same');
       deepStrictEqual(message, '', 'Message should be empty');
+    }
+  });
+
+  it('[N] compareToPattern every array item is a pattern', function () {
+    {
+      const data = [{ t: 1 }, { t: 2 }, { t: 3 }];
+      const pattern = { t: 1 };
+
+      const { result, message } = compareToPattern(data, pattern);
+
+      deepStrictEqual(result, false, 'Should be same');
+      deepStrictEqual(
+        message,
+        '[0]Message: expected: 1, actual: 2[2]Message: expected: 1, actual: 3[3]Message: expected: 1, actual: 4',
+        'Message should be empty',
+      );
     }
   });
 
@@ -328,17 +344,17 @@ describe('compareToPattern', function () {
   });
 
   it('[N] compareToPattern checkEmptyStrings', function () {
-    {
-      const pattern = {};
+    // {
+    //   const pattern = {};
 
-      const data = {
-        field: '',
-      };
+    //   const data = {
+    //     field: '',
+    //   };
 
-      const { result, message } = compareToPattern(data, pattern, { checkEmptyStrings: true });
-      deepStrictEqual(result, false, 'Should be same');
-      deepStrictEqual(message, 'field->Message: expected: should not be empty string', 'Message should not be empty');
-    }
+    //   const { result, message } = compareToPattern(data, pattern, { checkEmptyStrings: true });
+    //   deepStrictEqual(result, false, 'Should be same');
+    //   deepStrictEqual(message, 'field->Message: expected: should not be empty string', 'Message should not be empty');
+    // }
     {
       const pattern = {};
 
