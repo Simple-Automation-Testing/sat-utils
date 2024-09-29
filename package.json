@@ -1,14 +1,19 @@
 {
   "name": "sat-utils",
-  "version": "1.16.1",
+  "version": "2.0.1",
   "description": "Utils library",
-  "main": "built/index.js",
   "scripts": {
     "test": "mocha ./specs/**/*.spec.ts --require ts-node/register --timeout 30000",
     "test:w": "mocha ./specs/**/*.spec.ts --require ts-node/register --timeout 30000 --watch",
     "test:debug": "mocha ./specs/async.child.methods.spec.ts --require ts-node/register --timeout 30000",
     "lint": "eslint --ext .ts ./",
     "tsc": "rm -rf ./built && tsc"
+  },
+  "main": "./built/index.js",
+  "exports": {
+    ".": {
+      "require": "./built/index.js"
+    }
   },
   "repository": {
     "type": "git",
@@ -26,9 +31,6 @@
     "async waitForCondition",
     "async waiter",
     "awaiter",
-    "compare item to pattern",
-    "compare",
-    "data comparison",
     "get random data"
   ],
   "author": "Potapov Dmitriy",
