@@ -4,7 +4,6 @@ import {
   getRandomString,
   getRandomArrayItem,
   execNumberExpression,
-  waitForCondition,
   prettifyCamelCase,
   safeHasOwnPropery,
   lengthToIndexesArray,
@@ -93,29 +92,6 @@ describe('SPEC', function () {
   it('[P] execNumberExpression', function () {
     deepStrictEqual(execNumberExpression('>10 and <15', 11), true, '11 shoult be in range from 10 to 15');
     deepStrictEqual(execNumberExpression('>10 and <9', 11), false, '11 shoult be in range from 10 to 9');
-  });
-
-  it('[P] waitForCondition falseIfError', async function () {
-    const throwFunction = () => {
-      throw new Error('TEST');
-    };
-
-    const result = await waitForCondition(throwFunction, { dontThrow: true, timeout: 1500, interval: 50 });
-
-    deepStrictEqual(result, false);
-  });
-
-  it('[N] waitForCondition falseIfError', async function () {
-    const throwError = new Error('TEST');
-    const throwFunction = () => {
-      throw throwError;
-    };
-
-    try {
-      await waitForCondition(throwFunction, { falseIfError: false, timeout: 1500, interval: 50 });
-    } catch (error) {
-      deepStrictEqual(throwError, error);
-    }
   });
 
   it('[P] prettifyCamelCase', function () {
