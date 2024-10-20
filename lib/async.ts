@@ -58,7 +58,7 @@ async function asyncMap<T = unknown, R = unknown>(
   return result;
 }
 
-async function asyncFilter<T = unknown, R = unknown>(
+async function asyncFilter<T = unknown>(
   ctxArray: T[],
   callBack: (item: T, index: number, arr: T[]) => Promise<boolean>,
 ): Promise<T[]> {
