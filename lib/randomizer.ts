@@ -164,8 +164,6 @@ function getUniqItems<T>(itemsList: T[], uniqByFields?: symbol | string | string
   }
 
   if (itemsList.length === 0) {
-    console.info('getUniqItems(): given array is empty');
-
     return [];
   }
 
