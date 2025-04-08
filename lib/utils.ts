@@ -402,6 +402,119 @@ function stringifyData(obj: unknown): string {
   return `{${objString}}`;
 }
 
+type TgetStringEqualtyPersentage = {
+  ignoreSpaces?: boolean;
+  toLowerCase?: boolean;
+  ignorePunctuation?: boolean;
+};
+/**
+ * @param {string} str string to check percentage of the equality
+ * @param {string} inStr string to check how many pecent is in str
+ * @param {object} opts strings modification options
+ * @returns {number} percentage of the equality
+ */
+function getStringEqualtyPersentage(str: string, inStr: string, opts?: TgetStringEqualtyPersentage) {
+  const defaultOpts = {
+    ignoreSpaces: false,
+    toLowerCase: false,
+    ignorePunctuation: false,
+  };
+
+  if (!isString(str)) {
+    throw new TypeError(
+      `getStringEqualtyPersentage(): first argument should be a string, current arg is ${getType(str)}`,
+    );
+  }
+
+  if (!isString(inStr)) {
+    throw new TypeError(
+      `getStringEqualtyPersentage(): second argument should be a string, current arg is ${getType(inStr)}`,
+    );
+  }
+
+  if (!isObject(opts) && !isUndefined(opts)) {
+    throw new TypeError(
+      `getStringEqualtyPersentage(): third argument should be an object, current arg is ${getType(opts)}`,
+    );
+  }
+
+  const options = { ...defaultOpts, ...opts };
+
+  if (!isBoolean(options.ignoreSpaces)) {
+    throw new TypeError(
+      `getStringEqualtyPersentage(): third argument "ignoreSpaces" property should be a boolean, current arg is ${getType(
+        options.ignoreSpaces,
+      )}`,
+    );
+  }
+
+  if (!isBoolean(options.toLowerCase)) {
+    throw new TypeError(
+      `getStringEqualtyPersentage(): third argument "toLowerCase" property should be a boolean, current arg is ${getType(
+        options.toLowerCase,
+      )}`,
+    );
+  }
+
+  if (!isBoolean(options.ignorePunctuation)) {
+    throw new TypeError(
+      `getStringEqualtyPersentage(): third argument "ignorePunctuation" property should be a boolean, current arg is ${getType(
+        options.ignorePunctuation,
+      )}`,
+    );
+  }
+
+  let str1 = str;
+  let str2 = inStr;
+
+  if (options.ignoreSpaces) {
+    str1 = str1.replace(/\s/g, '');
+    str2 = str2.replace(/\s/g, '');
+  }
+
+  if (options.toLowerCase) {
+    str1 = str1.toLowerCase();
+    str2 = str2.toLowerCase();
+  }
+
+  if (options.ignorePunctuation) {
+    const punctuationRegex = /[!#$%&()*,./:;=^_`{}~\-]/g;
+    str1 = str1.replace(punctuationRegex, '');
+    str2 = str2.replace(punctuationRegex, '');
+  }
+
+  const str1Arr = str1.split('');
+  const str2Arr = str2.split('');
+  const comparisonResults = [0];
+
+  for (let i = 0; i < str1Arr.length; i++) {
+    const charInStr = str1Arr[i];
+    const slicedStr = str1Arr.slice(i);
+    const indexInComarisonStr = str2Arr.indexOf(charInStr);
+    // if the char is not in the comparison string, we can skip it
+    if (indexInComarisonStr === -1 && i === 0) {
+      return 0;
+    }
+
+    const sliced = str2Arr.slice(indexInComarisonStr);
+    let equaltyCount = 0;
+
+    for (const [j, element] of sliced.entries()) {
+      if (element === slicedStr[j]) {
+        equaltyCount++;
+      } else {
+        comparisonResults.push(equaltyCount);
+        break;
+      }
+      comparisonResults.push(equaltyCount);
+    }
+  }
+
+  const bigest = comparisonResults.sort()[comparisonResults.length - 1];
+
+  return Number(((bigest / str2.length) * 100).toFixed(1));
+}
+
 export {
   toArray,
   prettifyCamelCase,
@@ -418,4 +531,5 @@ export {
   canBeStringified,
   safeJSONparse,
   stringifyData,
+  getStringEqualtyPersentage,
 };

@@ -48,8 +48,7 @@
 - [asyncMap](#asyncmap)
 - [asyncForEach](#asyncforeach)
 - [asyncReduce](#asyncReduce)
-
-
+- [getStringEqualtyPersentage](#getStringEqualtyPersentage)
 
 ### getRandomArrayItem
 
@@ -352,7 +351,6 @@ const isTruly3 = execNumberExpression('<9', 11); // false
 const isTruly4 = execNumberExpression('!==11', 11); // false
 ```
 
-
 ## getDirFilesList
 
 ```js
@@ -479,4 +477,12 @@ asyncForEach([1, 2, 3], async (item, index, arr) => console.log(item, index, arr
 const { asyncReduce } = require('sat-utils');
 
 asyncReduce([1, 2, 3], (acc, item) => new Promise(res => setTimeout(() => res(acc + item), 25)), 1).then(console.log); // 7
+```
+
+## getStringEqualtyPersentage
+
+```js
+const { getStringEqualtyPersentage } = require('sat-utils');
+
+const percentage = getStringEqualtyPersentage('asd', 'asd'); // 100.0
 ```
