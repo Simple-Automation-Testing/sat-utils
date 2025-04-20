@@ -22,5 +22,6 @@ describe('UTILS', function () {
       },
     };
     deepStrictEqual(stringifyData(obj), `{b: [{b: 1}], c: {c: () => console.log('stringifyData')}}`);
+    deepStrictEqual(stringifyData(obj, { ignoreFunctions: true }), `{b: [{b: 1}], c: {c: function}}`);
   });
 });

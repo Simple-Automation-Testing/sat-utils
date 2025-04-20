@@ -391,27 +391,31 @@ function getStringifyReadyData(data): any {
   return '';
 }
 
+type TstringifyDataConfig = {
+  ignoreFunctions?: boolean;
+};
 /**
  * Converts an object to a string.
  *
  * @param {*} obj - The object to convert.
+ * @param {TstringifyDataConfig} [config] - Configuration options.
  * @returns {string} The string representation of the object.
  */
-function stringifyData(obj: unknown): string {
+function stringifyData(obj: unknown, config?: TstringifyDataConfig): string {
   if (isPrimitive(obj)) {
     return String(obj);
   }
   if (isFunction(obj) || isAsyncFunction(obj)) {
-    return obj.toString();
+    return config?.ignoreFunctions ? 'function' : obj.toString();
   }
 
   if (isArray(obj)) {
-    const arrString = (obj as unknown[]).map(item => stringifyData(item)).join(', ');
+    const arrString = (obj as unknown[]).map(item => stringifyData(item, config)).join(', ');
     return `[${arrString}]`;
   }
 
   const objString = Object.keys(obj)
-    .map(key => `${key}: ${stringifyData(obj[key])}`)
+    .map(key => `${key}: ${stringifyData(obj[key], config)}`)
     .join(', ');
 
   return `{${objString}}`;
