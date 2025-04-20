@@ -49,6 +49,7 @@
 - [asyncForEach](#asyncforeach)
 - [asyncReduce](#asyncReduce)
 - [getStringEqualtyPersentage](#getStringEqualtyPersentage)
+- [stringifyData](#stringifydata)
 
 ### getRandomArrayItem
 
@@ -485,4 +486,18 @@ asyncReduce([1, 2, 3], (acc, item) => new Promise(res => setTimeout(() => res(ac
 const { getStringEqualtyPersentage } = require('sat-utils');
 
 const percentage = getStringEqualtyPersentage('asd', 'asd'); // 100.0
+```
+
+## stringifyData
+
+```js
+const { stringifyData } = require('sat-utils');
+const obj = {
+      b: [{ b: 1 }],
+      c: {
+        c: () => console.log('stringifyData'),
+      },
+    };
+
+const str = stringifyData(data); // {b: [{b: 1}], c: {c: () => console.log('stringifyData')}}
 ```

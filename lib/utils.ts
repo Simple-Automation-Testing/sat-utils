@@ -1,6 +1,18 @@
 /* eslint-disable sonarjs/cognitive-complexity, unicorn/no-object-as-default-parameter, unicorn/prefer-string-replace-all*/
 
-import { isPrimitive, isArray, isNumber, getType, isString, isBoolean, isUndefined, isNull, isObject } from './types';
+import {
+  isPrimitive,
+  isArray,
+  isNumber,
+  getType,
+  isString,
+  isBoolean,
+  isUndefined,
+  isNull,
+  isObject,
+  isFunction,
+  isAsyncFunction,
+} from './types';
 
 type TcamelCase = {
   firstWordUpperCase?: boolean;
@@ -388,6 +400,9 @@ function getStringifyReadyData(data): any {
 function stringifyData(obj: unknown): string {
   if (isPrimitive(obj)) {
     return String(obj);
+  }
+  if (isFunction(obj) || isAsyncFunction(obj)) {
+    return obj.toString();
   }
 
   if (isArray(obj)) {
