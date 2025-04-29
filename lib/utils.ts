@@ -6,6 +6,7 @@ import {
   isNumber,
   getType,
   isString,
+  isSymbol,
   isBoolean,
   isUndefined,
   isNull,
@@ -296,9 +297,11 @@ function safeJSONparse(data: any, returnIfError = {}): any {
  * @returns {boolean} True if the object has the property; otherwise, false.
  * @throws {TypeError} If the key is not a string.
  */
-function safeHasOwnPropery(item: any, key: string): boolean {
-  if (!isString(key)) {
-    throw new TypeError(`safeHasOwnPropery(): second argument should be a string, current arg is ${getType(key)}`);
+function safeHasOwnPropery(item: any, key: string | symbol): boolean {
+  if (!isString(key) && !isSymbol(key)) {
+    throw new TypeError(
+      `safeHasOwnPropery(): second argument should be a string or symbol, current arg is ${getType(key)}`,
+    );
   }
 
   if (isUndefined(item) || isNull(item)) {

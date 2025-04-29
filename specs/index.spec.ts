@@ -45,7 +45,7 @@ describe('SPEC', function () {
   });
 
   it('[P] safeHasOwnPropery', function () {
-    deepStrictEqual(safeHasOwnPropery({ a: 1 }, 'a'), true);
+    deepStrictEqual(safeHasOwnPropery({ a: 1, [Symbol['a']]: 1 }, 'a'), true);
     deepStrictEqual(safeHasOwnPropery({ a: 1 }, 'b'), false);
     deepStrictEqual(safeHasOwnPropery(undefined, 'b'), false);
     deepStrictEqual(safeHasOwnPropery(null, 'b'), false);
