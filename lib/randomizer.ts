@@ -158,7 +158,10 @@ function getRandomArrayItem<T>(itemsList: T[], quaintity?: number): T | T[] {
  * @returns {T[]} The array containing unique items based on the specified fields.
  * @throws {TypeError} If the first argument is not an array.
  */
-function getUniqItems<T>(itemsList: T[], uniqByFields?: symbol | string | string[]): T[] {
+function getUniqItems<T>(
+  itemsList: T[],
+  uniqByFields?: symbol | string | string[] | ((currentItems: T[], initalArrItem) => boolean),
+): T[] {
   if (!Array.isArray(itemsList)) {
     throw new TypeError(`getUniqItems(): first argument should be an array`);
   }
@@ -181,7 +184,11 @@ function getUniqItems<T>(itemsList: T[], uniqByFields?: symbol | string | string
       } else {
         const isUniq = uniqItems.every(uniqItem => {
           return fields.some(field => {
-            return uniqItem[field] !== item[field];
+            if (typeof field === 'string' || typeof field === 'symbol') {
+              return uniqItem[field] !== item[field];
+            } else if (typeof field === 'function') {
+              return field(Array.from(uniqItems), item);
+            }
           });
         });
 
