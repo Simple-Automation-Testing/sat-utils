@@ -151,7 +151,6 @@ function getRandomArrayItem<T>(itemsList: T[], quaintity?: number): T | T[] {
 
 /**
  * Retrieves unique items from the given array based on specified fields.
- *
  * @template T - The type of items in the array.
  * @param {T[]} itemsList - The array of items to be processed.
  * @param {symbol | string | string[]} [uniqByFields] - Optional. The field(s) based on which uniqueness is determined.
@@ -201,7 +200,52 @@ function getUniqItems<T>(
     return uniqItems;
   }
 
+  console.warn(`getUniqItems(): uniqByFields is not provided, returning original array without filtering`);
+
   return toArray(itemsList);
 }
 
-export { getRandomString, getRandomSubString, getRandomArrayItem, getUniqItems };
+/**
+ * Retrieves unique items from the given array based on specified fields.
+ * @template T - The type of items in the array.
+ * @param {T[]} itemsList - The array of items to be processed.
+ * @param {symbol | string | string[]} [uniqByFields] - Optional. The field(s) based on which uniqueness is determined.
+ * @returns {T[]} The array containing unique items based on the specified fields.
+ * @throws {TypeError} If the first argument is not an array.
+ */
+function getNotUniqItems<T>(itemsList: T[], uniqByFields?: symbol | string | string[]): T[] {
+  const seen = new Map<string, T[]>();
+  const duplicates: T[] = [];
+
+  if (!Array.isArray(itemsList)) {
+    throw new TypeError(`getNotUniqItems(): first argument should be an array`);
+  }
+  if (itemsList.length === 0) {
+    return [];
+  }
+  if (itemsList.every(el => isPrimitive(el))) {
+    return itemsList.filter((item, index, self) => self.indexOf(item) !== index);
+  }
+
+  for (const item of itemsList) {
+    const key = toArray(uniqByFields)
+      .map(k => String(item[k]))
+      .join('|'); // Unique composite key
+
+    if (seen.has(key)) {
+      seen.get(key)!.push(item);
+    } else {
+      seen.set(key, [item]);
+    }
+  }
+
+  for (const group of seen.values()) {
+    if (group.length > 1) {
+      duplicates.push(...group);
+    }
+  }
+
+  return duplicates;
+}
+
+export { getRandomString, getRandomSubString, getRandomArrayItem, getUniqItems, getNotUniqItems };

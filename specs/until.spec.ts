@@ -1,9 +1,13 @@
 /* eslint-disable no-console */
 /* eslint-disable unicorn/consistent-function-scoping */
 import { deepStrictEqual } from 'assert';
-import { getStringEqualtyPersentage, stringifyData } from '../lib/utils';
+import { getStringEqualtyPersentage, stringifyData, camelize } from '../lib/utils';
 
 describe('UTILS', function () {
+  it('[P] camelize', async function () {
+    deepStrictEqual(camelize('abc dsd'), 'abcDsd');
+  });
+
   it('[P] getStringEqualtyPersentage', async function () {
     const str1 = 'abc';
     const str2 = 'abc';
