@@ -537,6 +537,82 @@ function getStringEqualtyPersentage(str: string, inStr: string, opts?: TgetStrin
   return Number(((bigest / str2.length) * 100).toFixed(1));
 }
 
+/**
+ * Computes the Levenshtein edit distance between two sequences.
+ *
+ * @param {string} a - The first sequence.
+ * @param {string} b - The second sequence.
+ * @returns {number} The minimum number of single-character insertions, deletions, or substitutions required to transform `a` into `b`.
+ */
+function levenshtein(a, b) {
+  const m = a.length,
+    n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  const dp = Array.from({ length: m + 1 }, (_, i) => [i, ...Array(n).fill(0)]);
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+    }
+  }
+  return dp[m][n];
+}
+
+/**
+ * Checks whether two values are a fuzzy match based on Levenshtein distance.
+ *
+ * Values are coerced to strings before comparison. Returns true when the edit distance
+ * falls within the inclusive `[min, max]` range — useful for catching typos while
+ * excluding both exact matches and wildly different inputs.
+ *
+ * @param {*} a - The first value to compare.
+ * @param {*} b - The second value to compare.
+ * @param {number} [min=2] - Minimum edit distance (inclusive) to consider a fuzzy match.
+ * @param {number} [max=5] - Maximum edit distance (inclusive) to consider a fuzzy match.
+ * @returns {boolean} True if the edit distance between `a` and `b` is within `[min, max]`.
+ */
+function isFuzzyMatch(a, b, min = 2, max = 5) {
+  const d = levenshtein(String(a), String(b));
+  return d >= min && d <= max;
+}
+
+/**
+ * Checks whether any n-gram of `phrase` (of size `minGram`) appears within `fullName`.
+ *
+ * The phrase is sliced into chunks of size `minGram`, both in its original order and reversed,
+ * and each chunk is compared case-insensitively against `fullName`. If no chunk matches, the
+ * function recurses on the phrase with its first character removed, allowing partial overlaps
+ * starting at any offset of the original phrase.
+ *
+ * @param {string} phrase - The phrase whose n-grams are searched for.
+ * @param {string} fullName - The string to search within.
+ * @param {number} [minGram=2] - The size of each n-gram chunk; phrases shorter than this return false.
+ * @returns {boolean} True if any forward or reversed n-gram of `phrase` is contained in `fullName`; otherwise, false.
+ */
+function isNgram(phrase, fullName, minGram = 2) {
+  if (phrase.length < minGram) {
+    // Below min_gram, no match expected
+    return false;
+  } else {
+    const parts = phrase.match(new RegExp(`.{1,${minGram}}`, 'g')).filter(part => part.length >= minGram);
+    const partsReverse = phrase
+      .split('')
+      .reverse()
+      .join('')
+      .match(new RegExp(`.{1,${minGram}}`, 'g'))
+      .filter(part => part.length >= minGram);
+    if (parts.some(part => fullName.toLowerCase().includes(part.toLowerCase()))) {
+      return true;
+    }
+    if (partsReverse.some(part => fullName.toLowerCase().includes(part.toLowerCase()))) {
+      return true;
+    }
+  }
+  return isNgram(phrase.slice(1), fullName, minGram);
+}
+
 export {
   toArray,
   prettifyCamelCase,
@@ -554,4 +630,6 @@ export {
   safeJSONparse,
   stringifyData,
   getStringEqualtyPersentage,
+  isFuzzyMatch,
+  isNgram,
 };
